@@ -29,14 +29,13 @@ signinRouter.post(
         const payLoad = {
             user: {
                 id: existingUser.id,
-                email
             },
         };
 
         existingUser.password = undefined
         existingUser.verificationCode = undefined
         let accessToken = await generateAccessToken(payLoad);
-        res.status(200).send({ user: existingUser, accessToken });
+        res.status(200).send({ message: "Sign in successful", statuscode: 200, data: { user: existingUser, accessToken } });
     }
 );
 

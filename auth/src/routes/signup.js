@@ -37,8 +37,6 @@ signupRouter.post(
         const user = await db.User.create(newUser);
         console.log(user)
         user.password = undefined;
-
-
         const mailOptions = {
             from: 'olaludesunkanmi@yahoo.com',
             to: user.email,
@@ -47,7 +45,6 @@ signupRouter.post(
         };
         //await sendMailWithSendgrid(mailOptions)
         await sendWithMailTrap(mailOptions)
-
         const payLoad = {
             user: {
                 id: user.id,
@@ -59,7 +56,7 @@ signupRouter.post(
             httpOnly: true,
             secure: req.secure || req.headers['x-forwarded-proto'] === 'https', //used only in production
         });
-        res.status(201).send({ user, accessToken });
+        res.status(201).send({ message: "User created", statuscode: 201, type: "success", data: { user, accessToken } });
     }
 );
 
@@ -78,13 +75,11 @@ signupRouter.post(
         if (!existingUser) {
             throw new BadRequestError('Incorect Verification Code');
         }
-
         const updatedUser = await db.User.update({ isVerified: true }, { where: { id, verificationCode } })
-
         existingUser.password = undefined
         existingUser.verificationCode = verificationCode
 
-        res.status(200).send({ user: existingUser });
+        res.status(200).send({ message: "User verified", statuscode: 200, data: { user: existingUser } });
     }
 );
 signupRouter.post(
@@ -111,7 +106,7 @@ signupRouter.post(
 
         await sendWithMailTrap(mailOptions)
         existingUser.password = undefined
-        res.status(200).send({ user: existingUser });
+        res.status(200).send({ message: "Verification code resent", statuscode: 200, data: { user: existingUser, verificationCode } });
     }
 );
 
