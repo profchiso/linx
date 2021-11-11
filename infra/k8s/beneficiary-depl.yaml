@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beneficiary-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: beneficiary
+  template:
+    metadata:
+      labels:
+        app: beneficiary
+    spec:
+      containers:
+        - name: beneficiary
+          image: linx/beneficiary
+          env:
+            - name: username
+              value: "postgres"
+            - name: password
+              value: "postgres"
+            - name: database
+              value: "beneficiary"
+            - name: host
+              value: "localhost"
+            - name: dialect
+              value: "postgres"
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: beneficiary-srv
+spec:
+  selector:
+    app: beneficiary
+  ports:
+    - name: beneficiary
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

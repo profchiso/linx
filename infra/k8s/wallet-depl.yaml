@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wallet-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wallet
+  template:
+    metadata:
+      labels:
+        app: wallet
+    spec:
+      containers:
+        - name: wallet
+          image: linx/wallet
+          env:
+            - name: username
+              value: "postgres"
+            - name: password
+              value: "postgres"
+            - name: database
+              value: "wallet"
+            - name: host
+              value: "localhost"
+            - name: dialect
+              value: "postgres"
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wallet-srv
+spec:
+  selector:
+    app: wallet
+  ports:
+    - name: wallet
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

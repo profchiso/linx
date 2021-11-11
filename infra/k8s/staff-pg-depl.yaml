@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: staff-pg-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: staff-pg
+  template:
+    metadata:
+      labels:
+        app: staff-pg
+    spec:
+      containers:
+        - name: staff-pg
+          image: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: staff-pg-srv
+spec:
+  selector:
+    app: staff-pg
+  ports:
+    - name: staff-pg
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
