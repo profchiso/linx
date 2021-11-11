@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction-pg-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transaction-pg
+  template:
+    metadata:
+      labels:
+        app: transaction-pg
+    spec:
+      containers:
+        - name: transaction-pg
+          image: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-pg-srv
+spec:
+  selector:
+    app: transaction-pg
+  ports:
+    - name: transaction-pg
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

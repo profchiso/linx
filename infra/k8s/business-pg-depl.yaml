@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: business-pg-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: business-pg
+  template:
+    metadata:
+      labels:
+        app: business-pg
+    spec:
+      containers:
+        - name: business-pg
+          image: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: business-pg-srv
+spec:
+  selector:
+    app: business-pg
+  ports:
+    - name: business-pg
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
