@@ -82,6 +82,8 @@ signupRouter.post(
         const updatedUser = await db.User.update({ isVerified: true }, { where: { id, verificationCode } })
 
         existingUser.password = undefined
+        existingUser.verificationCode = verificationCode
+
         res.status(200).send({ user: existingUser });
     }
 );
