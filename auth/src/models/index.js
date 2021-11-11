@@ -11,7 +11,7 @@ const db_uri = process.env.MY_DB_URI
 let sequelize;
 if (db_uri) {
     sequelize = new Sequelize(db_uri, { dialect: "postgres" });
-    console.log("connection", sequelize)
+
 } else {
     sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
