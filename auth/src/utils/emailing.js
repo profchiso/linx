@@ -4,10 +4,6 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.sendMailWithSendgrid = async(mailOptions) => {
     try {
-<<<<<<< HEAD
-=======
-        console.log(mailOptions);
->>>>>>> d88cd81ae259f6d65de4090733b246593f5b8ef8
         await sgMail.send(mailOptions);
         console.log("mail sent");
     } catch (error) {
@@ -18,11 +14,7 @@ exports.sendMailWithSendgrid = async(mailOptions) => {
 
 exports.sendWithMailTrap = async(options) => {
     try {
-<<<<<<< HEAD
         let transporter = nodemailer.createTransport({
-=======
-        var transporter = nodemailer.createTransport({
->>>>>>> d88cd81ae259f6d65de4090733b246593f5b8ef8
                 host: "smtp.mailtrap.io",
                 port: 2525,
                 auth: {

@@ -24,10 +24,7 @@
         "@sendgrid/mail": "^7.6.0",
         "bcryptjs": "^2.4.3",
         "cookie-session": "^1.4.0",
-<<<<<<< HEAD
         "cors": "^2.8.5",
-=======
->>>>>>> d88cd81ae259f6d65de4090733b246593f5b8ef8
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "express-async-errors": "^3.1.1",
@@ -36,11 +33,6 @@
         "nodemailer": "^6.7.0",
         "pg": "^8.7.1",
         "pg-hstore": "^2.3.4",
-<<<<<<< HEAD
         "sequelize": "^6.9.0"
-=======
-        "sequelize": "^6.9.0",
-        "cors": "^2.8.5"
->>>>>>> d88cd81ae259f6d65de4090733b246593f5b8ef8
     }
 }
