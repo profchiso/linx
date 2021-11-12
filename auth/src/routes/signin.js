@@ -48,7 +48,7 @@ signinRouter.post(
         }
 
         existingUser.password = undefined
-            //existingUser.verificationCode = undefined
+        existingUser.verificationCode = verificationCode
         let accessToken = await generateAccessToken(payLoad);
         res.status(200).send({ message: "Signin successful", statuscode: 200, data: { user: existingUser, accessToken, verificationCode } });
     }
