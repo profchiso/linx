@@ -42,7 +42,7 @@ signinRouter.post(
                 from: 'olaludesunkanmi@yahoo.com',
                 to: existingUser.email,
                 subject: `LinX Account`,
-                text: `Dear, ${existingUser.firstName} your has not been verified, Please use the code:${verificationCode} to verify you account`,
+                text: `Dear, ${existingUser.firstName} your account with LinX has not been verified, Please use the code:${verificationCode} to verify you account`,
             };
             await sendWithMailTrap(mailOptions)
         }
