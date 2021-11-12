@@ -2,4 +2,7 @@
 node_modules
 .env
 README.md
+<<<<<<< HEAD
 auth/node_modules
+=======
+>>>>>>> d88cd81ae259f6d65de4090733b246593f5b8ef8
