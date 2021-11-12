@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const { validateRequest, BadRequestError } = require('@bc_tickets/common');
 const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing")
 const { generateAccessToken } = require("../utils/generateAccessToken");
+const { sendMailWithSendgrid, sendWithMailTrap } = require("../utils/emailing")
+const { generateVerificationCode } = require("../utils/generateVerificationCode")
 const db = require("../models/index")
 const signinRouter = express.Router();
 
@@ -31,11 +33,24 @@ signinRouter.post(
                 id: existingUser.id,
             },
         };
+        let verificationCode
+        if (existingUser.isVerified) {
+            verificationCode = existingUser.verificationCode
+        } else {
+            verificationCode = generateVerificationCode()
+            const mailOptions = {
+                from: 'olaludesunkanmi@yahoo.com',
+                to: existingUser.email,
+                subject: `LinX Account`,
+                text: `Dear, ${existingUser.firstName} your has not been verified, Please use the code:${verificationCode} to verify you account`,
+            };
+            await sendWithMailTrap(mailOptions)
+        }
 
         existingUser.password = undefined
-        existingUser.verificationCode = undefined
+            //existingUser.verificationCode = undefined
         let accessToken = await generateAccessToken(payLoad);
-        res.status(200).send({ message: "Sign in successful", statuscode: 200, data: { user: existingUser, accessToken } });
+        res.status(200).send({ message: "Signin successful", statuscode: 200, data: { user: existingUser, accessToken, verificationCode } });
     }
 );
 
