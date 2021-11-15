@@ -97,10 +97,13 @@ signupRouter.post(
 
         const updatedUser = await db.User.update({ verificationCode }, { where: { id, verificationCode } })
         const mailOptions = {
-            from: 'olaludesunkanmi@yahoo.com',
+            from: process.env.SENDER_EMAIL,
             to: existingUser.email,
             subject: `LinX Account`,
-            text: `Dear, ${existingUser.firstName} your account with LinX was created successfull, Please use the code:${verificationCode} to verify you account`,
+            text: `Dear ${existingUser.firstName}, 
+            Your LinX account has been created successfully. Please use the following code:
+            ${verificationCode} to verify your account.
+            Thank you.`,
         };
         existingUser.verificationCode = verificationCode
 
