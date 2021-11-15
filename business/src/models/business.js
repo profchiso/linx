@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         tradingName: DataTypes.STRING,
         businessType: DataTypes.STRING,
         description: DataTypes.STRING,
-        yearOfOperation: DataTypes.STRING,
+        yearOfOperation: DataTypes.INTEGER,
         address: DataTypes.STRING,
         country: DataTypes.STRING,
         utilityBill: DataTypes.STRING,
@@ -28,6 +28,9 @@ module.exports = (sequelize, DataTypes) => {
         tin: DataTypes.STRING,
         tinCertificate: DataTypes.STRING,
         userId: DataTypes.INTEGER,
+        state: DataTypes.STRING,
+        rcNumber: DataTypes.STRING,
+        utilityBillType: DataTypes.STRING,
 
     }, {
         sequelize,

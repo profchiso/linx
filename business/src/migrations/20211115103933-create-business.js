@@ -47,6 +47,15 @@ module.exports = {
             userId: {
                 type: Sequelize.INTEGER
             },
+            state: {
+                type: Sequelize.STRING
+            },
+            rcNumber: {
+                type: Sequelize.STRING
+            },
+            utilityBillType: {
+                type: Sequelize.STRING
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
