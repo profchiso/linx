@@ -44,7 +44,7 @@ signupRouter.post(
             text: `Dear, ${user.firstName} your account with LinX was created successfull, Please use the code:${user.verificationCode} to verify you account`,
         };
         //await sendMailWithSendgrid(mailOptions)
-        await sendEmailWithMailgun(mailOptions)
+        await sendMailWithSendgrid(mailOptions)
         const payLoad = {
             user: {
                 id: user.id,
