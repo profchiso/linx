@@ -44,3 +44,31 @@ exports.sendWithMailTrap = async(options) => {
 
 
 }
+
+
+exports.sendEmailWithMailgun = async(options) => {
+    try {
+        const API_KEY = process.env.MAILGUN_KEY;
+        const DOMAIN = process.env.MAILGUN_DOMAIN;
+        var mailgun = require("mailgun-js")({
+            apiKey: API_KEY,
+            domain: DOMAIN,
+        });
+
+        const mailOptions = {
+            from: options.from,
+            to: options.to,
+            subject: options.subject,
+            text: options.text,
+            // html: options.html,
+        };
+
+        await mailgun.messages().send(mailOptions, (error, body) => {
+            if (error) console.log("mail error", error);
+
+            console.log("mail body", body);
+        });
+    } catch (error) {
+        console.log("error from email sending", error);
+    }
+};

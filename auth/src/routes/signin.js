@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { validateRequest, BadRequestError } = require('@bc_tickets/common');
 const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing")
 const { generateAccessToken } = require("../utils/generateAccessToken");
-const { sendMailWithSendgrid, sendWithMailTrap } = require("../utils/emailing")
+const { sendMailWithSendgrid, sendWithMailTrap, sendEmailWithMailgun } = require("../utils/emailing")
 const { generateVerificationCode } = require("../utils/generateVerificationCode")
 const db = require("../models/index")
 const signinRouter = express.Router();
@@ -39,17 +39,14 @@ signinRouter.post(
         } else {
             verificationCode = generateVerificationCode()
             const mailOptions = {
-                from: 'olaludesunkanmi@yahoo.com',
+                from: process.env.SENDER_EMAIL,
                 to: existingUser.email,
                 subject: `LinX Account`,
                 text: `Dear, ${existingUser.firstName} your account with LinX has not been verified, Please use the code:${verificationCode} to verify you account`,
             };
             const updatedUser = await db.User.update({ verificationCode }, { where: { id: existingUser.id } })
-            await sendWithMailTrap(mailOptions)
-
-
+            await sendEmailWithMailgun(mailOptions)
         }
-
         existingUser.password = undefined
         existingUser.verificationCode = verificationCode
         let accessToken = await generateAccessToken(payLoad);

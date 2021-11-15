@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { validateRequest, BadRequestError } = require("@bc_tickets/common");
 const { generateVerificationCode } = require("../utils/generateVerificationCode")
 const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing")
-const { sendMailWithSendgrid, sendWithMailTrap } = require("../utils/emailing")
+const { sendMailWithSendgrid, sendWithMailTrap, sendEmailWithMailgun } = require("../utils/emailing")
 const { generateAccessToken } = require("../utils/generateAccessToken");
 const { authenticate } = require("../utils/authService")
 const db = require("../models/index")
@@ -19,7 +19,7 @@ signupRouter.post(
         body('phone').notEmpty().withMessage('Phone number cannot be empty'),
         body('password')
         .trim()
-        .isLength({ min: 4, max: 20 })
+        .isLength({ min: 8, max: 20 })
         .withMessage('Password must be between 4 and 20 characters'),
     ],
     validateRequest,
@@ -38,13 +38,13 @@ signupRouter.post(
         console.log(user)
         user.password = undefined;
         const mailOptions = {
-            from: 'olaludesunkanmi@yahoo.com',
+            from: process.env.SENDER_EMAIL,
             to: user.email,
             subject: `LinX Account`,
             text: `Dear, ${user.firstName} your account with LinX was created successfull, Please use the code:${user.verificationCode} to verify you account`,
         };
         //await sendMailWithSendgrid(mailOptions)
-        await sendWithMailTrap(mailOptions)
+        await sendEmailWithMailgun(mailOptions)
         const payLoad = {
             user: {
                 id: user.id,
