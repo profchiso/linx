@@ -73,7 +73,7 @@ signupRouter.post(
 
         const existingUser = await db.User.findOne({ where: { id, verificationCode } });
         if (!existingUser) {
-            throw new BadRequestError('Incorect Verification Code');
+            throw new BadRequestError('Incorrect Verification Code');
         }
         const updatedUser = await db.User.update({ isVerified: true }, { where: { id, verificationCode } })
         existingUser.password = undefined
