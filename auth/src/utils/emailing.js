@@ -53,6 +53,7 @@ exports.sendEmailWithMailgun = async(options) => {
         var mailgun = require("mailgun-js")({
             apiKey: API_KEY,
             domain: DOMAIN,
+            host: "api.eu.mailgun.net"
         });
 
         const mailOptions = {
