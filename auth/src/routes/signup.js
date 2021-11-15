@@ -41,7 +41,7 @@ signupRouter.post(
             from: process.env.SENDER_EMAIL,
             to: user.email,
             subject: `LinX Account`,
-            text: `Dear, ${user.firstName} your account with LinX was created successfull, Please use the code:${user.verificationCode} to verify you account`,
+            text: `Dear, ${user.firstName} your account with LinX was created successfull, Please use the code:${user.verificationCode} to verify your account`,
         };
         //await sendMailWithSendgrid(mailOptions)
         await sendMailWithSendgrid(mailOptions)
