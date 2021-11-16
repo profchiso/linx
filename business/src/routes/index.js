@@ -154,6 +154,7 @@ businessRouter.post(
         const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: userId || data.user.id })
 
         //create business owners
+        let partners = [];
         for (let businessOwner of businessOwners) {
             let busnessOwnerDetails = {
                 firstName: businessOwner.firstName,
@@ -163,12 +164,14 @@ businessRouter.post(
                 idTypeImage: "",
                 businessId: createdBusiness.id
             }
-            createdBusiness.businessOwners = []
+
             let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails).
-            createdBusiness.businessOwners.push(createdBusinessOwner)
+            partners.push(createdBusinessOwner)
         }
         createdBusiness.alias = businesAlias
         createdBusiness.alias.owner = data.user
+        createdBusiness.partners = partners
+
 
 
         res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: createdBusiness } });
