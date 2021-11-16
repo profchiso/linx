@@ -10,8 +10,8 @@ const businessRouter = express.Router();
 businessRouter.get(
     '/api/v1/business',
     businessRegistrationValidation,
-    validateRequest,
-    authenticate,
+    //validateRequest,
+    // authenticate,
     async(req, res) => {
         //get all registered businesses
         const businesses = await db.businesses.findAll({});
@@ -24,10 +24,10 @@ businessRouter.get(
 businessRouter.post(
     '/api/v1/business',
     businessRegistrationValidation,
-    validateRequest,
-    authenticate,
+    //validateRequest,
+    //authenticate,
     async(req, res) => {
-        const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType } = req.body
+        const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId } = req.body
 
         //check if business already exist
         const existingBusiness = await db.businesses.findOne({ where: { name } });
@@ -98,8 +98,8 @@ businessRouter.post(
             );
         }
 
-        let userId = req.user.id
-            //create business
+        //let userId = req.user.id
+        //create business
         const createdBusiness = db.businesses.create({
             name,
             tradingName,
@@ -132,8 +132,8 @@ businessRouter.post(
 //GET  BUSINESSES BY USE ID
 businessRouter.get(
     '/api/v1/business/:userId',
-    validateRequest,
-    authenticate,
+    //validateRequest,
+    // authenticate,
     async(req, res) => {
         const { userId } = req.params;
         const business = await db.businesses.findAll({ where: { userId } });
@@ -144,10 +144,12 @@ businessRouter.get(
 //QUERY IF BUSINESS ALIAS ALREADY EXIST
 businessRouter.get(
     '/api/v1/business/alias/:alias',
-    validateRequest,
-    authenticate,
+    // validateRequest,
+    //authenticate,
     async(req, res) => {
         const { alias } = req.params;
+
+        //CHECK IF ALIAS ALREADY EXIST
         const existingAlias = await db.aliases.findOne({ where: { name: alias } });
         if (existingAlias) {
             throw new BadRequestError("Business alias already in use please choose another alias")
@@ -159,8 +161,8 @@ businessRouter.get(
 //UPDATE BUSINESS DATA
 businessRouter.patch(
     '/api/v1/business/:businessId',
-    validateRequest,
-    authenticate,
+    //validateRequest,
+    //authenticate,
     async(req, res) => {
         const { businessId } = req.params
 
