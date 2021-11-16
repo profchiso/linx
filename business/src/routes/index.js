@@ -199,7 +199,7 @@ businessRouter.get(
     '/api/v1/business/alias/:alias',
     async(req, res) => {
 
-        //console.log(db.)
+
         //authenticate user
         const { data } = await axios.get(`${AUTH_URL}`, {
                 headers: {
@@ -223,12 +223,11 @@ businessRouter.get(
 );
 
 
-//QUERY IF CAC for RC number
+//QUERY  CAC FOR RC NUMBER VALIDITY
 businessRouter.get(
     '/api/v1/business/rc-number/:rcNumber',
     async(req, res) => {
 
-        //console.log(db.)
         //authenticate user
         const { data } = await axios.get(`${AUTH_URL}`, {
                 headers: {
@@ -247,7 +246,7 @@ businessRouter.get(
         // if (foundRCNumber) {
         //     throw new BadRequestError("RC number not found in CAC database")
         // }
-        res.status(200).send({ message: `RC number ${rcNumber} valid`, statuscode: 200, data: { rcNumber, businessDetails: [] } });
+        res.status(200).send({ message: `RC number ${rcNumber} valid`, statuscode: 200, data: { rcNumber, businessDetails: {} } });
     }
 );
 
