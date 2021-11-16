@@ -130,7 +130,7 @@ businessRouter.post(
 
         //let userId = req.user.id
         //create business
-        const createdBusiness = db.businesses.create({
+        const createdBusiness = await db.businesses.create({
             name,
             tradingName,
             businessType,
@@ -163,9 +163,9 @@ businessRouter.post(
                 idTypeImage: "",
                 businessId: createdBusiness.id
             }
-            let createdBusinessOwner = db.businessOwners.create(busnessOwnerDetails)
+            let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
         }
-        console.log(createdBusiness)
+
 
         res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: createdBusiness } });
     }
