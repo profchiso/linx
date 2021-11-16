@@ -169,10 +169,11 @@ businessRouter.post(
             console.log(createdBusinessOwner)
             partners.push(createdBusinessOwner)
         }
-        createdBusiness.alias = businesAlias
-        createdBusiness.owner = data.user
-        createdBusiness.partners = partners
-        res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: createdBusiness } });
+        let returnData = {...createdBusiness }
+        returnData.alias = businesAlias
+        returnData.owner = data.user
+        returnData.partners = partners
+        res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: returnData } });
     }
 );
 
