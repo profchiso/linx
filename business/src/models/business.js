@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         state: DataTypes.STRING,
         rcNumber: DataTypes.STRING,
         utilityBillType: DataTypes.STRING,
+        alias: DataTypes.STRING,
 
     }, {
         sequelize,

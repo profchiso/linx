@@ -9,6 +9,9 @@ const businessRegistrationValidation = [
     body("country").notEmpty().withMessage("Country of business is required"),
     body("tin").notEmpty().withMessage("Tax identification number is required"),
     body("rcNumber").notEmpty().withMessage("Rc number is required"),
-    body("state").notEmpty().withMessage("State is required")
+    body("state").notEmpty().withMessage("State is required"),
+    body("alias").notEmpty().withMessage("Business alias is required"),
+    body("utilityBillType").notEmpty().withMessage("Utility type is required"),
+
 ]
 module.exports = { businessRegistrationValidation }

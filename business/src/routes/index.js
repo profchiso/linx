@@ -25,7 +25,7 @@ businessRouter.post(
     validateRequest,
     authenticate,
     async(req, res) => {
-        const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state } = req.body
+        const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType } = req.body
         const existingBusiness = await db.businesses.findOne({ where: { name } });
         if (existingBusiness) {
             throw new BadRequestError('Business name already in use');
@@ -49,8 +49,6 @@ businessRouter.post(
                 }
             );
         }
-
-
         if (req.files.registrationCertificate) {
             await cloudinary.uploader.upload(
                 req.files.registrationCertificate[0].path, {
@@ -93,7 +91,7 @@ businessRouter.post(
         }
 
         let userId = req.user.id
-        const business = db.businesses.create({
+        const createdBusiness = db.businesses.create({
             name,
             tradingName,
             businessType,
@@ -108,12 +106,15 @@ businessRouter.post(
             utilityBill: imageData.utilityBill,
             registrationCertificate: imageData.registrationCertificate,
             otherDocuments: imageData.otherDocuments,
-            tinCertificate: imageData.tinCertificate
+            tinCertificate: imageData.tinCertificate,
+            alias: alias.toUpperCase(),
+            utilityBillType
         })
 
-        const businesAlias =
+        const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId })
 
-            res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business } });
+
+        res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: createdBusiness } });
     }
 );
 
@@ -148,11 +149,13 @@ businessRouter.patch(
     async(req, res) => {
         const { businessId } = req.params
 
-        const existingBusines = await db.businesses.findOne({ where: { businessId } });
-        if (!existingBusines) {
+        const existingBusiness = await db.businesses.findOne({ where: { businessId } });
+        if (!existingBusiness) {
             throw new BadRequestError('Invalid business id');
         }
-        res.status(200).send({ message: "Business updated successfully", statuscode: 200, data: { user: existingUser, verificationCode } });
+        const updatedBusiness = await db.businesses.update(req.body, { where: { id: businessId }, returning: true, plain: true })
+
+        res.status(200).send({ message: "Business updated successfully", statuscode: 200, data: { business: updatedBusiness } });
     }
 );
 
