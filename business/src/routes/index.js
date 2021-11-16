@@ -165,6 +165,7 @@ businessRouter.post(
             }
             let createdBusinessOwner = db.businessOwners.create(busnessOwnerDetails)
         }
+        console.log(createdBusiness)
 
         res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: createdBusiness } });
     }
