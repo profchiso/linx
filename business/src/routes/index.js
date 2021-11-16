@@ -166,6 +166,7 @@ businessRouter.post(
             }
 
             let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
+            console.log(createdBusinessOwner)
             partners.push(createdBusinessOwner)
         }
         createdBusiness.alias = businesAlias
