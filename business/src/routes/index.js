@@ -130,7 +130,7 @@ businessRouter.post(
 
         //let userId = req.user.id
         //create business
-        const createdBusiness = await db.businesses.create({
+        let createdBusiness = await db.businesses.create({
             name,
             tradingName,
             businessType,
@@ -163,8 +163,12 @@ businessRouter.post(
                 idTypeImage: "",
                 businessId: createdBusiness.id
             }
-            let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
+            createdBusiness.businessOwners = []
+            let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails).
+            createdBusiness.businessOwners.push(createdBusinessOwner)
         }
+        createdBusiness.alias = businesAlias
+        createdBusiness.alias.owner = data.user
 
 
         res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: createdBusiness } });
