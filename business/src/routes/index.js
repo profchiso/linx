@@ -182,6 +182,7 @@ businessRouter.get(
 
         //authenticate user
         const { data } = await axios.get(AUTH_URL)
+        console.log(data);
         if (!data.user) {
             throw new NotAuthorisedError()
         }
