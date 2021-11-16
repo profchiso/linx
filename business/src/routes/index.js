@@ -38,6 +38,12 @@ businessRouter.get(
 businessRouter.post(
     '/api/v1/business',
     businessRegistrationValidation,
+    upload.fields([
+        { name: "utilityBill", maxCount: 1 },
+        { name: "registrationCertificate", maxCount: 1 },
+        { name: "otherDocuments", maxCount: 1 },
+        { name: "tinCertificate", maxCount: 1 },
+    ]),
     async(req, res) => {
 
         //authenticate user
@@ -134,7 +140,7 @@ businessRouter.post(
             address,
             country,
             tin,
-            userId: userid || data.user.id,
+            userId: userId || data.user.id,
             rcNumber,
             state,
             utilityBill: imageData.utilityBill,
@@ -146,7 +152,7 @@ businessRouter.post(
         })
 
         //create business alias
-        const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: userid || data.user.id })
+        const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: userId || data.user.id })
 
         //create business owners
         for (let businessOwner of businessOwners) {
@@ -213,6 +219,35 @@ businessRouter.get(
             throw new BadRequestError("Business alias already in use please choose another alias")
         }
         res.status(200).send({ message: `Business alias ${alias} available`, statuscode: 200, data: { alias } });
+    }
+);
+
+
+//QUERY IF CAC for RC number
+businessRouter.get(
+    '/api/v1/business/rc-number/:rcNumber',
+    async(req, res) => {
+
+        //console.log(db.)
+        //authenticate user
+        const { data } = await axios.get(`${AUTH_URL}`, {
+                headers: {
+                    authorization: req.headers.authorization
+                }
+            })
+            //check if user is not authenticated
+        if (!data.user) {
+            throw new NotAuthorisedError()
+        }
+
+        const { rcNumber } = req.params;
+
+        //PING CAC API FOR RC NUMBER VALIDATION
+        // const responseFromCAC= await axios.get("cacEndpoin");
+        // if (foundRCNumber) {
+        //     throw new BadRequestError("RC number not found in CAC database")
+        // }
+        res.status(200).send({ message: `RC number ${rcNumber} valid`, statuscode: 200, data: { rcNumber, businessDetails: [] } });
     }
 );
 
