@@ -7,21 +7,14 @@ const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing"
 const { sendMailWithSendgrid, sendWithMailTrap, sendEmailWithMailgun } = require("../utils/emailing")
 const { generateAccessToken } = require("../utils/generateAccessToken");
 const { authenticate } = require("../utils/authService")
+const { signUpValidations } = require("../utils/signUpValidation")
 const db = require("../models/index")
 const signupRouter = express.Router();
 
 
 signupRouter.post(
-    '/api/v1/auth/signup', [
-        body('firstName').notEmpty().withMessage('Firstname cannot be empty'),
-        body('lastName').notEmpty().withMessage('Lastname cannot be empty'),
-        body('email').isEmail().withMessage('Email must be valid'),
-        body('phone').notEmpty().withMessage('Phone number cannot be empty'),
-        body('password')
-        .trim()
-        .isLength({ min: 8, max: 20 })
-        .withMessage('Password must be between 8 and 20 characters'),
-    ],
+    '/api/v1/auth/signup',
+    signUpValidations,
     validateRequest,
     async(req, res) => {
         const { firstName, lastName, email, phone, password } = req.body;
@@ -33,9 +26,8 @@ signupRouter.post(
             throw new BadRequestError('Email already in use');
         }
         let newUser = { firstName, lastName, phone, password: hashedPassword, verificationCode, email }
-
         const user = await db.User.create(newUser);
-        console.log(user)
+
         user.password = undefined;
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
@@ -75,11 +67,12 @@ signupRouter.post(
         if (!existingUser) {
             throw new BadRequestError('Incorrect Verification Code');
         }
-        const updatedUser = await db.User.update({ isVerified: true }, { where: { id, verificationCode } })
+        const updatedUser = await db.User.update({ isVerified: true }, { where: { id, verificationCode }, returning: true, plain: true })
         existingUser.password = undefined
+        updatedUser.password = undefined
         existingUser.verificationCode = verificationCode
 
-        res.status(200).send({ message: "User verified", statuscode: 200, data: { user: existingUser } });
+        res.status(200).send({ message: "User verified", statuscode: 200, data: { user: updatedUser } });
     }
 );
 signupRouter.post(
@@ -95,7 +88,7 @@ signupRouter.post(
         }
         let verificationCode = generateVerificationCode()
 
-        const updatedUser = await db.User.update({ verificationCode }, { where: { id, verificationCode } })
+        const updatedUser = await db.User.update({ verificationCode }, { where: { id, verificationCode }, returning: true, plain: true })
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
             to: existingUser.email,
@@ -106,10 +99,11 @@ signupRouter.post(
             Thank you.`,
         };
         existingUser.verificationCode = verificationCode
+        updatedUser.password = undefined
 
-        await sendWithMailTrap(mailOptions)
+        await sendMailWithSendgrid(mailOptions)
         existingUser.password = undefined
-        res.status(200).send({ message: "Verification code resent", statuscode: 200, data: { user: existingUser, verificationCode } });
+        res.status(200).send({ message: "Verification code resent", statuscode: 200, data: { user: updatedUser, verificationCode } });
     }
 );
 

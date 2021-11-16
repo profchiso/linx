@@ -44,10 +44,11 @@ signinRouter.post(
                 subject: `LinX Account`,
                 text: `Dear, ${existingUser.firstName} your account with LinX has not been verified, Please use the code:${verificationCode} to verify you account`,
             };
-            const updatedUser = await db.User.update({ verificationCode }, { where: { id: existingUser.id } })
+            const updatedUser = await db.User.update({ verificationCode }, { where: { id: existingUser.id }, returning: true, plain: true })
             await sendMailWithSendgrid(mailOptions)
         }
         existingUser.password = undefined
+
         existingUser.verificationCode = verificationCode
         let accessToken = await generateAccessToken(payLoad);
         res.status(200).send({ message: "Signin successful", statuscode: 200, data: { user: existingUser, accessToken, verificationCode } });

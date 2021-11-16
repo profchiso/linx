@@ -136,7 +136,7 @@ businessRouter.get(
         const { alias } = req.params;
         const existingAlias = await db.aliases.findOne({ where: { name: alias } });
         if (existingAlias) {
-            throw new BadRequestError("Business alias already exist please choose another alias")
+            throw new BadRequestError("Business alias already in use please choose another alias")
         }
         res.status(200).send({ message: `Business alias ${alias} available`, statuscode: 200, data: { alias } });
     }
