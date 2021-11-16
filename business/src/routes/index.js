@@ -8,18 +8,24 @@ const db = require("../models/index")
 const businessRouter = express.Router();
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
 
+
 //GET ALL BUSINESSES
 businessRouter.get(
     '/api/v1/business',
     businessRegistrationValidation,
-    //validateRequest,
-    // authenticate,
+
     async(req, res) => {
         //authenticate user
-        const { data } = await axios.get(AUTH_URL)
+        const { data } = await axios.get(`${AUTH_URL}`, {
+                headers: {
+                    authorization: req.headers.authorization
+                }
+            })
+            //check if user is not authenticated
         if (!data.user) {
             throw new NotAuthorisedError()
         }
+
 
         //get all registered businesses
         const businesses = await db.businesses.findAll({});
@@ -32,15 +38,19 @@ businessRouter.get(
 businessRouter.post(
     '/api/v1/business',
     businessRegistrationValidation,
-    //validateRequest,
-    //authenticate,
     async(req, res) => {
 
         //authenticate user
-        const { data } = await axios.get(AUTH_URL)
+        const { data } = await axios.get(`${AUTH_URL}`, {
+                headers: {
+                    authorization: req.headers.authorization
+                }
+            })
+            //check if user is not authenticated
         if (!data.user) {
             throw new NotAuthorisedError()
         }
+
 
         const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
 
@@ -162,11 +172,16 @@ businessRouter.get(
     // authenticate,
     async(req, res) => {
         //authenticate user
-        const { data } = await axios.get(AUTH_URL)
-        console.log(data)
+        const { data } = await axios.get(`${AUTH_URL}`, {
+                headers: {
+                    authorization: req.headers.authorization
+                }
+            })
+            //check if user is not authenticated
         if (!data.user) {
             throw new NotAuthorisedError()
         }
+
         const { userId } = req.params;
         const business = await db.businesses.findAll({ where: { userId } });
         res.status(200).send({ message: `${business.length?"Business fetched":"You do not currently have any business setup"}`, statuscode: 200, data: { business } });
@@ -176,20 +191,24 @@ businessRouter.get(
 //QUERY IF BUSINESS ALIAS ALREADY EXIST
 businessRouter.get(
     '/api/v1/business/alias/:alias',
-    // validateRequest,
-    //authenticate,
     async(req, res) => {
 
+        //console.log(db.)
         //authenticate user
-        const { data } = await axios.get(AUTH_URL)
-        console.log(data);
+        const { data } = await axios.get(`${AUTH_URL}`, {
+                headers: {
+                    authorization: req.headers.authorization
+                }
+            })
+            //check if user is not authenticated
         if (!data.user) {
             throw new NotAuthorisedError()
         }
+
         const { alias } = req.params;
 
         //CHECK IF ALIAS ALREADY EXIST
-        const existingAlias = await db.aliases.findOne({ where: { name: alias } });
+        const existingAlias = await db.alias.findOne({ where: { name: alias } });
         if (existingAlias) {
             throw new BadRequestError("Business alias already in use please choose another alias")
         }
@@ -200,14 +219,18 @@ businessRouter.get(
 //UPDATE BUSINESS DATA
 businessRouter.patch(
     '/api/v1/business/:businessId',
-    //validateRequest,
-    //authenticate,
     async(req, res) => {
         //authenticate user
-        const { data } = await axios.get(AUTH_URL)
+        const { data } = await axios.get(`${AUTH_URL}`, {
+                headers: {
+                    authorization: req.headers.authorization
+                }
+            })
+            //check if user is not authenticated
         if (!data.user) {
             throw new NotAuthorisedError()
         }
+
         const { businessId } = req.params
 
         const existingBusiness = await db.businesses.findOne({ where: { businessId } });
