@@ -121,31 +121,12 @@ signupRouter.post(
     }
 );
 
-// signupRouter.post(
-//     '/api/v1/auth/signin', [body('email').isEmail().withMessage('Email must be valid'), body('password').notEmpty().withMessage('Password cannot be empty'), ],
-//     validateRequest,
-
-//     async(req, res) => {
-
-//         const { email, password, alias } = req.body
-//         const existingUser = await db.User.findOne({ where: { email } });
-//         if (!existingUser) {
-//             throw new BadRequestError('Invalid user credentials')
-//         }
-
-//         if (!(await decryptPassword(password, existingUser.password))) {
-//             throw new BadRequestError('Invalid user credentials');
-//         }
-//         const payLoad = {
-//             user: {
-//                 id: existingUser.id,
-//             },
-//         };
-
-//         let accessToken = await generateAccessToken(payLoad);
-
-//         res.status(200).send({ user: existingUser, accessToken });
-//     }
-// );
+signupRouter.get(
+    '/api/v1/auth/authenticate',
+    authenticate,
+    async(req, res) => {
+        res.status(200).send({ user: req.user });
+    }
+);
 
 module.exports = { signupRouter };

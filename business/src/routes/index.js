@@ -1,10 +1,12 @@
 const express = require("express");
 const { body } = require('express-validator');
-const { validateRequest, BadRequestError, NotFoundError } = require("@bc_tickets/common");
+const axios = require("axios")
+const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
 const { businessRegistrationValidation } = require("../utils/business-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
 const db = require("../models/index")
 const businessRouter = express.Router();
+const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
 
 //GET ALL BUSINESSES
 businessRouter.get(
@@ -13,6 +15,12 @@ businessRouter.get(
     //validateRequest,
     // authenticate,
     async(req, res) => {
+        //authenticate user
+        const { data } = await axios.get(AUTH_URL)
+        if (!data.user) {
+            throw new NotAuthorisedError()
+        }
+
         //get all registered businesses
         const businesses = await db.businesses.findAll({});
 
@@ -27,7 +35,14 @@ businessRouter.post(
     //validateRequest,
     //authenticate,
     async(req, res) => {
-        const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId } = req.body
+
+        //authenticate user
+        const { data } = await axios.get(AUTH_URL)
+        if (!data.user) {
+            throw new NotAuthorisedError()
+        }
+
+        const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
 
         //check if business already exist
         const existingBusiness = await db.businesses.findOne({ where: { name } });
@@ -124,6 +139,17 @@ businessRouter.post(
         const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId })
 
         //create business owners
+        for (let businessOwner of businessOwners) {
+            let busnessOwnerDetails = {
+                firstName: businessOwner.firstName,
+                lastName: businessOwner.lastName,
+                email: businessOwner.email,
+                idType: businessOwner.idType,
+                idTypeImage: "",
+                businessId: createdBusiness.id
+            }
+            let createdBusinessOwner = db.businessOwners.create(busnessOwnerDetails)
+        }
 
         res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: createdBusiness } });
     }
@@ -135,6 +161,11 @@ businessRouter.get(
     //validateRequest,
     // authenticate,
     async(req, res) => {
+        //authenticate user
+        const { data } = await axios.get(AUTH_URL)
+        if (!data.user) {
+            throw new NotAuthorisedError()
+        }
         const { userId } = req.params;
         const business = await db.businesses.findAll({ where: { userId } });
         res.status(200).send({ message: `${business.length?"Business fetched":"You do not currently have any business setup"}`, statuscode: 200, data: { business } });
@@ -147,6 +178,12 @@ businessRouter.get(
     // validateRequest,
     //authenticate,
     async(req, res) => {
+
+        //authenticate user
+        const { data } = await axios.get(AUTH_URL)
+        if (!data.user) {
+            throw new NotAuthorisedError()
+        }
         const { alias } = req.params;
 
         //CHECK IF ALIAS ALREADY EXIST
@@ -164,6 +201,11 @@ businessRouter.patch(
     //validateRequest,
     //authenticate,
     async(req, res) => {
+        //authenticate user
+        const { data } = await axios.get(AUTH_URL)
+        if (!data.user) {
+            throw new NotAuthorisedError()
+        }
         const { businessId } = req.params
 
         const existingBusiness = await db.businesses.findOne({ where: { businessId } });
