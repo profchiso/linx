@@ -12,8 +12,6 @@ const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
 //GET ALL BUSINESSES
 businessRouter.get(
     '/api/v1/business',
-    businessRegistrationValidation,
-
     async(req, res) => {
         //authenticate user
         const { data } = await axios.get(`${AUTH_URL}`, {
