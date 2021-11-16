@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const db = require("../models/index");
+const { NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
 const JWT_SECRET = process.env.JWT_KEY;
 
 exports.authenticate = async(req, res, next) => {
@@ -20,24 +21,26 @@ exports.authenticate = async(req, res, next) => {
 
         //check if the access token actually exist
         if (!accessToken) {
-            apiError.message = `Acesss denied, No authorization token`;
-            apiError.success = false;
-            console.log("apiError", apiError);
-            return res.status(401).json(apiError);
+            // apiError.message = `Acesss denied, No authorization token`;
+            // apiError.success = false;
+            // console.log("apiError", apiError);
+            // return res.status(401).json(apiError);
             //return res.status(401).redirect('/');
+            throw new NotAuthorisedError()
         }
         //decode the acesss token
         const decodedToken = await jwt.verify(accessToken, JWT_SECRET);
 
         //check if user exist   just to be sure the user had not bern deleted
-        //{ where: { id, verificationCode } }
+
         const user = await db.User.findOne({ where: { id: decodedToken.user.id } });
         if (!user) {
-            apiError.message = `Acesss denied, User with the token might have been deleted or deactivated`;
-            apiError.success = false;
-            console.log("apiError", apiError);
-            return res.status(401).json(apiError);
-            //return res.status(401).redirect(401, '/');
+            // apiError.message = `Acesss denied, User with the token might have been deleted or deactivated`;
+            // apiError.success = false;
+            // console.log("apiError", apiError);
+            // return res.status(401).json(apiError);
+            // //return res.status(401).redirect(401, '/');
+            throw new NotFoundError()
         }
         //Allow access to protected route
         req.user = user;
@@ -52,11 +55,12 @@ exports.authenticate = async(req, res, next) => {
             console.log("apiError", apiError);
             return res.status(401).json(apiError);
         }
-        apiError.message = `Invalid accessToken`;
-        apiError.success = false;
-        console.log("apiError", apiError);
-        return res.status(401).json(apiError);
-        //return res.status(401).rediect(401, '/');
+        throw new NotAuthorisedError()
+            // apiError.message = `Invalid accessToken`;
+            // apiError.success = false;
+            // console.log("apiError", apiError);
+            // return res.status(401).json(apiError);
+            //return res.status(401).rediect(401, '/');
     }
 };
 

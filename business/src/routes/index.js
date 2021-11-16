@@ -1,6 +1,6 @@
 const express = require("express");
 const { body } = require('express-validator');
-const { validateRequest, BadRequestError } = require("@bc_tickets/common");
+const { validateRequest, BadRequestError, NotFoundError } = require("@bc_tickets/common");
 const { businessRegistrationValidation } = require("../utils/business-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
 const db = require("../models/index")
