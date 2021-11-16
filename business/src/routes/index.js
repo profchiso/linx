@@ -124,7 +124,7 @@ businessRouter.post(
             address,
             country,
             tin,
-            userId,
+            userId: userid || data.user.id,
             rcNumber,
             state,
             utilityBill: imageData.utilityBill,
@@ -136,7 +136,7 @@ businessRouter.post(
         })
 
         //create business alias
-        const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId })
+        const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: userid || data.user.id })
 
         //create business owners
         for (let businessOwner of businessOwners) {
@@ -163,6 +163,7 @@ businessRouter.get(
     async(req, res) => {
         //authenticate user
         const { data } = await axios.get(AUTH_URL)
+        console.log(data)
         if (!data.user) {
             throw new NotAuthorisedError()
         }

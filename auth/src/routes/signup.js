@@ -121,6 +121,7 @@ signupRouter.post(
     }
 );
 
+//AUTHENTICATE REQUESTS
 signupRouter.get(
     '/api/v1/auth/authenticate',
     authenticate,
