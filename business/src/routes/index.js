@@ -129,13 +129,16 @@ businessRouter.get(
 );
 
 businessRouter.get(
-    '/api/v1/business/:alias',
+    '/api/v1/business/alias/:alias',
     validateRequest,
     authenticate,
     async(req, res) => {
         const { alias } = req.params;
-        const business = await db.businesses.findAll({ where: { userId } });
-        res.status(200).send({ message: `${business.length?"Business fetched":"You do not currently have any business setup"}`, statuscode: 200, data: { business } });
+        const existingAlias = await db.aliases.findOne({ where: { name: alias } });
+        if (existingAlias) {
+            throw new BadRequestError("Business alias already exist please choose another alias")
+        }
+        res.status(200).send({ message: `Business alias ${alias} available`, statuscode: 200, data: { alias } });
     }
 );
 businessRouter.patch(
