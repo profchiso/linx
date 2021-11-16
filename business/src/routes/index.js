@@ -73,6 +73,7 @@ businessRouter.post(
         }
 
         //upload images
+        console.log(req.files)
         if (req.files.utilityBill) {
             await cloudinary.uploader.upload(
                 req.files.utilityBill[0].path, {
