@@ -169,7 +169,8 @@ businessRouter.post(
             console.log(createdBusinessOwner)
             partners.push(createdBusinessOwner)
         }
-        let returnData = {...createdBusiness }
+        let returnData = {...createdBusiness.dataValues }
+        console.log(createdBusiness.dataValues)
         returnData.alias = businesAlias
         returnData.owner = data.user
         returnData.partners = partners
