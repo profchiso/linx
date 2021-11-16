@@ -126,6 +126,8 @@ signupRouter.get(
     '/api/v1/auth/authenticate',
     authenticate,
     async(req, res) => {
+        req.user.password = undefined
+
         res.status(200).send({ user: req.user });
     }
 );
