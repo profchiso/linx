@@ -61,7 +61,7 @@ businessRouter.post(
         //check if business already exist
         const existingBusiness = await db.businesses.findOne({ where: { name } });
         if (existingBusiness) {
-            throw new BadRequestError('Business name already in use');
+            throw new BadRequestError(`Business name ${name} already in use`);
         }
 
         // initialize file upload fields
@@ -165,15 +165,12 @@ businessRouter.post(
                 businessId: createdBusiness.id
             }
 
-            let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails).
+            let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
             partners.push(createdBusinessOwner)
         }
         createdBusiness.alias = businesAlias
-        createdBusiness.alias.owner = data.user
+        createdBusiness.owner = data.user
         createdBusiness.partners = partners
-
-
-
         res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: createdBusiness } });
     }
 );
