@@ -1,33 +1,35 @@
-import express from 'express';
-import 'express-async-errors';
-import { json } from 'body-parser';
-import cookieSession from 'cookie-session';
-import { errorHandler, NotFoundError, currentUser } from '@bc_tickets/common';
+const express = require("express")
 
-import { newOrderRouter } from './routes/new';
-import { showOrderRouter } from './routes/show';
-import { indexOrderRouter } from './routes/index';
-import { deleteOrderRouter } from './routes/patch';
+const cors = require("cors")
+
+require('express-async-errors');
+
+const cookieSession = require('cookie-session');
+const { errorHandler, NotFoundError } = require('@bc_tickets/common');
+
+const { walletRouter } = require('./routes/wallet');
 
 const app = express();
 app.set('trust proxy', true);
-app.use(json());
+app.use(express.json());
+app.use(cors())
+app.use(express.urlencoded({ extended: true }))
 app.use(
-  cookieSession({
-    signed: false,
-    secure: process.env.NODE_ENV != 'test',
-  })
+    cookieSession({
+        signed: false,
+        secure: process.env.NODE_ENV != 'test',
+    })
 );
-app.use(currentUser);
-app.use(newOrderRouter);
-app.use(showOrderRouter);
-app.use(indexOrderRouter);
-app.use(deleteOrderRouter);
 
-app.all('*', async () => {
-  throw new NotFoundError();
+app.get("/", (req, res) => {
+    res.send("welcome to wallet")
+})
+app.use(walletRouter);
+
+app.all('*', async() => {
+    throw new NotFoundError();
 });
 
 app.use(errorHandler);
 
-export { app };
+module.exports = { app };
