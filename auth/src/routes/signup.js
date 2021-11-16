@@ -11,7 +11,7 @@ const { signUpValidations } = require("../utils/signUpValidation")
 const db = require("../models/index")
 const signupRouter = express.Router();
 
-
+//SIGIN UP USER
 signupRouter.post(
     '/api/v1/auth/signup',
     signUpValidations,
@@ -19,7 +19,11 @@ signupRouter.post(
     async(req, res) => {
         const { firstName, lastName, email, phone, password } = req.body;
         let verificationCode = generateVerificationCode();
+
+        //HAS USER PASSWORD
         let hashedPassword = await hashUserPassword(password)
+
+        //CHECK IF USER ALREADY EXIST
         const existingUser = await db.User.findOne({ where: { email } });
 
         if (existingUser) {
@@ -36,12 +40,15 @@ signupRouter.post(
             text: `Dear, ${user.firstName} your account with LinX was created successfull, Please use the code:${user.verificationCode} to verify your account`,
         };
 
+        //SEND MAIL CONTAINING VERIFICATION CODE UPON SIGNUP
         await sendMailWithSendgrid(mailOptions)
         const payLoad = {
             user: {
                 id: user.id,
             },
         };
+
+        //GENERATE ACCESS TOKEN
         const accessToken = await generateAccessToken(payLoad)
         res.cookie("accessToken", accessToken, {
             expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), //expires in 2days
@@ -52,6 +59,8 @@ signupRouter.post(
     }
 );
 
+
+//VERIFY USER ACCOUNT
 signupRouter.post(
     '/api/v1/auth/verify', [
         body('verificationCode').notEmpty().withMessage('Verification code cannot be empty'),
@@ -63,10 +72,13 @@ signupRouter.post(
 
         let id = req.user.id
 
+        //CHECK IF VERIFICATION CODE IS CORRECT
         const existingUser = await db.User.findOne({ where: { id, verificationCode } });
         if (!existingUser) {
             throw new BadRequestError('Incorrect Verification Code');
         }
+
+        //UPDATE VERIFICATION STATUS TO TRUE
         const updatedUser = await db.User.update({ isVerified: true }, { where: { id, verificationCode }, returning: true, plain: true })
         existingUser.password = undefined
         updatedUser.password = undefined
@@ -75,6 +87,8 @@ signupRouter.post(
         res.status(200).send({ message: "User verified", statuscode: 200, data: { user: updatedUser } });
     }
 );
+
+//RESEND VERIFICATION CODE
 signupRouter.post(
     '/api/v1/auth/verify/resend',
     validateRequest,
@@ -107,31 +121,31 @@ signupRouter.post(
     }
 );
 
-signupRouter.post(
-    '/api/v1/auth/signin', [body('email').isEmail().withMessage('Email must be valid'), body('password').notEmpty().withMessage('Password cannot be empty'), ],
-    validateRequest,
+// signupRouter.post(
+//     '/api/v1/auth/signin', [body('email').isEmail().withMessage('Email must be valid'), body('password').notEmpty().withMessage('Password cannot be empty'), ],
+//     validateRequest,
 
-    async(req, res) => {
+//     async(req, res) => {
 
-        const { email, password, alias } = req.body
-        const existingUser = await db.User.findOne({ where: { email } });
-        if (!existingUser) {
-            throw new BadRequestError('Invalid user credentials')
-        }
+//         const { email, password, alias } = req.body
+//         const existingUser = await db.User.findOne({ where: { email } });
+//         if (!existingUser) {
+//             throw new BadRequestError('Invalid user credentials')
+//         }
 
-        if (!(await decryptPassword(password, existingUser.password))) {
-            throw new BadRequestError('Invalid user credentials');
-        }
-        const payLoad = {
-            user: {
-                id: existingUser.id,
-            },
-        };
+//         if (!(await decryptPassword(password, existingUser.password))) {
+//             throw new BadRequestError('Invalid user credentials');
+//         }
+//         const payLoad = {
+//             user: {
+//                 id: existingUser.id,
+//             },
+//         };
 
-        let accessToken = await generateAccessToken(payLoad);
+//         let accessToken = await generateAccessToken(payLoad);
 
-        res.status(200).send({ user: existingUser, accessToken });
-    }
-);
+//         res.status(200).send({ user: existingUser, accessToken });
+//     }
+// );
 
 module.exports = { signupRouter };

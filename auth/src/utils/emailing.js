@@ -2,6 +2,8 @@ const sgMail = require("@sendgrid/mail");
 const nodemailer = require('nodemailer');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+
+//SEND EMAIL WITH SENDGRID
 exports.sendMailWithSendgrid = async(mailOptions) => {
     try {
         await sgMail.send(mailOptions);
@@ -12,6 +14,8 @@ exports.sendMailWithSendgrid = async(mailOptions) => {
     }
 };
 
+
+//SEND EMAIL WITH MAIL TRAP
 exports.sendWithMailTrap = async(options) => {
     try {
         let transporter = nodemailer.createTransport({
@@ -46,11 +50,12 @@ exports.sendWithMailTrap = async(options) => {
 }
 
 
+//SEND EMAIL WITH MAILGUN
 exports.sendEmailWithMailgun = async(options) => {
     try {
         const API_KEY = process.env.MAILGUN_KEY;
         const DOMAIN = process.env.MAILGUN_DOMAIN;
-        var mailgun = require("mailgun-js")({
+        let mailgun = require("mailgun-js")({
             apiKey: API_KEY,
             domain: DOMAIN,
             host: "api.eu.mailgun.net"

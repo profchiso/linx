@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 
-//function to hash user passwords
+//HASH USER PASSWORD WITH BCRYPTJS
 exports.hashUserPassword = async(password) => {
     try {
         const saltRound = await bcrypt.genSalt(10);

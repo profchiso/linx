@@ -1,6 +1,7 @@
 const { body } = require("express-validator")
 
 
+//USER REGISTRATION VALIDATION
 const signUpValidations = [
     body('firstName').notEmpty().withMessage('Firstname cannot be empty'),
     body('lastName').notEmpty().withMessage('Lastname cannot be empty'),

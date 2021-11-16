@@ -6,19 +6,21 @@ const { upload, cloudinary } = require("../utils/imageProcessing")
 const db = require("../models/index")
 const businessRouter = express.Router();
 
-
+//GET ALL BUSINESSES
 businessRouter.get(
     '/api/v1/business',
     businessRegistrationValidation,
     validateRequest,
     authenticate,
     async(req, res) => {
-        const business = await db.businesses.findAll({});
+        //get all registered businesses
+        const businesses = await db.businesses.findAll({});
 
-        res.status(200).send({ message: "Businesses Fetched", statuscode: 200, type: "success", data: { business } });
+        res.status(200).send({ message: "Businesses Fetched", statuscode: 200, data: { businesses } });
     }
 );
 
+//REGISTER BUSINESSES
 businessRouter.post(
     '/api/v1/business',
     businessRegistrationValidation,
@@ -26,16 +28,22 @@ businessRouter.post(
     authenticate,
     async(req, res) => {
         const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType } = req.body
+
+        //check if business already exist
         const existingBusiness = await db.businesses.findOne({ where: { name } });
         if (existingBusiness) {
             throw new BadRequestError('Business name already in use');
         }
+
+        // initialize file upload fields
         let imageData = {
             utilityBill: "",
             registrationCertificate: "",
             otherDocuments: "",
             tinCertificate: ""
         }
+
+        //upload images
         if (req.files.utilityBill) {
             await cloudinary.uploader.upload(
                 req.files.utilityBill[0].path, {
@@ -91,6 +99,7 @@ businessRouter.post(
         }
 
         let userId = req.user.id
+            //create business
         const createdBusiness = db.businesses.create({
             name,
             tradingName,
@@ -111,13 +120,16 @@ businessRouter.post(
             utilityBillType
         })
 
+        //create business alias
         const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId })
 
+        //create business owners
 
         res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: createdBusiness } });
     }
 );
 
+//GET  BUSINESSES BY USE ID
 businessRouter.get(
     '/api/v1/business/:userId',
     validateRequest,
@@ -129,6 +141,7 @@ businessRouter.get(
     }
 );
 
+//QUERY IF BUSINESS ALIAS ALREADY EXIST
 businessRouter.get(
     '/api/v1/business/alias/:alias',
     validateRequest,
@@ -142,6 +155,8 @@ businessRouter.get(
         res.status(200).send({ message: `Business alias ${alias} available`, statuscode: 200, data: { alias } });
     }
 );
+
+//UPDATE BUSINESS DATA
 businessRouter.patch(
     '/api/v1/business/:businessId',
     validateRequest,

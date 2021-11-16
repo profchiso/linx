@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const JWT_SECRET = process.env.JWT_KEY
 console.log(JWT_SECRET)
+
+//GENERATE ACCESS TOKEN FOR AUTHENTICATION
 exports.generateAccessToken = async(payload) => {
     try {
         let accessToken = jwt.sign(payload, JWT_SECRET, {
@@ -12,6 +14,9 @@ exports.generateAccessToken = async(payload) => {
         console.log(error);
     }
 };
+
+
+//GENERATE PASSWORD RESET TOKEN
 exports.generatePasswordResetToken = async() => {
     try {
         const resetPasswordToken = crypto.randomBytes(32).toString("hex");
