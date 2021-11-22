@@ -25,10 +25,10 @@ const storage1 = multer.memoryStorage()
 
 const multerStorage = multer.diskStorage({
     destination: function(req, file, cb) {
-        if (file.mimetype.startsWith("image")) {
+        if (file.mimetype.includes("jpeg") || file.mimetype.includes("png") || file.mimetype.includes("pdf") || file.mimetype.includes("svg") || file.mimetype.includes("jpg") || file.mimetype.includes("doc") || file.mimetype.includes("docx")) {
             cb(null, path.join(__dirname, "public"));
         } else {
-            cb(new Error("Not an image"), false);
+            cb(new Error("File type not supported"), false);
         }
     },
     filename: function(req, file, cb) {
@@ -37,10 +37,10 @@ const multerStorage = multer.diskStorage({
 });
 
 const filterFileType = (req, file, cb) => {
-    if (file.mimetype.startsWith("image")) {
+    if (file.mimetype.includes("jpeg") || file.mimetype.includes("png") || file.mimetype.includes("pdf") || file.mimetype.includes("svg") || file.mimetype.includes("jpg") || file.mimetype.includes("doc") || file.mimetype.includes("docx")) {
         cb(null, true);
     } else {
-        cb(new Error("Not an image"), false);
+        cb(new Error("File type not supported"), false);
     }
 };
 
