@@ -7,7 +7,7 @@ require('express-async-errors');
 const cookieSession = require('cookie-session');
 const { errorHandler, NotFoundError } = require('@bc_tickets/common');
 
-const { walletRouter } = require('./routes/wallet');
+const walletRouter  = require('./routes/wallet');
 
 const app = express();
 app.set('trust proxy', true);

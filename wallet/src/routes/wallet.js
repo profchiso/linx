@@ -7,6 +7,6 @@ const walletRouter = express.Router();
 
 
 
-walletRouter.post('/api/v1/auth/signup', createWallet);
+walletRouter.post('/api/v1/create-wallet', createWallet);
 
 module.exports = walletRouter;

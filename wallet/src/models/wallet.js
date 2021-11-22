@@ -45,6 +45,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
 
         },
+        alias: {
+            type: DataTypes.STRING,
+        },
     }, {
         sequelize,
         modelName: 'Wallet',
