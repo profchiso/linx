@@ -108,8 +108,6 @@ businessRouter.post(
 
                     }
 
-
-
                 }
             );
         }
@@ -306,6 +304,33 @@ businessRouter.patch(
         res.status(200).send({ message: "Business updated successfully", statuscode: 200, data: { business: updatedBusiness } });
     }
 );
+
+businessRouter.post("/api/v1/business/upload", upload.single("image"), (req, res) => {
+
+    console.log("file", req.file)
+    console.log("files", req.files)
+
+    if (req.file.image) {
+        await cloudinary.uploader.upload(
+            req.files.utilityBill[0].path, {
+                public_id: `image-bill/-utility-bill`,
+            },
+            (error, result) => {
+
+                console.log(result)
+                if (error) {
+                    console.log("Error uploading utilityBill to cloudinary");
+                } else {
+                    // imageData.utilityBill = result.secure_url;
+
+                }
+
+            }
+        );
+
+    }
+
+})
 
 
 module.exports = { businessRouter };
