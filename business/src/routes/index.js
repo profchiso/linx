@@ -9,6 +9,8 @@ const businessRouter = express.Router();
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
 
 
+
+
 //GET ALL BUSINESSES
 businessRouter.get(
     '/api/v1/business',
@@ -74,59 +76,59 @@ businessRouter.post(
 
         //upload images
         // console.log(req.files)
-        // if (req.files.utilityBill) {
-        //     await cloudinary.uploader.upload(
-        //         req.files.utilityBill[0].path, {
-        //             public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
-        //         },
-        //         (error, result) => {
-        //             if (error)
-        //                 console.log("Error uploading utilityBill to cloudinary");
-        //             imageData.utilityBill = result.secure_url;
+        if (req.files.utilityBill) {
+            await cloudinary.uploader.upload(
+                req.files.utilityBill[0].path, {
+                    public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                },
+                (error, result) => {
+                    if (error)
+                        console.log("Error uploading utilityBill to cloudinary");
+                    imageData.utilityBill = result.secure_url;
 
-        //         }
-        //     );
-        // }
-        // if (req.files.registrationCertificate) {
-        //     await cloudinary.uploader.upload(
-        //         req.files.registrationCertificate[0].path, {
-        //             public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
-        //         },
-        //         (error, result) => {
-        //             if (error)
-        //                 console.log("Error uploading registration Certificate to cloudinary");
-        //             imageData.registrationCertificate = result.secure_url;
+                }
+            );
+        }
+        if (req.files.registrationCertificate) {
+            await cloudinary.uploader.upload(
+                req.files.registrationCertificate[0].path, {
+                    public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
+                },
+                (error, result) => {
+                    if (error)
+                        console.log("Error uploading registration Certificate to cloudinary");
+                    imageData.registrationCertificate = result.secure_url;
 
-        //         }
-        //     );
-        // }
-        // if (req.files.otherDocuments) {
-        //     await cloudinary.uploader.upload(
-        //         req.files.otherDocuments[0].path, {
-        //             public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
-        //         },
-        //         (error, result) => {
-        //             if (error)
-        //                 console.log("Error uploading other Documents to cloudinary");
-        //             imageData.otherDocuments = result.secure_url;
+                }
+            );
+        }
+        if (req.files.otherDocuments) {
+            await cloudinary.uploader.upload(
+                req.files.otherDocuments[0].path, {
+                    public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
+                },
+                (error, result) => {
+                    if (error)
+                        console.log("Error uploading other Documents to cloudinary");
+                    imageData.otherDocuments = result.secure_url;
 
-        //         }
-        //     );
-        // }
+                }
+            );
+        }
 
-        // if (req.files.tinCertificate) {
-        //     await cloudinary.uploader.upload(
-        //         req.files.tinCertificate[0].path, {
-        //             public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
-        //         },
-        //         (error, result) => {
-        //             if (error)
-        //                 console.log("Error uploading other Documents to cloudinary");
-        //             imageData.tinCertificate = result.secure_url;
+        if (req.files.tinCertificate) {
+            await cloudinary.uploader.upload(
+                req.files.tinCertificate[0].path, {
+                    public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
+                },
+                (error, result) => {
+                    if (error)
+                        console.log("Error uploading other Documents to cloudinary");
+                    imageData.tinCertificate = result.secure_url;
 
-        //         }
-        //     );
-        // }
+                }
+            );
+        }
 
         //let userId = req.user.id
         //create business
@@ -166,11 +168,10 @@ businessRouter.post(
             }
 
             let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
-            console.log(createdBusinessOwner)
             partners.push(createdBusinessOwner)
         }
         let returnData = {...createdBusiness.dataValues }
-        console.log(createdBusiness.dataValues)
+
         returnData.alias = businesAlias
         returnData.owner = data.user
         returnData.partners = partners
@@ -221,7 +222,7 @@ businessRouter.get(
         const { alias } = req.params;
 
         //CHECK IF ALIAS ALREADY EXIST
-        const existingAlias = await db.aliases.findOne({ where: { name: alias } });
+        const existingAlias = await db.aliases.findOne({ where: { name: alias.toUpperCase() } });
         if (existingAlias) {
             throw new BadRequestError("Business alias already in use please choose another alias")
         }
