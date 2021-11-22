@@ -77,6 +77,7 @@ businessRouter.post(
         //upload images
         // console.log(req.files)
         if (req.files.utilityBill) {
+            console.log("ok")
             await cloudinary.uploader.upload(
                 req.files.utilityBill[0].path, {
                     public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
@@ -196,6 +197,7 @@ businessRouter.post(
         returnData.owner = data.user
         returnData.partners = partners
         res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: returnData } });
+
     }
 );
 
@@ -305,14 +307,17 @@ businessRouter.patch(
     }
 );
 
-businessRouter.post("/api/v1/business/upload", upload.single("image"), (req, res) => {
+//upload.single("image")
+businessRouter.post("/api/v1/business/upload", upload.single("image"), async(req, res) => {
 
     console.log("file", req.file)
-    console.log("files", req.files)
 
-    if (req.file.image) {
+
+    if (req.file) {
+
+        console.log("images")
         await cloudinary.uploader.upload(
-            req.files.utilityBill[0].path, {
+            req.file.path, {
                 public_id: `image-bill/-utility-bill`,
             },
             (error, result) => {
@@ -329,7 +334,7 @@ businessRouter.post("/api/v1/business/upload", upload.single("image"), (req, res
         );
 
     }
-
+    res.send("ok")
 })
 
 
