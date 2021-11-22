@@ -82,9 +82,14 @@ businessRouter.post(
                     public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
                 },
                 (error, result) => {
-                    if (error)
+
+                    console.log(result)
+                    if (error) {
                         console.log("Error uploading utilityBill to cloudinary");
-                    imageData.utilityBill = result.secure_url;
+                    } else {
+                        imageData.utilityBill = result.secure_url;
+
+                    }
 
                 }
             );
@@ -95,9 +100,15 @@ businessRouter.post(
                     public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
                 },
                 (error, result) => {
-                    if (error)
+                    console.log(result)
+                    if (error) {
                         console.log("Error uploading registration Certificate to cloudinary");
-                    imageData.registrationCertificate = result.secure_url;
+                    } else {
+                        imageData.registrationCertificate = result.secure_url;
+
+                    }
+
+
 
                 }
             );
@@ -108,10 +119,14 @@ businessRouter.post(
                     public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
                 },
                 (error, result) => {
-                    if (error)
-                        console.log("Error uploading other Documents to cloudinary");
-                    imageData.otherDocuments = result.secure_url;
 
+
+                    console.log(result)
+                    if (error) {
+                        console.log("Error uploading other Documents to cloudinary");
+                    } else {
+                        imageData.otherDocuments = result.secure_url;
+                    }
                 }
             );
         }
@@ -122,10 +137,13 @@ businessRouter.post(
                     public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
                 },
                 (error, result) => {
-                    if (error)
-                        console.log("Error uploading other Documents to cloudinary");
-                    imageData.tinCertificate = result.secure_url;
 
+                    console.log(result)
+                    if (error) {
+                        console.log("Error uploading other Documents to cloudinary");
+                    } else {
+                        imageData.tinCertificate = result.secure_url;
+                    }
                 }
             );
         }
@@ -157,19 +175,23 @@ businessRouter.post(
 
         //create business owners
         let partners = [];
-        for (let businessOwner of businessOwners) {
-            let busnessOwnerDetails = {
-                firstName: businessOwner.firstName,
-                lastName: businessOwner.lastName,
-                email: businessOwner.email,
-                idType: businessOwner.idType,
-                idTypeImage: "",
-                businessId: createdBusiness.id
+        if (businessOwners.length) {
+            for (let businessOwner of businessOwners) {
+                let busnessOwnerDetails = {
+                    firstName: businessOwner.firstName,
+                    lastName: businessOwner.lastName,
+                    email: businessOwner.email,
+                    idType: businessOwner.idType,
+                    idTypeImage: "",
+                    businessId: createdBusiness.id
+                }
+
+                let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
+                partners.push(createdBusinessOwner)
             }
 
-            let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
-            partners.push(createdBusinessOwner)
         }
+
         let returnData = {...createdBusiness.dataValues }
 
         returnData.alias = businesAlias
