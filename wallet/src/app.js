@@ -9,80 +9,80 @@ const { errorHandler, NotFoundError } = require('@bc_tickets/common');
 const db = require("../src/models/index")
 const AWS = require('aws-sdk');
 // Configure the region 
-AWS.config.update({ region: 'us-east-1' });
+// AWS.config.update({ region: 'us-east-1' });
 
-// Create an SQS service object
-const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
-let params = {
-    QueueUrl: queueUrl
-};
-sqs.receiveMessage(params, async function(err, data) {
-    if (err) console.log(err, err.stack); // an error occurred
-    else {
-        console.log(data.Messages)
+// // Create an SQS service object
+// const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
+// const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
+// let params = {
+//     QueueUrl: queueUrl
+// };
+// sqs.receiveMessage(params, async function(err, data) {
+//     if (err) console.log(err, err.stack); // an error occurred
+//     else {
+//         console.log(data.Messages)
 
-        if (data.Messages.length) {
-            let createdWallet = await db.wallet.create({
-                id: Date.now().toString().substring(0, 10),
-                name: "testing",
-                ownerId: data.businessId,
-                alias: data.alias,
-                credit: 0,
-                debit: 0,
-                balance: 0
-            })
+//         if (data.Messages.length) {
+//             let createdWallet = await db.wallet.create({
+//                 id: Date.now().toString().substring(0, 10),
+//                 name: "testing",
+//                 ownerId: data.businessId,
+//                 alias: data.alias,
+//                 credit: 0,
+//                 debit: 0,
+//                 balance: 0
+//             })
 
-            let sqsWalletData = {
-                MessageAttributes: {
-                    "wallet": {
-                        DataType: "Object",
-                        StringValue: walletData.wallet
-                    }
-                }
-            };
+//             let sqsWalletData = {
+//                 MessageAttributes: {
+//                     "wallet": {
+//                         DataType: "Object",
+//                         StringValue: walletData.wallet
+//                     }
+//                 }
+//             };
 
 
 
-        }
-        db.Wallet.create({
-                id: Date.now().toString().substring(0, 10),
-                name: "testing",
-                ownerId: data.businessId,
-                alias: data.alias,
-                credit: 0,
-                debit: 0,
-                balance: 0
-            })
-            .then((walletCreated) => {
-                // res.status(201).json({
-                //     message: 'Wallet Created Successfully',
-                //     walletCreated,
-                // });
-            })
-            .then((walletData) => {
-                let sqsWalletData = {
-                    MessageAttributes: {
-                        "wallet": {
-                            DataType: "Object",
-                            StringValue: walletData.wallet
-                        }
-                    }
-                };
-            })
-            .then((sendSqsMessage) => {
-                sqs.sendMessage(sqsWalletData).promise(),
-                    sendSqsMessage.then((data) => {
-                        console.log(`WalletSvc | SUCCESS: ${data.MessageId}`);
-                        res.send("Wallet created successfully");
-                    })
-                    .catch(error => res.status(500).json({
-                        message: 'Unsuccessful',
-                        error: error.toString(),
-                    }))
-            })
-    }
-})
+//         }
+//         db.Wallet.create({
+//                 id: Date.now().toString().substring(0, 10),
+//                 name: "testing",
+//                 ownerId: data.businessId,
+//                 alias: data.alias,
+//                 credit: 0,
+//                 debit: 0,
+//                 balance: 0
+//             })
+//             .then((walletCreated) => {
+//                 // res.status(201).json({
+//                 //     message: 'Wallet Created Successfully',
+//                 //     walletCreated,
+//                 // });
+//             })
+//             .then((walletData) => {
+//                 let sqsWalletData = {
+//                     MessageAttributes: {
+//                         "wallet": {
+//                             DataType: "Object",
+//                             StringValue: walletData.wallet
+//                         }
+//                     }
+//                 };
+//             })
+//             .then((sendSqsMessage) => {
+//                 sqs.sendMessage(sqsWalletData).promise(),
+//                     sendSqsMessage.then((data) => {
+//                         console.log(`WalletSvc | SUCCESS: ${data.MessageId}`);
+//                         res.send("Wallet created successfully");
+//                     })
+//                     .catch(error => res.status(500).json({
+//                         message: 'Unsuccessful',
+//                         error: error.toString(),
+//                     }))
+//             })
+//     }
+// })
 
 
 

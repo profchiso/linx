@@ -61,13 +61,14 @@ businessRouter.post(
         if (!data.user) {
             throw new NotAuthorisedError()
         }
-        console.log("req", req.body)
+        //console.log("req", req.body)
 
 
         const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
 
         //check if business already exist
         const existingBusiness = await db.businesses.findOne({ where: { name } });
+        // console.log("existing", existingBusiness)
         if (existingBusiness) {
             throw new BadRequestError(`Business name ${name} already in use`);
         }
@@ -90,7 +91,7 @@ businessRouter.post(
                 },
                 (error, result) => {
 
-                    console.log(result)
+
                     if (error) {
                         console.log("Error uploading utilityBill to cloudinary");
                     } else {
@@ -107,7 +108,7 @@ businessRouter.post(
                     public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
                 },
                 (error, result) => {
-                    console.log(result)
+
                     if (error) {
                         console.log("Error uploading registration Certificate to cloudinary");
                     } else {
@@ -124,9 +125,6 @@ businessRouter.post(
                     public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
                 },
                 (error, result) => {
-
-
-                    console.log(result)
                     if (error) {
                         console.log("Error uploading other Documents to cloudinary");
                     } else {
@@ -175,6 +173,8 @@ businessRouter.post(
             utilityBillType
         })
 
+        console.log(typeof createdBusiness.id)
+
         //create business alias
         const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: userId || data.user.id })
 
@@ -200,19 +200,19 @@ businessRouter.post(
         let returnData = {...createdBusiness.dataValues }
 
         let businessCreatedPayload = {
-            businesId: createdBusiness.id,
-            userId: data.user.id
+            businesId: `${createdBusiness.id}`,
+            userId: `${data.user.id}`
         }
 
         let businessCreatedMessage = {
             MessageAttributes: {
                 "businessId": {
-                    DataType: "Number",
-                    StringValue: createdBusiness.id
+                    DataType: "String",
+                    StringValue: `${createdBusiness.id}`
                 },
                 "userId": {
-                    DataType: "Number",
-                    StringValue: data.user.id
+                    DataType: "String",
+                    StringValue: `${data.user.id}`
                 },
                 "alias": {
                     DataType: "String",
