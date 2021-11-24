@@ -2,10 +2,12 @@ require("dotenv").config();
 require('express-async-errors');
 
 
+
+
 const { app } = require('./app');
 
+let PORT = process.env.PORT || 3000
 
-
-app.listen(process.env.PORT || 3000, () => {
-    console.log('Listening on port 3000!');
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
 });

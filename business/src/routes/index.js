@@ -198,9 +198,42 @@ businessRouter.post(
 
         let returnData = {...createdBusiness.dataValues }
 
+        let businessCreatedPayload = {
+            businesId: createdBusiness.id,
+            userId: data.user.id
+        }
+
+        let businessCreatedMessage = {
+            MessageAttributes: {
+                "businessId": {
+                    DataType: "Number",
+                    StringValue: createdBusiness.id
+                },
+                "userId": {
+                    DataType: "Number",
+                    StringValue: data.user.id
+                },
+                "alias": {
+                    DataType: "String",
+                    StringValue: businesAlias.name
+                },
+
+            },
+            MessageBody: JSON.stringify(businessCreatedPayload),
+            //MessageDeduplicationId: "test",
+            //MessageGroupId: "testing",
+            QueueUrl: queueUrl
+        };
+        let sendSqsMessage = await sqs.sendMessage(businessCreatedMessage).promise()
+        console.log(sendSqsMessage)
+
+
+
+
         returnData.alias = businesAlias
         returnData.owner = data.user
         returnData.partners = partners
+
         res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: returnData } });
 
     }
@@ -345,15 +378,23 @@ businessRouter.post("/api/v1/business/upload", upload.single("image"), async(req
 businessRouter.post("/api/v1/business/sqs-test", async(req, res) => {
     console.log("posting data")
     let testingPayload = {
-        name: "chinedu",
-        gender: "M"
+        businesId: "1",
+        userId: "2"
     }
 
     let sqsTesting = {
         MessageAttributes: {
-            "userEmail": {
+            "businessId": {
                 DataType: "String",
-                StringValue: "test@mail.com"
+                StringValue: "1"
+            },
+            "userId": {
+                DataType: "String",
+                StringValue: "2"
+            },
+            "alias": {
+                DataType: "String",
+                StringValue: "Alias"
             },
 
         },
