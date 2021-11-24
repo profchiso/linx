@@ -1,4 +1,5 @@
 const express = require("express");
+const AWS = require('aws-sdk');
 const { body } = require('express-validator');
 const axios = require("axios")
 const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
@@ -7,6 +8,10 @@ const { upload, cloudinary } = require("../utils/imageProcessing")
 const db = require("../models/index")
 const businessRouter = express.Router();
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
+    // Configure the region 
+AWS.config.update({ region: 'us-east-1' });
+const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
+const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
 
 
 
@@ -335,6 +340,33 @@ businessRouter.post("/api/v1/business/upload", upload.single("image"), async(req
 
     }
     res.send("ok")
+})
+
+businessRouter.post("/api/v1/business/sqs-test", async(req, res) => {
+    console.log("posting data")
+    let testingPayload = {
+        name: "chinedu",
+        gender: "M"
+    }
+
+    let sqsTesting = {
+        MessageAttributes: {
+            "userEmail": {
+                DataType: "String",
+                StringValue: "test@mail.com"
+            },
+
+        },
+        MessageBody: JSON.stringify(testingPayload),
+        //MessageDeduplicationId: "test",
+        //MessageGroupId: "testing",
+        QueueUrl: queueUrl
+    };
+    let sendSqsMessage = await sqs.sendMessage(sqsTesting).promise()
+    console.log(sendSqsMessage)
+    res.status(200).json({ data: sendSqsMessage })
+
+
 })
 
 
