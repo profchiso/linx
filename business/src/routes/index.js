@@ -61,6 +61,7 @@ businessRouter.post(
         if (!data.user) {
             throw new NotAuthorisedError()
         }
+        console.log("req", req.body)
 
 
         const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
