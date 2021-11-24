@@ -350,13 +350,14 @@ businessRouter.patch(
 businessRouter.post("/api/v1/business/upload", upload.single("image"), async(req, res) => {
 
     console.log("file", req.file)
+    console.log("req body", req.body)
 
 
-    if (req.file) {
+    if (req.body.image) {
 
         console.log("images")
         await cloudinary.uploader.upload(
-            req.file.path, {
+            req.body.image, {
                 public_id: `image-bill/-utility-bill`,
             },
             (error, result) => {
