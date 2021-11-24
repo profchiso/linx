@@ -83,10 +83,10 @@ businessRouter.post(
 
         //upload images
         // console.log(req.files)
-        if (req.files.utilityBill) {
+        if (req.body.utilityBill) {
             console.log("ok")
             await cloudinary.uploader.upload(
-                req.files.utilityBill[0].path, {
+                req.body.utilityBill, {
                     public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
                 },
                 (error, result) => {
@@ -102,9 +102,9 @@ businessRouter.post(
                 }
             );
         }
-        if (req.files.registrationCertificate) {
+        if (req.body.registrationCertificate) {
             await cloudinary.uploader.upload(
-                req.files.registrationCertificate[0].path, {
+                req.body.registrationCertificate, {
                     public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
                 },
                 (error, result) => {
@@ -119,9 +119,9 @@ businessRouter.post(
                 }
             );
         }
-        if (req.files.otherDocuments) {
+        if (req.body.otherDocuments) {
             await cloudinary.uploader.upload(
-                req.files.otherDocuments[0].path, {
+                req.body.otherDocuments, {
                     public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
                 },
                 (error, result) => {
@@ -134,9 +134,9 @@ businessRouter.post(
             );
         }
 
-        if (req.files.tinCertificate) {
+        if (req.body.tinCertificate) {
             await cloudinary.uploader.upload(
-                req.files.tinCertificate[0].path, {
+                req.body.tinCertificate, {
                     public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
                 },
                 (error, result) => {
