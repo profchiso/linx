@@ -350,7 +350,7 @@ businessRouter.patch(
 businessRouter.post("/api/v1/business/upload", upload.single("image"), async(req, res) => {
 
     console.log("file", req.file)
-    console.log("req body", req.body)
+    console.log("req body", req.body.image)
 
 
     if (req.body.image) {
