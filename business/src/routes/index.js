@@ -199,34 +199,34 @@ businessRouter.post(
 
         let returnData = {...createdBusiness.dataValues }
 
-        let businessCreatedPayload = {
-            businesId: `${createdBusiness.id}`,
-            userId: `${data.user.id}`
-        }
+        // let businessCreatedPayload = {
+        //     businesId: `${createdBusiness.id}`,
+        //     userId: `${data.user.id}`
+        // }
 
-        let businessCreatedMessage = {
-            MessageAttributes: {
-                "businessId": {
-                    DataType: "String",
-                    StringValue: `${createdBusiness.id}`
-                },
-                "userId": {
-                    DataType: "String",
-                    StringValue: `${data.user.id}`
-                },
-                "alias": {
-                    DataType: "String",
-                    StringValue: businesAlias.name
-                },
+        // let businessCreatedMessage = {
+        //     MessageAttributes: {
+        //         "businessId": {
+        //             DataType: "String",
+        //             StringValue: `${createdBusiness.id}`
+        //         },
+        //         "userId": {
+        //             DataType: "String",
+        //             StringValue: `${data.user.id}`
+        //         },
+        //         "alias": {
+        //             DataType: "String",
+        //             StringValue: businesAlias.name
+        //         },
 
-            },
-            MessageBody: JSON.stringify(businessCreatedPayload),
-            //MessageDeduplicationId: "test",
-            //MessageGroupId: "testing",
-            QueueUrl: queueUrl
-        };
-        let sendSqsMessage = await sqs.sendMessage(businessCreatedMessage).promise()
-        console.log(sendSqsMessage)
+        //     },
+        //     MessageBody: JSON.stringify(businessCreatedPayload),
+        //     //MessageDeduplicationId: "test",
+        //     //MessageGroupId: "testing",
+        //     QueueUrl: queueUrl
+        // };
+        // let sendSqsMessage = await sqs.sendMessage(businessCreatedMessage).promise()
+        // console.log(sendSqsMessage)
 
 
 
