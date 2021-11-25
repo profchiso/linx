@@ -68,7 +68,7 @@ businessRouter.post(
 
         //check if business already exist
         const existingBusiness = await db.businesses.findOne({ where: { name } });
-        // console.log("existing", existingBusiness)
+
         if (existingBusiness) {
             throw new BadRequestError(`Business name ${name} already in use`);
         }
@@ -82,9 +82,9 @@ businessRouter.post(
         }
 
         //upload images
-        // console.log(req.files)
+        //upload images in base64 string
         if (req.body.utilityBill) {
-            console.log("ok")
+
             await cloudinary.uploader.upload(
                 req.body.utilityBill, {
                     public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
@@ -151,6 +151,77 @@ businessRouter.post(
             );
         }
 
+
+        //upload images in  file format
+        if (req.files.utilityBill) {
+
+            await cloudinary.uploader.upload(
+                req.files.utilityBill[0].path, {
+                    public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                },
+                (error, result) => {
+
+
+                    if (error) {
+                        console.log("Error uploading utilityBill to cloudinary");
+                    } else {
+                        imageData.utilityBill = result.secure_url;
+
+                    }
+
+                }
+            );
+        }
+        if (req.files.registrationCertificate) {
+            await cloudinary.uploader.upload(
+                req.files.registrationCertificate[0].path, {
+                    public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
+                },
+                (error, result) => {
+
+                    if (error) {
+                        console.log("Error uploading registration Certificate to cloudinary");
+                    } else {
+                        imageData.registrationCertificate = result.secure_url;
+
+                    }
+
+                }
+            );
+        }
+        if (req.files.otherDocuments) {
+            await cloudinary.uploader.upload(
+                req.files.otherDocuments[0].path, {
+                    public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
+                },
+                (error, result) => {
+                    if (error) {
+                        console.log("Error uploading other Documents to cloudinary");
+                    } else {
+                        imageData.otherDocuments = result.secure_url;
+                    }
+                }
+            );
+        }
+
+        if (req.files.tinCertificate) {
+            await cloudinary.uploader.upload(
+                req.files.tinCertificate[0].path, {
+                    public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
+                },
+                (error, result) => {
+
+                    console.log(result)
+                    if (error) {
+                        console.log("Error uploading other Documents to cloudinary");
+                    } else {
+                        imageData.tinCertificate = result.secure_url;
+                    }
+                }
+            );
+        }
+
+
         //let userId = req.user.id
         //create business
         let createdBusiness = await db.businesses.create({
@@ -173,8 +244,6 @@ businessRouter.post(
             utilityBillType
         })
 
-        console.log(typeof createdBusiness.id)
-
         //create business alias
         const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: userId || data.user.id })
 
@@ -190,6 +259,29 @@ businessRouter.post(
                     idTypeImage: "",
                     businessId: createdBusiness.id
                 }
+
+                if (businessOwner.idTypeImage) {
+
+                    await cloudinary.uploader.upload(
+                        businessOwner.idTypeImage, {
+                            public_id: `partnerid-image/${businessOwner.firstName}-${businessOwner.lastName}-idTypeImage`,
+                        },
+                        (error, result) => {
+
+
+                            if (error) {
+                                console.log("Error uploading partner id image to cloudinary");
+                            } else {
+                                busnessOwnerDetails.idTypeImage = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+
+
+
 
                 let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
                 partners.push(createdBusinessOwner)
