@@ -14,44 +14,44 @@ AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey:
 
 
 // Create an SQS service object
-const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
-let params = {
-    QueueUrl: queueUrl
-};
-sqs.receiveMessage(params, async function(err, data) {
-    if (err) throw new Error(err.message) // an error occurred
+// const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
+// const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
+// let params = {
+//     QueueUrl: queueUrl
+// };
+// sqs.receiveMessage(params, async function(err, data) {
+//     if (err) throw new Error(err.message) // an error occurred
 
-    console.log(data.Messages)
+//     console.log(data.Messages)
 
-    if (data.Messages.length) {
+//     if (data.Messages.length) {
 
 
-        let createdWallet = await db.wallet.create({
-            id: Date.now().toString().substring(0, 10),
-            name: "testing",
-            ownerId: data.businessId,
-            alias: data.alias,
-            credit: 0,
-            debit: 0,
-            balance: 0
-        })
-        console.log("createdWallet", createdWallet)
+//         let createdWallet = await db.wallet.create({
+//             id: Date.now().toString().substring(0, 10),
+//             name: "testing",
+//             ownerId: data.businessId,
+//             alias: data.alias,
+//             credit: 0,
+//             debit: 0,
+//             balance: 0
+//         })
+//         console.log("createdWallet", createdWallet)
 
-        let sqsWalletData = {
-            MessageAttributes: {
-                "wallet": {
-                    DataType: "Object",
-                    StringValue: createdWallet
-                }
-            }
-        };
+//         let sqsWalletData = {
+//             MessageAttributes: {
+//                 "wallet": {
+//                     DataType: "Object",
+//                     StringValue: createdWallet
+//                 }
+//             }
+//         };
 
-        let sqsWallet = await sqs.sendMessage(sqsWalletData).promise()
-        console.log("sqsWallet", sqsWallet)
-    }
+//         let sqsWallet = await sqs.sendMessage(sqsWalletData).promise()
+//         console.log("sqsWallet", sqsWallet)
+//     }
 
-})
+// })
 
 const walletRouter = require('./routes/wallet');
 
