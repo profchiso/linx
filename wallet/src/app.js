@@ -10,82 +10,48 @@ const db = require("../src/models/index")
 const AWS = require('aws-sdk');
 // Configure the region 
 // AWS.config.update({ region: 'us-east-1' });
-
-// // Create an SQS service object
-// const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-// const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
-// let params = {
-//     QueueUrl: queueUrl
-// };
-// sqs.receiveMessage(params, async function(err, data) {
-//     if (err) console.log(err, err.stack); // an error occurred
-//     else {
-//         console.log(data.Messages)
-
-//         if (data.Messages.length) {
-//             let createdWallet = await db.wallet.create({
-//                 id: Date.now().toString().substring(0, 10),
-//                 name: "testing",
-//                 ownerId: data.businessId,
-//                 alias: data.alias,
-//                 credit: 0,
-//                 debit: 0,
-//                 balance: 0
-//             })
-
-//             let sqsWalletData = {
-//                 MessageAttributes: {
-//                     "wallet": {
-//                         DataType: "Object",
-//                         StringValue: walletData.wallet
-//                     }
-//                 }
-//             };
+AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
 
 
+// Create an SQS service object
+const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
+const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
+let params = {
+    QueueUrl: queueUrl
+};
+sqs.receiveMessage(params, async function(err, data) {
+    if (err) throw new Error(err.message) // an error occurred
 
-//         }
-//         db.Wallet.create({
-//                 id: Date.now().toString().substring(0, 10),
-//                 name: "testing",
-//                 ownerId: data.businessId,
-//                 alias: data.alias,
-//                 credit: 0,
-//                 debit: 0,
-//                 balance: 0
-//             })
-//             .then((walletCreated) => {
-//                 // res.status(201).json({
-//                 //     message: 'Wallet Created Successfully',
-//                 //     walletCreated,
-//                 // });
-//             })
-//             .then((walletData) => {
-//                 let sqsWalletData = {
-//                     MessageAttributes: {
-//                         "wallet": {
-//                             DataType: "Object",
-//                             StringValue: walletData.wallet
-//                         }
-//                     }
-//                 };
-//             })
-//             .then((sendSqsMessage) => {
-//                 sqs.sendMessage(sqsWalletData).promise(),
-//                     sendSqsMessage.then((data) => {
-//                         console.log(`WalletSvc | SUCCESS: ${data.MessageId}`);
-//                         res.send("Wallet created successfully");
-//                     })
-//                     .catch(error => res.status(500).json({
-//                         message: 'Unsuccessful',
-//                         error: error.toString(),
-//                     }))
-//             })
-//     }
-// })
+    console.log(data.Messages)
+
+    if (data.Messages.length) {
 
 
+        let createdWallet = await db.wallet.create({
+            id: Date.now().toString().substring(0, 10),
+            name: "testing",
+            ownerId: data.businessId,
+            alias: data.alias,
+            credit: 0,
+            debit: 0,
+            balance: 0
+        })
+        console.log("createdWallet", createdWallet)
 
+        let sqsWalletData = {
+            MessageAttributes: {
+                "wallet": {
+                    DataType: "Object",
+                    StringValue: createdWallet
+                }
+            }
+        };
+
+        let sqsWallet = await sqs.sendMessage(sqsWalletData).promise()
+        console.log("sqsWallet", sqsWallet)
+    }
+
+})
 
 const walletRouter = require('./routes/wallet');
 
