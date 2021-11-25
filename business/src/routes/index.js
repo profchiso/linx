@@ -474,8 +474,9 @@ businessRouter.post("/api/v1/business/upload", upload.single("image"), async(req
 businessRouter.post("/api/v1/business/sqs-test", async(req, res) => {
     console.log("posting data")
     let testingPayload = {
-        businesId: "1",
-        userId: "2"
+        businessId: "1",
+        userId: "2",
+        alias: "TEST ALIAS"
     }
 
     let sqsTesting = {
@@ -490,7 +491,7 @@ businessRouter.post("/api/v1/business/sqs-test", async(req, res) => {
             },
             "alias": {
                 DataType: "String",
-                StringValue: "Alias"
+                StringValue: "TEST ALIAS"
             },
 
         },

@@ -3,7 +3,7 @@ const {
     Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    class Wallet extends Model {
+    class wallet extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -11,20 +11,10 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-                Wallet.belongsTo(models.Business, {
-                  foreignKey: 'walletIds',
-                  onDelete: 'CASCADE',
-                });
         }
     };
-    Wallet.init({
-        id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            unique: true,
-            primaryKey: true,
-            autoIncrement: true
-        },
+    wallet.init({
+
         name: {
             type: DataTypes.STRING,
             allowNull: false
@@ -43,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         balance: {
             type: DataTypes.INTEGER,
+            defaultValue: 0
 
         },
         alias: {
@@ -50,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
         },
     }, {
         sequelize,
-        modelName: 'Wallet',
+        modelName: 'wallet',
     });
-    return Wallet;
+    return wallet;
 };
