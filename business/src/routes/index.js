@@ -154,73 +154,73 @@ businessRouter.post(
 
 
         //upload images in  file format
-        if (req.files.utilityBill) {
+        // if (req.files.utilityBill) {
 
-            await cloudinary.uploader.upload(
-                req.files.utilityBill[0].path, {
-                    public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
-                },
-                (error, result) => {
+        //     await cloudinary.uploader.upload(
+        //         req.files.utilityBill[0].path, {
+        //             public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+        //         },
+        //         (error, result) => {
 
 
-                    if (error) {
-                        console.log("Error uploading utilityBill to cloudinary");
-                    } else {
-                        imageData.utilityBill = result.secure_url;
+        //             if (error) {
+        //                 console.log("Error uploading utilityBill to cloudinary");
+        //             } else {
+        //                 imageData.utilityBill = result.secure_url;
 
-                    }
+        //             }
 
-                }
-            );
-        }
-        if (req.files.registrationCertificate) {
-            await cloudinary.uploader.upload(
-                req.files.registrationCertificate[0].path, {
-                    public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
-                },
-                (error, result) => {
+        //         }
+        //     );
+        // }
+        // if (req.files.registrationCertificate) {
+        //     await cloudinary.uploader.upload(
+        //         req.files.registrationCertificate[0].path, {
+        //             public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
+        //         },
+        //         (error, result) => {
 
-                    if (error) {
-                        console.log("Error uploading registration Certificate to cloudinary");
-                    } else {
-                        imageData.registrationCertificate = result.secure_url;
+        //             if (error) {
+        //                 console.log("Error uploading registration Certificate to cloudinary");
+        //             } else {
+        //                 imageData.registrationCertificate = result.secure_url;
 
-                    }
+        //             }
 
-                }
-            );
-        }
-        if (req.files.otherDocuments) {
-            await cloudinary.uploader.upload(
-                req.files.otherDocuments[0].path, {
-                    public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
-                },
-                (error, result) => {
-                    if (error) {
-                        console.log("Error uploading other Documents to cloudinary");
-                    } else {
-                        imageData.otherDocuments = result.secure_url;
-                    }
-                }
-            );
-        }
+        //         }
+        //     );
+        // }
+        // if (req.files.otherDocuments) {
+        //     await cloudinary.uploader.upload(
+        //         req.files.otherDocuments[0].path, {
+        //             public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
+        //         },
+        //         (error, result) => {
+        //             if (error) {
+        //                 console.log("Error uploading other Documents to cloudinary");
+        //             } else {
+        //                 imageData.otherDocuments = result.secure_url;
+        //             }
+        //         }
+        //     );
+        // }
 
-        if (req.files.tinCertificate) {
-            await cloudinary.uploader.upload(
-                req.files.tinCertificate[0].path, {
-                    public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
-                },
-                (error, result) => {
+        // if (req.files.tinCertificate) {
+        //     await cloudinary.uploader.upload(
+        //         req.files.tinCertificate[0].path, {
+        //             public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
+        //         },
+        //         (error, result) => {
 
-                    console.log(result)
-                    if (error) {
-                        console.log("Error uploading other Documents to cloudinary");
-                    } else {
-                        imageData.tinCertificate = result.secure_url;
-                    }
-                }
-            );
-        }
+        //             console.log(result)
+        //             if (error) {
+        //                 console.log("Error uploading other Documents to cloudinary");
+        //             } else {
+        //                 imageData.tinCertificate = result.secure_url;
+        //             }
+        //         }
+        //     );
+        // }
 
 
         //let userId = req.user.id
