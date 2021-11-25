@@ -250,6 +250,7 @@ businessRouter.post(
 
         //create business owners
         let partners = [];
+        console.log("businessOwners", businessOwners)
         if (businessOwners.length) {
             for (let businessOwner of businessOwners) {
                 let busnessOwnerDetails = {
