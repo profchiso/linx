@@ -10,11 +10,20 @@ module.exports = {
             },
             name: {
                 type: Sequelize.STRING,
-                allowNull: false
+
             },
-            ownerId: {
+            businessId: {
                 type: Sequelize.INTEGER,
-                allowNull: false,
+
+            },
+            userId: {
+                type: Sequelize.INTEGER,
+
+            },
+            walletType: {
+                type: Sequelize.STRING,
+
+
             },
             credit: {
                 type: Sequelize.INTEGER,
@@ -31,7 +40,7 @@ module.exports = {
             },
             walletId: {
                 type: Sequelize.INTEGER,
-                // allowNull: false,
+
             },
             alias: {
                 type: Sequelize.STRING,

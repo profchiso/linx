@@ -36,11 +36,12 @@ sqs.receiveMessage(params, async function(err, data) {
             let createdWallet = await db.wallet.create({
                 walletId: Number(Date.now().toString().substring(0, 10)),
                 name: parsedMessage.name || "Testing",
-                ownerId: Number(parsedMessage.businessId),
+                businessId: Number(parsedMessage.businessId),
+                userId: Number(parsedMessage.userId),
                 alias: parsedMessage.alias,
-                credit: 0,
-                debit: 0,
-                balance: 0
+                // credit: 0,
+                // debit: 0,
+                // balance: 0
             })
             console.log("createdWallet", createdWallet)
 
