@@ -17,11 +17,15 @@ module.exports = (sequelize, DataTypes) => {
 
         name: {
             type: DataTypes.STRING,
-            allowNull: false
+            // allowNull: false
+        },
+        walletId: {
+            type: DataTypes.INTEGER,
+            // allowNull: false,
         },
         ownerId: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            // allowNull: false,
         },
         credit: {
             type: DataTypes.INTEGER,
@@ -33,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         balance: {
             type: DataTypes.INTEGER,
-            defaultValue: 0
+            // defaultValue: 0
 
         },
         alias: {

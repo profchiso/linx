@@ -29,6 +29,10 @@ module.exports = {
 
 
             },
+            walletId: {
+                type: Sequelize.INTEGER,
+                // allowNull: false,
+            },
             alias: {
                 type: Sequelize.STRING,
             },

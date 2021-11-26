@@ -476,7 +476,8 @@ businessRouter.post("/api/v1/business/sqs-test", async(req, res) => {
     let testingPayload = {
         businessId: "1",
         userId: "2",
-        alias: "TEST ALIAS"
+        alias: "TEST ALIAS",
+        name: "LinX"
     }
 
     let sqsTesting = {

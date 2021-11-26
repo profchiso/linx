@@ -22,30 +22,44 @@ let params = {
 sqs.receiveMessage(params, async function(err, data) {
     if (err) throw new Error(err.message) // an error occurred
 
+    if (data.Messages && data.Messages.length) {
+        let parsedMessageBody = data.Messages
 
-    console.log(data.Messages)
+        console.log(parsedMessageBody)
 
-    if (data.Messages.length) {
+        for (let message of parsedMessageBody) {
+            console.log("alias", message.Body)
 
-        for (let message of data.Messages) {
+            let parsedMessage = JSON.parse(message.Body)
+
+
             let createdWallet = await db.wallet.create({
-                id: Number(Date.now().toString().substring(0, 10)),
-                name: "testing",
-                ownerId: Number(message.Body.businessId),
-                // alias: message.Body.alias,
+                walletId: Number(Date.now().toString().substring(0, 10)),
+                name: parsedMessage.name || "Testing",
+                ownerId: Number(parsedMessage.businessId),
+                alias: parsedMessage.alias,
                 credit: 0,
                 debit: 0,
                 balance: 0
             })
             console.log("createdWallet", createdWallet)
 
+
+            let testingPayload = {
+                businessId: `${createdWallet.dataValues.ownerId}`,
+                userId: "2",
+                alias: `${createdWallet.dataValues.alias}`
+            }
+
             let sqsWalletData = {
                 MessageAttributes: {
                     "wallet": {
-                        DataType: "Object",
-                        StringValue: createdWallet
+                        DataType: "String",
+                        StringValue: "Wallet created"
                     }
-                }
+                },
+                QueueUrl: queueUrl,
+                MessageBody: JSON.stringify(testingPayload),
             };
 
             let sqsWallet = await sqs.sendMessage(sqsWalletData).promise()
