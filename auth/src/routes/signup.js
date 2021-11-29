@@ -124,11 +124,11 @@ signupRouter.post(
             if (!existingUser) {
                 throw new BadRequestError('Incorect Verification Code');
             }
-            console.log("existing user", existingUser)
+
             let verificationCode = generateVerificationCode()
 
             const updatedUser = await db.User.update({ verificationCode }, { where: { id }, returning: true, plain: true })
-            console.log("user after vc update", updatedUser)
+
             const mailOptions = {
                 from: process.env.SENDER_EMAIL,
                 to: existingUser.email,
@@ -139,11 +139,13 @@ signupRouter.post(
             Thank you.`,
             };
             existingUser.verificationCode = verificationCode
-            updatedUser.password = undefined
+            console.log(updatedUser[0].user)
+            let userData = {...updatedUser[0].user }
+            userData.password = undefined
 
             await sendMailWithSendgrid(mailOptions)
             existingUser.password = undefined
-            res.status(200).send({ message: "Verification code resent", statuscode: 200, data: { user: updatedUser, verificationCode } });
+            res.status(200).send({ message: "Verification code resent", statuscode: 200, data: { user: userData, verificationCode } });
 
         } catch (error) {
             console.log(error)
