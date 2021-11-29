@@ -357,8 +357,10 @@ businessRouter.get(
             let myBusinesses = [];
             if (business.length > 0) {
                 for (let b of business) {
-                    //myBusinesses.push(b.businesses.dataValue)
-                    console.log(b)
+                    //myBusinesses.push(b.dataValue)
+
+                    console.log("testing2", b.businesses)
+                    console.log("only datavalue", b.dataValues)
 
                 }
 
