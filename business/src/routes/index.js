@@ -363,7 +363,7 @@ businessRouter.get(
             }
 
             console.log("business", myBusinesses)
-            res.status(200).send({ message: `${business.length?"Business fetched":"You do not currently have any business setup"}`, statuscode: 200, data: { businesses: myBusinesses } });
+            res.status(200).send({ message: `${business.length?"Business fetched":"You do not currently have any business setup"}`, statuscode: 200, data: { myBusinesses } });
 
         } catch (error) {
             console.log(error)
