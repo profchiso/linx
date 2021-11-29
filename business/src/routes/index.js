@@ -357,6 +357,7 @@ businessRouter.get(
             let myBusinesses = [];
             if (business.length > 0) {
                 for (let b of business) {
+                    b.dataValues.wallet = 0.00
                     myBusinesses.push(b.dataValues)
                 }
 
