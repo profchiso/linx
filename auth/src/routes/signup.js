@@ -139,8 +139,7 @@ signupRouter.post(
             Thank you.`,
             };
             existingUser.verificationCode = verificationCode
-            console.log(updatedUser[1])
-            console.log(updatedUser[2])
+
             let userData = {...updatedUser[1].dataValues }
 
             userData.password = undefined
