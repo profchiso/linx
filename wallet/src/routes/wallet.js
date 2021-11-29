@@ -1,12 +1,12 @@
 const express = require('express');
 
-const createWallet = require('../controllers/createWallet');
+const createSecondaryWallet = require('../controllers/createSecondaryWallet');
 
 
 const walletRouter = express.Router();
 
 
 
-walletRouter.post('/api/v1/create-wallet', createWallet);
+walletRouter.post('/api/v1/create-secondary-wallet', createSecondaryWallet);
 
 module.exports = walletRouter;

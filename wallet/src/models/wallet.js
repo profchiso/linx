@@ -17,31 +17,49 @@ module.exports = (sequelize, DataTypes) => {
 
         name: {
             type: DataTypes.STRING,
-            // allowNull: false
+            allowNull: false
         },
         walletId: {
             type: DataTypes.INTEGER,
-            // allowNull: false,
+            allowNull: false,
         },
-        ownerId: {
+        businessId: {
             type: DataTypes.INTEGER,
-            // allowNull: false,
+            allowNull: false,
+        },
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        walletType: {
+            type: DataTypes.STRING,
+            defaultValue: "Primary",
+
+
         },
         credit: {
             type: DataTypes.INTEGER,
+            defaultValue: 0
 
         },
         debit: {
             type: DataTypes.INTEGER,
+            defaultValue: 0
 
         },
         balance: {
             type: DataTypes.INTEGER,
-            // defaultValue: 0
+            defaultValue: 0
 
         },
         alias: {
             type: DataTypes.STRING,
+            allowNull: false
+        },
+        walletType: {
+            type: DataTypes.STRING,
+            defaultValue: "Primary",
+
         },
     }, {
         sequelize,

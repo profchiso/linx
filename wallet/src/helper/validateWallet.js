@@ -8,6 +8,8 @@ module.exports.validate = function validate(req) {
     credit: Joi.number(),
     debit: Joi.number(),
     balance: Joi.string(),
+    alias: Joi.string(),
+    walletType: Joi.string(),
   });
 
   return schema.validate(req);
