@@ -139,9 +139,9 @@ signupRouter.post(
             Thank you.`,
             };
             existingUser.verificationCode = verificationCode
-            console.log(updatedUser[1].User)
-            console.log(updatedUser[2].User)
-            let userData = {...updatedUser[1].User }
+            console.log(updatedUser[1])
+            console.log(updatedUser[2])
+            let userData = {...updatedUser[1] }
             userData.password = undefined
 
             await sendMailWithSendgrid(mailOptions)
