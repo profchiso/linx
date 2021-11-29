@@ -124,9 +124,11 @@ signupRouter.post(
             if (!existingUser) {
                 throw new BadRequestError('Incorect Verification Code');
             }
+            console.log("existing user", existingUser)
             let verificationCode = generateVerificationCode()
 
-            const updatedUser = await db.User.update({ verificationCode }, { where: { id, verificationCode }, returning: true, plain: true })
+            const updatedUser = await db.User.update({ verificationCode }, { where: { id }, returning: true, plain: true })
+            console.log("user after vc update", updatedUser)
             const mailOptions = {
                 from: process.env.SENDER_EMAIL,
                 to: existingUser.email,
