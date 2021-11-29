@@ -357,7 +357,8 @@ businessRouter.get(
             let myBusinesses = [];
             if (business.length > 0) {
                 for (let b of business) {
-                    myBusinesses.push(b.businesses.dataValues)
+                    //myBusinesses.push(b.businesses.dataValue)
+                    console.log(b)
 
                 }
 
