@@ -354,8 +354,17 @@ businessRouter.get(
 
             const { userId } = req.params;
             const business = await db.businesses.findAll({ where: { userId } });
+            let myBusinesses = [];
+            if (business.length > 0) {
+                for (let b of business) {
+                    myBusinesses.push(b.businesses.dataValues)
+
+                }
+
+            }
+
             console.log("business", business)
-            res.status(200).send({ message: `${business.length?"Business fetched":"You do not currently have any business setup"}`, statuscode: 200, data: { business } });
+            res.status(200).send({ message: `${business.length?"Business fetched":"You do not currently have any business setup"}`, statuscode: 200, data: { myBusinesses } });
 
         } catch (error) {
             console.log(error)
