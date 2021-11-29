@@ -11,6 +11,9 @@ module.exports = {
             name: {
                 type: Sequelize.STRING
             },
+            alias: {
+                type: Sequelize.STRING
+            },
             tradingName: {
                 type: Sequelize.STRING
             },
@@ -21,7 +24,7 @@ module.exports = {
                 type: Sequelize.STRING
             },
             yearOfOperation: {
-                type: Sequelize.INTEGER
+                type: Sequelize.STRING
             },
             address: {
                 type: Sequelize.STRING

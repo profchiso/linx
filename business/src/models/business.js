@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         tradingName: DataTypes.STRING,
         businessType: DataTypes.STRING,
         description: DataTypes.STRING,
-        yearOfOperation: DataTypes.INTEGER,
+        yearOfOperation: DataTypes.STRING,
         address: DataTypes.STRING,
         country: DataTypes.STRING,
         utilityBill: DataTypes.STRING,
@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
 
     }, {
         sequelize,
-        modelName: 'business',
+        modelName: 'businesses',
     });
     return business;
 };

@@ -3,10 +3,22 @@ const { body } = require("express-validator")
 
 //USER REGISTRATION VALIDATION
 const signUpValidations = [
-    body('firstName').notEmpty().withMessage('Firstname cannot be empty'),
-    body('lastName').notEmpty().withMessage('Lastname cannot be empty'),
-    body('email').isEmail().withMessage('Email must be valid'),
-    body('phone').notEmpty().withMessage('Phone number cannot be empty'),
+    body('firstName')
+    .trim()
+    .notEmpty()
+    .withMessage('Firstname cannot be empty'),
+    body('lastName')
+    .trim()
+    .notEmpty()
+    .withMessage('Lastname cannot be empty'),
+    body('email')
+    .isEmail()
+    .withMessage('Email must be valid')
+    .notEmpty()
+    .withMessage("Email field is required"),
+    body('phone')
+    .notEmpty()
+    .withMessage('Phone number cannot be empty'),
     body('password')
     .trim()
     .isLength({ min: 8, max: 20 })

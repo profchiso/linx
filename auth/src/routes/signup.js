@@ -32,12 +32,18 @@ signupRouter.post(
         let newUser = { firstName, lastName, phone, password: hashedPassword, verificationCode, email }
         const user = await db.User.create(newUser);
 
+
+        let msg = `${user.firstName}, 
+        Your LinX account has been created successfully. Please use the following code:
+        ${user.verificationCode} to verify your account.
+        Thank you.`
+
         user.password = undefined;
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
             to: user.email,
             subject: `LinX Account`,
-            text: `Dear, ${user.firstName} your account with LinX was created successfull, Please use the code:${user.verificationCode} to verify your account`,
+            text: msg,
         };
 
         //SEND MAIL CONTAINING VERIFICATION CODE UPON SIGNUP
@@ -95,29 +101,35 @@ signupRouter.post(
     authenticate,
     async(req, res) => {
 
-        let id = req.user.id
-        const existingUser = await db.User.findOne({ where: { id, } });
-        if (!existingUser) {
-            throw new BadRequestError('Incorect Verification Code');
-        }
-        let verificationCode = generateVerificationCode()
+        try {
+            let id = req.user.id
+            const existingUser = await db.User.findOne({ where: { id, } });
+            if (!existingUser) {
+                throw new BadRequestError('Incorect Verification Code');
+            }
+            let verificationCode = generateVerificationCode()
 
-        const updatedUser = await db.User.update({ verificationCode }, { where: { id, verificationCode }, returning: true, plain: true })
-        const mailOptions = {
-            from: process.env.SENDER_EMAIL,
-            to: existingUser.email,
-            subject: `LinX Account`,
-            text: `Dear ${existingUser.firstName}, 
-            Your LinX account has been created successfully. Please use the following code:
-            ${verificationCode} to verify your account.
+            const updatedUser = await db.User.update({ verificationCode }, { where: { id, verificationCode }, returning: true, plain: true })
+            const mailOptions = {
+                from: process.env.SENDER_EMAIL,
+                to: existingUser.email,
+                subject: `LinX Account`,
+                text: `Dear ${existingUser.firstName}, 
+             Please use the following code:
+            ${verificationCode} to verify your LinX account.
             Thank you.`,
-        };
-        existingUser.verificationCode = verificationCode
-        updatedUser.password = undefined
+            };
+            existingUser.verificationCode = verificationCode
+            updatedUser.password = undefined
 
-        await sendMailWithSendgrid(mailOptions)
-        existingUser.password = undefined
-        res.status(200).send({ message: "Verification code resent", statuscode: 200, data: { user: updatedUser, verificationCode } });
+            await sendMailWithSendgrid(mailOptions)
+            existingUser.password = undefined
+            res.status(200).send({ message: "Verification code resent", statuscode: 200, data: { user: updatedUser, verificationCode } });
+
+        } catch (error) {
+            console.log(error)
+
+        }
     }
 );
 
@@ -126,7 +138,6 @@ signupRouter.get(
     '/api/v1/auth/authenticate',
     authenticate,
     async(req, res) => {
-        req.user.password = undefined
 
         res.status(200).send({ user: req.user });
     }
