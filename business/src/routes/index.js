@@ -336,24 +336,32 @@ businessRouter.post(
 
 //GET  BUSINESSES BY USE ID
 businessRouter.get(
-    '/api/v1/business/:userId',
+    '/api/v1/business/my-businesses/:userId',
     //validateRequest,
     // authenticate,
     async(req, res) => {
         //authenticate user
-        const { data } = await axios.get(`${AUTH_URL}`, {
-                headers: {
-                    authorization: req.headers.authorization
-                }
-            })
-            //check if user is not authenticated
-        if (!data.user) {
-            throw new NotAuthorisedError()
+        try {
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
+
+            const { userId } = req.params;
+            const business = await db.businesses.findAll({ where: { userId } });
+            console.log("business", business)
+            res.status(200).send({ message: `${business.length?"Business fetched":"You do not currently have any business setup"}`, statuscode: 200, data: { business } });
+
+        } catch (error) {
+            console.log(error)
+
         }
 
-        const { userId } = req.params;
-        const business = await db.businesses.findAll({ where: { userId } });
-        res.status(200).send({ message: `${business.length?"Business fetched":"You do not currently have any business setup"}`, statuscode: 200, data: { business } });
     }
 );
 
