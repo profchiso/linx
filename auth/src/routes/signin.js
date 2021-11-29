@@ -81,6 +81,7 @@ signinRouter.post(
 
         } catch (error) {
             console.log(error)
+            res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
 
         }
 
