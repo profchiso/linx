@@ -53,6 +53,9 @@ module.exports = {
             employmentType: {
                 type: Sequelize.STRING
             },
+            businessId: {
+                type: Sequelize.INTEGER
+            },
 
             createdAt: {
                 allowNull: false,

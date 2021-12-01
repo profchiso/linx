@@ -59,6 +59,9 @@ module.exports = (sequelize, DataTypes) => {
         employmentType: {
             type: DataTypes.STRING
         },
+        businessId: {
+            type: DataTypes.INTEGER
+        },
 
         // firstName: DataTypes.STRING,
         // lastName: DataTypes.STRING,

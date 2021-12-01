@@ -3,7 +3,7 @@ const AWS = require('aws-sdk');
 const { body } = require('express-validator');
 const axios = require("axios")
 const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
-const { businessRegistrationValidation } = require("../utils/business-registration-validation")
+const { staffRegistrationValidation } = require("../utils/staff-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
 const db = require("../models/index")
 const staffRouter = express.Router();
@@ -23,21 +23,21 @@ staffRouter.get(
     async(req, res) => {
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                throw new NotAuthorisedError()
-            }
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     throw new NotAuthorisedError()
+            // }
 
 
             //get all registered businesses
-            const businesses = await db.businesses.findAll({});
+            const staff = await db.staff.findAll({});
 
-            res.status(200).send({ message: "Businesses Fetched", statuscode: 200, data: { businesses } });
+            res.status(200).send({ message: "All staff Fetched", statuscode: 200, data: { staff } });
 
         } catch (error) {
             console.log(error)
@@ -50,7 +50,7 @@ staffRouter.get(
 //REGISTER A STAFF
 staffRouter.post(
     '/api/v1/staff',
-    businessRegistrationValidation,
+    staffRegistrationValidation,
     upload.fields([
         { name: "utilityBill", maxCount: 1 },
         { name: "registrationCertificate", maxCount: 1 },
@@ -61,22 +61,22 @@ staffRouter.post(
 
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                throw new NotAuthorisedError()
-            }
-            //console.log("req", req.body)
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     throw new NotAuthorisedError()
+            // }
+
 
 
             const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
 
             //check if business already exist
-            const existingBusiness = await db.businesses.findOne({ where: { name } });
+            const existingBusiness = await db.staff.findOne({ where: { name } });
 
             if (existingBusiness) {
                 throw new BadRequestError(`Business name ${name} already in use`);
@@ -235,7 +235,7 @@ staffRouter.post(
 
             //let userId = req.user.id
             //create business
-            let createdBusiness = await db.businesses.create({
+            let createdStaff = await db.staff.create({
                 name,
                 tradingName,
                 businessType,
@@ -255,52 +255,8 @@ staffRouter.post(
                 utilityBillType
             })
 
-            //create business alias
-            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
 
-            //create business owners
-            let partners = [];
-            console.log("businessOwners", businessOwners)
-            if (businessOwners.length) {
-                for (let businessOwner of businessOwners) {
-                    let busnessOwnerDetails = {
-                        firstName: businessOwner.firstName,
-                        lastName: businessOwner.lastName,
-                        email: businessOwner.email,
-                        idType: businessOwner.idType,
-                        idTypeImage: "",
-                        businessId: createdBusiness.id
-                    }
-
-                    if (businessOwner.idTypeImage) {
-                        await cloudinary.uploader.upload(
-                            businessOwner.idTypeImage, {
-                                public_id: `partnerid-image/${businessOwner.firstName}-${businessOwner.lastName}-idTypeImage`,
-                            },
-                            (error, result) => {
-
-
-                                if (error) {
-                                    console.log("Error uploading partner id image to cloudinary");
-                                } else {
-                                    busnessOwnerDetails.idTypeImage = result.secure_url;
-
-                                }
-
-                            }
-                        );
-                    }
-
-
-
-
-                    let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
-                    partners.push(createdBusinessOwner)
-                }
-
-            }
-
-            let returnData = {...createdBusiness.dataValues }
+            let returnData = {...createdStaff.dataValues }
 
             // let businessCreatedPayload = {
             //     businesId: `${createdBusiness.id}`,
@@ -332,21 +288,13 @@ staffRouter.post(
             // console.log(sendSqsMessage)
 
 
-
-
-            returnData.alias = businesAlias
-            returnData.owner = data.user
-            returnData.partners = partners
-
-            res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: returnData } });
+            res.status(201).send({ message: "Staff Created", statuscode: 201, type: "success", data: { staff: returnData } });
 
         } catch (error) {
             console.log(error)
             res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
 
         }
-
-
 
     }
 );
@@ -359,20 +307,20 @@ staffRouter.get(
     async(req, res) => {
         //authenticate user
         try {
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                throw new NotAuthorisedError()
-            }
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     throw new NotAuthorisedError()
+            // }
 
-            const { userId } = req.params;
-            const business = await db.businesses.findAll({ where: { userId } });
-            let myBusinesses = [];
-            if (business.length > 0) {
+            const { businessId } = req.params;
+            const staff = await db.staff.findAll({ where: { businessId } });
+            let myStaff = [];
+            if (staff.length > 0) {
                 for (let b of business) {
                     b.dataValues.wallet = 0.00
                     myBusinesses.push(b.dataValues)
@@ -381,7 +329,7 @@ staffRouter.get(
             }
 
 
-            res.status(200).send({ message: `${business.length?"Business fetched":"You do not currently have any business setup"}`, statuscode: 200, data: { myBusinesses } });
+            res.status(200).send({ message: `${myStaff.length?"Staff fetched":"You do not currently have any staff"}`, statuscode: 200, data: { myStaff } });
 
         } catch (error) {
             console.log(error)
