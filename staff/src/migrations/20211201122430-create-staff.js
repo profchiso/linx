@@ -48,7 +48,8 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             role: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                defaultValue: "staff"
             },
             employmentType: {
                 type: Sequelize.STRING

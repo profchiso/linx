@@ -52,10 +52,8 @@ staffRouter.post(
     '/api/v1/staff',
     staffRegistrationValidation,
     upload.fields([
-        { name: "utilityBill", maxCount: 1 },
-        { name: "registrationCertificate", maxCount: 1 },
-        { name: "otherDocuments", maxCount: 1 },
-        { name: "tinCertificate", maxCount: 1 },
+        { name: "profilePix", maxCount: 1 },
+
     ]),
     async(req, res) => {
 
@@ -75,12 +73,7 @@ staffRouter.post(
 
             const { firstName, lastName, email, phoneNumber, dataOfBirth, profilePix, address, country, state, lga, bankName, accountName, accountNumber, role, employmentType, businessId, paymentAccount } = req.body
 
-            //check if business already exist
-            // const existingBusiness = await db.staff.findOne({ where: { name } });
 
-            // if (existingBusiness) {
-            //     throw new BadRequestError(`Business name ${name} already in use`);
-            // }
 
             // initialize file upload fields
             let imageData = {
@@ -111,54 +104,6 @@ staffRouter.post(
                     }
                 );
             }
-            if (req.body.registrationCertificate) {
-                await cloudinary.uploader.upload(
-                    req.body.registrationCertificate, {
-                        public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
-                    },
-                    (error, result) => {
-
-                        if (error) {
-                            console.log("Error uploading registration Certificate to cloudinary");
-                        } else {
-                            imageData.registrationCertificate = result.secure_url;
-
-                        }
-
-                    }
-                );
-            }
-            if (req.body.otherDocuments) {
-                await cloudinary.uploader.upload(
-                    req.body.otherDocuments, {
-                        public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
-                    },
-                    (error, result) => {
-                        if (error) {
-                            console.log("Error uploading other Documents to cloudinary");
-                        } else {
-                            imageData.otherDocuments = result.secure_url;
-                        }
-                    }
-                );
-            }
-
-            if (req.body.tinCertificate) {
-                await cloudinary.uploader.upload(
-                    req.body.tinCertificate, {
-                        public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
-                    },
-                    (error, result) => {
-
-                        console.log(result)
-                        if (error) {
-                            console.log("Error uploading other Documents to cloudinary");
-                        } else {
-                            imageData.tinCertificate = result.secure_url;
-                        }
-                    }
-                );
-            }
 
 
             //upload images in  file format
@@ -182,77 +127,29 @@ staffRouter.post(
                         }
                     );
                 }
-                if (req.files.registrationCertificate) {
-                    await cloudinary.uploader.upload(
-                        req.files.registrationCertificate[0].path, {
-                            public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
-                        },
-                        (error, result) => {
 
-                            if (error) {
-                                console.log("Error uploading registration Certificate to cloudinary");
-                            } else {
-                                imageData.registrationCertificate = result.secure_url;
 
-                            }
-
-                        }
-                    );
-                }
-                if (req.files.otherDocuments) {
-                    await cloudinary.uploader.upload(
-                        req.files.otherDocuments[0].path, {
-                            public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
-                        },
-                        (error, result) => {
-                            if (error) {
-                                console.log("Error uploading other Documents to cloudinary");
-                            } else {
-                                imageData.otherDocuments = result.secure_url;
-                            }
-                        }
-                    );
-                }
-
-                if (req.files.tinCertificate) {
-                    await cloudinary.uploader.upload(
-                        req.files.tinCertificate[0].path, {
-                            public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
-                        },
-                        (error, result) => {
-
-                            console.log(result)
-                            if (error) {
-                                console.log("Error uploading other Documents to cloudinary");
-                            } else {
-                                imageData.tinCertificate = result.secure_url;
-                            }
-                        }
-                    );
-                }
             }
 
 
-            //let userId = req.user.id
-            //create business
+
+            //create staff
             let createdStaff = await db.staff.create({
-                name,
-                tradingName,
-                businessType,
-                description,
-                yearOfOperation,
+                firstName,
+                lastName,
+                email,
+                phoneNumber,
+                dataOfBirth,
                 address,
                 country,
-                tin,
-                userId: data.user.id,
-                rcNumber,
                 state,
-                utilityBill: imageData.utilityBill,
-                registrationCertificate: imageData.registrationCertificate,
-                otherDocuments: imageData.otherDocuments,
-                tinCertificate: imageData.tinCertificate,
-                alias: alias.toUpperCase(),
-                utilityBillType
+                lga,
+                bankName,
+                accountName,
+                accountNumber,
+                role: role || "staff",
+                employmentType,
+                businessId,
             })
 
 
@@ -356,14 +253,14 @@ staffRouter.get(
                 throw new NotAuthorisedError()
             }
 
-            const { alias } = req.params;
+            const { staffId } = req.params;
 
             //CHECK IF ALIAS ALREADY EXIST
-            const existingAlias = await db.aliases.findOne({ where: { name: alias.toUpperCase() } });
-            if (existingAlias) {
-                throw new BadRequestError("Business alias already in use please choose another alias")
+            const foundStaff = await db.staff.findOne({ where: { id: staffId } });
+            if (foundStaff) {
+                throw new NotFoundError()
             }
-            res.status(200).send({ message: `Business alias ${alias} available`, statuscode: 200, data: { alias } });
+            res.status(200).send({ message: `Staff fetched`, statuscode: 200, data: { staff: foundStaff } });
 
         } catch (error) {
             console.log(error)
@@ -394,14 +291,11 @@ staffRouter.patch(
                 throw new NotAuthorisedError()
             }
 
-            const { rcNumber } = req.params;
+            const { staffId } = req.params;
 
-            //PING CAC API FOR RC NUMBER VALIDATION
-            // const responseFromCAC= await axios.get("cacEndpoin");
-            // if (foundRCNumber) {
-            //     throw new BadRequestError("RC number not found in CAC database")
-            // }
-            res.status(200).send({ message: `RC number ${rcNumber} valid`, statuscode: 200, data: { rcNumber, businessDetails: {} } });
+            const updatedStaff = await db.staff.update(req.body, { where: { id: staffId }, returning: true, plain: true })
+
+            res.status(200).send({ message: `Staff info updated`, statuscode: 200, data: { staff: updatedStaff } });
 
         } catch (error) {
             console.log(error)
