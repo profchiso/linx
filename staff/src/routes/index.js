@@ -309,7 +309,7 @@ staffRouter.patch(
 
 //DELETE STAFF
 staffRouter.delete(
-    '/api/v1/business/:businessId',
+    '/api/v1/staff/:staffId',
     async(req, res) => {
 
         try {
@@ -324,15 +324,11 @@ staffRouter.delete(
                 throw new NotAuthorisedError()
             }
 
-            const { businessId } = req.params
+            const { staffId } = req.params
 
-            const existingBusiness = await db.businesses.findOne({ where: { businessId } });
-            if (!existingBusiness) {
-                throw new BadRequestError('Invalid business id');
-            }
-            const updatedBusiness = await db.businesses.update(req.body, { where: { id: businessId }, returning: true, plain: true })
+            const existingBusiness = await db.staff.destroy({ where: { staffId } });
 
-            res.status(200).send({ message: "Business updated successfully", statuscode: 200, data: { business: updatedBusiness } });
+            res.status(204).send({ message: "Staff deleted", statuscode: 204, data: { staff: {} } });
 
         } catch (error) {
             console.log(error)
