@@ -4,18 +4,18 @@ const { BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tick
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
 const { validate } = require("../helper/validateCustomer");
 
-module.exports = async (req, res) => {
+module.exports = async(req, res) => {
 
     //authenticate user
-    const { data } = await axios.get(`${AUTH_URL}`, {
-        headers: {
-            authorization: req.headers.authorization
-        }
-    })
-    //check if user is not authenticated
-    if (!data.user) {
-    throw new NotAuthorisedError()
-    }
+    // const { data } = await axios.get(`${AUTH_URL}`, {
+    //         headers: {
+    //             authorization: req.headers.authorization
+    //         }
+    //     })
+    //     //check if user is not authenticated
+    // if (!data.user) {
+    //     throw new NotAuthorisedError()
+    // }
     // customer validation
     const { error } = validate(req.body);
     if (error) {
@@ -38,14 +38,15 @@ module.exports = async (req, res) => {
         email: req.body.email,
         phoneNumber: req.body.phoneNumber,
         alias: req.body.alias,
+        businessId: req.body.businessId
     })
 
-    res.status(201).send({ 
-        message: "Customer Created", 
-        statuscode: 201, 
-        type: "success", 
+    res.status(201).send({
+        message: "Customer Created",
+        statuscode: 201,
+        type: "success",
         data: {
-            customer: createdCustomer 
-        } 
+            customer: createdCustomer
+        }
     });
 }
