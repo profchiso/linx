@@ -157,6 +157,7 @@ staffRouter.post(
 
             let returnData = {...createdStaff.dataValues }
 
+
             // let businessCreatedPayload = {
             //     businesId: `${createdBusiness.id}`,
             //     userId: `${data.user.id}`
@@ -220,9 +221,9 @@ staffRouter.get(
             const staff = await db.staff.findAll({ where: { businessId } });
             let myStaff = [];
             if (staff.length > 0) {
-                for (let b of business) {
+                for (let b of staff) {
                     b.dataValues.wallet = 0.00
-                    myBusinesses.push(b.dataValues)
+                    myStaff.push(b.dataValues)
                 }
 
             }
@@ -245,23 +246,21 @@ staffRouter.get(
 
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                throw new NotAuthorisedError()
-            }
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     throw new NotAuthorisedError()
+            // }
 
             const { staffId } = req.params;
 
-            //CHECK IF ALIAS ALREADY EXIST
+
             const foundStaff = await db.staff.findOne({ where: { id: staffId } });
-            if (foundStaff) {
-                throw new NotFoundError()
-            }
+
             res.status(200).send({ message: `Staff fetched`, statuscode: 200, data: { staff: foundStaff } });
 
         } catch (error) {
@@ -269,8 +268,6 @@ staffRouter.get(
             res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
 
         }
-
-
 
     }
 );
@@ -283,21 +280,21 @@ staffRouter.patch(
 
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                throw new NotAuthorisedError()
-            }
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     throw new NotAuthorisedError()
+            // }
 
             const { staffId } = req.params;
 
             const updatedStaff = await db.staff.update(req.body, { where: { id: staffId }, returning: true, plain: true })
 
-            res.status(200).send({ message: `Staff info updated`, statuscode: 200, data: { staff: updatedStaff } });
+            res.status(200).send({ message: `Staff info updated`, statuscode: 200, data: { staff: updatedStaff[1] } });
 
         } catch (error) {
             console.log(error)
@@ -316,15 +313,15 @@ staffRouter.delete(
 
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                throw new NotAuthorisedError()
-            }
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     throw new NotAuthorisedError()
+            // }
 
             const { staffId } = req.params
 
