@@ -77,27 +77,27 @@ staffRouter.post(
 
             // initialize file upload fields
             let imageData = {
-                utilityBill: "",
-                registrationCertificate: "",
-                otherDocuments: "",
-                tinCertificate: ""
+                profilePix: "",
+
+
             }
 
             //upload images
             //upload images in base64 string
-            if (req.body.utilityBill) {
+            if (req.body.profilePix) {
 
                 await cloudinary.uploader.upload(
-                    req.body.utilityBill, {
-                        public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                    req.body.profilePix, {
+                        public_id: `staff-profile-pix/${firstName}-${lastName}`,
                     },
                     (error, result) => {
 
 
                         if (error) {
-                            console.log("Error uploading utilityBill to cloudinary");
+                            console.log(error)
+                            console.log("Error uploading staff profile pix to cloudinary");
                         } else {
-                            imageData.utilityBill = result.secure_url;
+                            imageData.profilePix = result.secure_url;
 
                         }
 
@@ -108,19 +108,20 @@ staffRouter.post(
 
             //upload images in  file format
             if (req.files) {
-                if (req.files.utilityBill) {
+                if (req.files.profilePix) {
 
                     await cloudinary.uploader.upload(
-                        req.files.utilityBill[0].path, {
-                            public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                        req.files.profilePix[0].path, {
+                            public_id: `staff-profile-pix/${firstName}-${lastName}`,
                         },
                         (error, result) => {
 
 
                             if (error) {
-                                console.log("Error uploading utilityBill to cloudinary");
+                                console.log(error)
+                                console.log("Error uploading staff profile pix to cloudinary");
                             } else {
-                                imageData.utilityBill = result.secure_url;
+                                imageData.profilePix = result.secure_url;
 
                             }
 
@@ -150,6 +151,7 @@ staffRouter.post(
                 role: role || "staff",
                 employmentType,
                 businessId,
+                profilePix: imageData.profilePix
             })
 
 
@@ -326,7 +328,7 @@ staffRouter.delete(
 
             const { staffId } = req.params
 
-            const existingBusiness = await db.staff.destroy({ where: { staffId } });
+            await db.staff.destroy({ where: { staffId } });
 
             res.status(204).send({ message: "Staff deleted", statuscode: 204, data: { staff: {} } });
 
