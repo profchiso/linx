@@ -56,6 +56,22 @@ module.exports = {
             businessId: {
                 type: Sequelize.INTEGER
             },
+            bonus: {
+                type: Sequelize.INTEGER,
+                defaultValue: 0
+            },
+            deduction: {
+                type: Sequelize.INTEGER,
+                defaultValue: 0
+            },
+            totalPayable: {
+                type: Sequelize.INTEGER,
+                defaultValue: 0
+            },
+            paymentAccount: {
+                type: Sequelize.STRING,
+                defaultValue: "wallet"
+            },
 
             createdAt: {
                 allowNull: false,

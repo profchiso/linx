@@ -62,6 +62,18 @@ module.exports = (sequelize, DataTypes) => {
         businessId: {
             type: DataTypes.INTEGER
         },
+        bonus: {
+            type: DataTypes.INTEGER
+        },
+        deduction: {
+            type: DataTypes.INTEGER
+        },
+        totalPayable: {
+            type: DataTypes.INTEGER
+        },
+        paymentAccount: {
+            type: DataTypes.STRING
+        },
 
         // firstName: DataTypes.STRING,
         // lastName: DataTypes.STRING,

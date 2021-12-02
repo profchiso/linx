@@ -73,14 +73,14 @@ staffRouter.post(
 
 
 
-            const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
+            const { firstName, lastName, email, phoneNumber, dataOfBirth, profilePix, address, country, state, lga, bankName, accountName, accountNumber, role, employmentType, businessId, paymentAccount } = req.body
 
             //check if business already exist
-            const existingBusiness = await db.staff.findOne({ where: { name } });
+            // const existingBusiness = await db.staff.findOne({ where: { name } });
 
-            if (existingBusiness) {
-                throw new BadRequestError(`Business name ${name} already in use`);
-            }
+            // if (existingBusiness) {
+            //     throw new BadRequestError(`Business name ${name} already in use`);
+            // }
 
             // initialize file upload fields
             let imageData = {
