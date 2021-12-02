@@ -53,6 +53,9 @@ module.exports = (sequelize, DataTypes) => {
         accountNumber: {
             type: DataTypes.INTEGER
         },
+        walletId: {
+            type: DataTypes.INTEGER
+        },
         role: {
             type: DataTypes.STRING
         },
