@@ -9,8 +9,8 @@ const { errorHandler, NotFoundError } = require('@bc_tickets/common');
 const db = require("../src/models/index")
 const AWS = require('aws-sdk');
 // Configure the region 
-AWS.config.update({ region: 'us-east-1' });
-AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
+// AWS.config.update({ region: 'us-east-1' });
+// AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
 
 
 // Create an SQS service object
@@ -22,17 +22,7 @@ let params = {
     QueueUrl: queueUrl
 };
 sqs.receiveMessage(params, async function(err, data) {
-    if (err) throw new Error(err.message) // an error occurred
-
-    if (data.Messages && data.Messages.length) {
-        let parsedMessageBody = data.Messages
-
-        console.log(parsedMessageBody)
-
-        for (let message of parsedMessageBody) {
-            console.log("alias", message.Body)
-
-            let parsedMessage = JSON.parse(message.Body)
+    if (err) throw new Error(err.message) 
 
             let checkOwnerId = parsedMessage.idType == 'business'?Number(parsedMessage.businessId):Number(parsedMessage.staffId)
 
@@ -93,12 +83,8 @@ sqs.receiveMessage(params, async function(err, data) {
                 let sqsWallet = await sqs.sendMessage(sqsWalletData).promise()
                 console.log("sqsWallet", sqsWallet)
             }
+       });
 
-        }
-
-    }
-
-})
 
 const walletRouter = require('./routes/wallet');
 

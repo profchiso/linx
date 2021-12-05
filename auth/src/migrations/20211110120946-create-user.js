@@ -33,6 +33,10 @@ module.exports = {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false
             },
+            userType: {
+                type: Sequelize.STRING,
+                defaultValue: "business"
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE

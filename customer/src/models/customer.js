@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
         email: DataTypes.STRING,
         phoneNumber: DataTypes.STRING,
         alias: DataTypes.STRING,
-
+        businessId: DataTypes.INTEGER,
     }, {
         sequelize,
         modelName: 'customer',
