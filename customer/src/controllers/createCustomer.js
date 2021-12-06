@@ -1,21 +1,21 @@
 const db = require("../models/index")
 const axios = require("axios")
-const { BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
+const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
 const { validate } = require("../helper/validateCustomer");
 
 module.exports = async(req, res) => {
-
-    //authenticate user
-    // const { data } = await axios.get(`${AUTH_URL}`, {
-    //         headers: {
-    //             authorization: req.headers.authorization
-    //         }
-    //     })
-    //     //check if user is not authenticated
-    // if (!data.user) {
-    //     throw new NotAuthorisedError()
-    // }
+    try {
+       //authenticate user
+    const { data } = await axios.get(`${AUTH_URL}`, {
+            headers: {
+                authorization: req.headers.authorization
+            }
+        })
+        //check if user is not authenticated
+    if (!data.user) {
+        throw new NotAuthorisedError()
+    }
     // customer validation
     const { error } = validate(req.body);
     if (error) {
@@ -48,5 +48,13 @@ module.exports = async(req, res) => {
         data: {
             customer: createdCustomer
         }
-    });
+    }); 
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ 
+            message: "Something went wrong",
+            statuscode: 500, 
+            errors: [{ message: error.message || "internal server error" }]
+        })
+    }
 }
