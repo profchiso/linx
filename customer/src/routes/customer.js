@@ -4,6 +4,7 @@ const createCustomer = require('../controllers/createCustomer');
 const updateCustomer = require('../controllers/editCustomer');
 const getAllCustomers = require('../controllers/getAllCustomers');
 const getCustomer = require('../controllers/getCustomer');
+const blacklistCustomer = require('../controllers/blacklistCustomer');
 
 const { uploadCompanyLogo } = require('../helper/upload');
 const { processCompanyLogo } = require('../middlewares/processUploads')
@@ -17,5 +18,6 @@ customerRouter.post('/api/v1/customer', uploadCompanyLogo, processCompanyLogo, c
 customerRouter.patch('/api/v1/customer/:customerId', updateCustomer);
 customerRouter.get('/api/v1/customer', getAllCustomers);
 customerRouter.get('/api/v1/customer/:customerId', getCustomer);
+customerRouter.patch('/api/v1/customer/blacklist/:customerId', blacklistCustomer);
 
 module.exports = customerRouter;

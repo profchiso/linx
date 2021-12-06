@@ -53,6 +53,11 @@ module.exports = {
             businessId: {
                 type: Sequelize.INTEGER
             },
+            status: {
+                type: Sequelize.ENUM,
+                values: ['active', 'blacklisted'],
+                defaultValue: 'active'
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE

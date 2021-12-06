@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
         phoneNumber: DataTypes.STRING,
         alias: DataTypes.STRING,
         businessId: DataTypes.INTEGER,
+        status: {
+            type: DataTypes.ENUM,
+            values: ['active', 'blacklisted'],
+            defaultValue: 'active',
+          },
     }, {
         sequelize,
         modelName: 'customer',
