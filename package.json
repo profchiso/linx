@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "customer-dev": "nodemon customer/src/index.js",
-        "start": "node auth/src/index.js",
+        "start": "node staff/src/index.js",
         "auth-dev": "nodemon auth/src/index.js",
         "wallet-dev": "nodemon wallet/src/index.js",
         "dev-all": "npm-run-all -p -r wallet-dev business-dev auth-dev ",
