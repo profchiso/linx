@@ -54,10 +54,13 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             status: {
-                type: Sequelize.ENUM,
-                values: ['active', 'blacklisted'],
-                defaultValue: 'active'
+                type: Sequelize.STRING
             },
+            // status: {
+            //     type: Sequelize.ENUM,
+            //     values: ['active', 'blacklisted'],
+            //     defaultValue: 'active'
+            // },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
