@@ -16,7 +16,7 @@ const customerRouter = express.Router();
 
 
 
-customerRouter.get('/api/v1/customer', getAllCustomers);
+customerRouter.get('/api/v1/customer/:businessId', getAllCustomers);
 customerRouter.get('/api/v1/customer/:customerId', getCustomer);
 customerRouter.post('/api/v1/customer', uploadCompanyLogo, processCompanyLogo, createCustomer);
 customerRouter.patch('/api/v1/customer/blacklist/:customerId', blacklistCustomer);
