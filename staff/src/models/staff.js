@@ -56,6 +56,9 @@ module.exports = (sequelize, DataTypes) => {
         walletId: {
             type: DataTypes.INTEGER
         },
+        walletBalance: {
+            type: DataTypes.INTEGER
+        },
         role: {
             type: DataTypes.STRING
         },
