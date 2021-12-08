@@ -16,7 +16,7 @@ module.exports = async(req, res) => {
         //     throw new NotAuthorisedError()
         // }
         const { businessId } = req.params
-        const customers = await db.customer.findAll({ where: { id: businessId } });
+        const customers = await db.customer.findAll({ where: { businessId } });
         if (!customers) {
             throw new Error('There are no customers found')
         }
