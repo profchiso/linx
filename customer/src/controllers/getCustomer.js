@@ -3,18 +3,18 @@ const axios = require("axios")
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
 
-module.exports = async (req,res) => {
-        //authenticate user
+module.exports = async(req, res) => {
+    //authenticate user
     try {
-        const { data } = await axios.get(`${AUTH_URL}`, {
-                headers: {
-                    authorization: req.headers.authorization
-                }
-            })
-            //check if user is not authenticated
-        if (!data.user) {
-            throw new NotAuthorisedError()
-        }
+        // const { data } = await axios.get(`${AUTH_URL}`, {
+        //         headers: {
+        //             authorization: req.headers.authorization
+        //         }
+        //     })
+        //     //check if user is not authenticated
+        // if (!data.user) {
+        //     throw new NotAuthorisedError()
+        // }
         const { customerId } = req.params
         const customer = await db.customer.findOne({ where: { id: customerId } });
 
@@ -22,17 +22,17 @@ module.exports = async (req,res) => {
             throw new Error('customer cannot be found');
         }
 
-        res.status(200).send({ 
+        res.status(200).send({
             message: 'Customer found successfully',
-            statuscode: 200, 
-            data: { customer } 
+            statuscode: 200,
+            data: { customer }
         });
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({ 
+        res.status(500).json({
             message: "Something went wrong",
-            statuscode: 500, 
+            statuscode: 500,
             errors: [{ message: error.message || "internal server error" }]
         })
     }

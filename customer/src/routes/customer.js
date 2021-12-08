@@ -14,10 +14,12 @@ const customerRouter = express.Router();
 
 
 
-customerRouter.post('/api/v1/customer', uploadCompanyLogo, processCompanyLogo, createCustomer);
-customerRouter.patch('/api/v1/customer/:customerId', updateCustomer);
+
+
 customerRouter.get('/api/v1/customer', getAllCustomers);
 customerRouter.get('/api/v1/customer/:customerId', getCustomer);
+customerRouter.post('/api/v1/customer', uploadCompanyLogo, processCompanyLogo, createCustomer);
 customerRouter.patch('/api/v1/customer/blacklist/:customerId', blacklistCustomer);
+customerRouter.patch('/api/v1/customer/:customerId', updateCustomer);
 
 module.exports = customerRouter;
