@@ -17,13 +17,28 @@ const storage = new CloudinaryStorage({
   },
 });
 
+const base64Storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'customer',
+    public_id: `customer/companyLogo`,
+  },
+});
+
 const cloudUpload = multer({
   storage,
 });
 
+const base64CloudUpload = multer({
+  base64Storage,
+})
+
 
 exports.uploadCompanyLogo = cloudUpload.single('companyLogo');
+
+exports.uploadBase64CompanyLogo = base64CloudUpload.single('companyLogo');
 
 
 
 exports.cloudUpload = cloudUpload;
+exports.cloudUpload = base64CloudUpload;
