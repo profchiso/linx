@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "customer-dev": "nodemon customer/src/index.js",
-        "start": "node auth/src/index.js",
+        "start": "node customer/src/index.js",
         "auth-dev": "nodemon auth/src/index.js",
         "wallet-dev": "nodemon wallet/src/index.js",
         "dev-all": "npm-run-all -p -r wallet-dev business-dev auth-dev ",
@@ -43,6 +43,7 @@
         "pg-hstore": "^2.3.4",
         "sequelize": "^6.9.0",
         "sqs-consumer": "^5.6.0",
-        "@hapi/joi": "^17.1.1"
+        "@hapi/joi": "^17.1.1",
+        "multer-storage-cloudinary": "^4.0.0"
     }
 }

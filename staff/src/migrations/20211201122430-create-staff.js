@@ -50,6 +50,10 @@ module.exports = {
             walletId: {
                 type: Sequelize.INTEGER
             },
+            walletBalance: {
+                type: Sequelize.INTEGER,
+                defaultValue: 0
+            },
             role: {
                 type: Sequelize.STRING,
                 defaultValue: "staff"
