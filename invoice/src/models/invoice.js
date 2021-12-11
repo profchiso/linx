@@ -1,53 +1,35 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class invoice extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
+const mongoose = require('mongoose');
+
+const Invoice = mongoose.model(
+  'Invoice',
+  new mongoose.Schema(
+    {
+      name: String,
+      status: String,
+      client: String,
+      date: Number,
+      amount: Number,
+      paymentMethod: {
+        type: String,
+        enum: {
+          values: ['wallet', 'bank'],
+        },
+        default: 'wallet',
+      },
+      goodsDetail: [
+        {
+          description: { type: String, required: true, lowercase: true },
+          cost: { type: Number, required: true, lowercase: true },
+          quantity: { type: Number, required: true, lowercase: true },
+        },
+      ],
+      discount: Number,
+      tax: Number,
+    },
+    {
+      timestamps: true,
     }
-  };
-  invoice.init({
-    name: DataTypes.STRING,
-    status: {
-      type: DataTypes.STRING
-    },
-    client: {
-      type: DataTypes.STRING
-    },
-    date: {
-      type: DataTypes.STRING
-    },
-    amount: {
-      type: DataTypes.STRING
-    },
-    paymentMethod: {
-      type: DataTypes.STRING
-    },
-    description: {
-      type: DataTypes.STRING
-    },
-    cost: {
-      type: DataTypes.STRING
-    },
-    quantity: {
-      type: DataTypes.STRING
-    },
-    discount: {
-      type: DataTypes.STRING
-    },
-    tax: {
-      type: DataTypes.STRING
-    },
-  }, {
-    sequelize,
-    modelName: 'invoice',
-  });
-  return invoice;
-};
+  )
+);
+
+exports.Invoice = Invoice;
