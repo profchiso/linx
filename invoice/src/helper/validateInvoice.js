@@ -17,7 +17,10 @@ module.exports.validate = function validate(req) {
             })
           ),
         discount: Joi.string(),
-        tax: Joi.string()
+        tax: Joi.string(),
+        businessId: Joi.number(),
+        customerId: Joi.number(),
+        customerEmail: Joi.string(),
     });
 
     return schema.validate(req);

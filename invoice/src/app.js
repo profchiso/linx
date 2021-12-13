@@ -6,9 +6,8 @@ require('express-async-errors');
 
 const cookieSession = require('cookie-session');
 const { errorHandler, NotFoundError } = require('@bc_tickets/common');
-const db = require("../src/models/index")
 
-const customerRouter = require('./routes/customer');
+const invoiceRouter = require('./routes/invoice');
 
 const app = express();
 app.set('trust proxy', true);
@@ -23,9 +22,9 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-    res.send("welcome to customer")
+    res.send("welcome to invoice")
 })
-app.use(customerRouter);
+app.use(invoiceRouter);
 
 app.all('*', async() => {
     throw new NotFoundError();

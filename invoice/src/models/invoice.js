@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+// const connectDB = require('../startup/db');
+
+// autoIncrement.initialize(mongoose.connection);
+
 const Invoice = mongoose.model(
   'Invoice',
   new mongoose.Schema(
@@ -25,6 +29,9 @@ const Invoice = mongoose.model(
       ],
       discount: Number,
       tax: Number,
+      businessId: Number,
+      customerId: Number,
+      customerEmail: String,
     },
     {
       timestamps: true,
@@ -32,4 +39,5 @@ const Invoice = mongoose.model(
   )
 );
 
-exports.Invoice = Invoice;
+
+exports.invoiceSchema = Invoice;
