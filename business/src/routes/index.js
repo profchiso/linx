@@ -571,6 +571,21 @@ businessRouter.post("/api/v1/business/sqs-test", async(req, res) => {
     let sendSqsMessage = await sqs.sendMessage(sqsTesting).promise()
     console.log(sendSqsMessage)
     res.status(200).json({ data: sendSqsMessage })
+        // let batchid= date.now()
+        // for(let item of req.body.items){
+
+
+    //     let record={
+    //         client:req.body.client,
+    //         paymentMethod:req.body.paymentMethod,
+    //         description:item.description,
+    //         cost: item.cost,
+    //         quntity:item.quqntity,
+    //         batchid
+    //     }
+
+    //     let createdItemRecord = await db.invoice.create(record)
+    // }
 
 
 })
