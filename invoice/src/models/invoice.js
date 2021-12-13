@@ -8,8 +8,15 @@ const Invoice = mongoose.model(
   'Invoice',
   new mongoose.Schema(
     {
+      id: Number,
       name: String,
-      status: String,
+      status: {
+        type: String,
+        enum: {
+          values: ['create', 'draft'],
+        },
+        default: 'create',
+      },
       client: String,
       date: Number,
       amount: Number,

@@ -24,25 +24,41 @@ module.exports = async(req, res) => {
             throw new Error(error.message);
         }
         
-        const { businessId, customerId, customerEmail } = req.body;
+        const { businessId, customerId, customerEmail, id, status } = req.body;
 
-        businessId = req.params.businessId
-        customerId = req.params.customerId
+        if (status = 'draft') {
+            const n = await Invoice.estimatedDocumentCount();
+            id = n + 1;
 
-        const invoice = await Invoice.create(req.body);
+            businessId = req.params.businessId
+            customerId = req.params.customerId
 
-            // transport object
-        const mailOptions = {
-            to: customerEmail,
-            from: { email: 'noreply@linx.ng', name: 'LinX' },
-            subject: 'Your Invoice',
-            html: `<p>Here is your Invoice: ${invoice}</p>`,
-        };
+            const invoice = await Invoice.create(req.body);
 
-        await sendWithMailTrap(mailOptions);
+        } else {
 
+            const n = await Invoice.estimatedDocumentCount();
+
+            id = n + 1;
+
+            businessId = req.params.businessId
+            customerId = req.params.customerId
+
+            const invoice = await Invoice.create(req.body);
+
+                // transport object
+            const mailOptions = {
+                to: customerEmail,
+                from: { email: 'noreply@linx.ng', name: 'LinX' },
+                subject: 'Your Invoice',
+                html: `<p>Here is your Invoice: ${invoice}</p>`,
+            };
+
+            await sendWithMailTrap(mailOptions);
+        }
+        const message = (status = 'draft') ? 'Invoice saved as draft' : 'Invoice created'
         res.status(201).send({
-            message: "Invoice Created",
+            message,
             statuscode: 201,
             type: "success",
             data: {
