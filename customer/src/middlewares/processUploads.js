@@ -1,18 +1,36 @@
-  exports.processCompanyLogo = async(req, res, next) => {
-      if (!req.file) return next();
+const { cloudinary } = require("../helper/upload")
 
-      // company logo
-      req.body.companyLogo = req.file.path;
+exports.processCompanyLogo = async(req, res, next) => {
+    if (!req.file) return next();
 
-      next();
-  };
+    // company logo
+    req.body.companyLogo = req.file.path;
 
-  exports.processBase64CompanyLogo = async(req, res, next) => {
-      if (!req.body.companyLogo) return next();
+    next();
+};
 
-      // company logo
-      console.log(res)
-      req.body.companyLogo = res.secure_url;
+exports.processBase64CompanyLogo = async(req, res, next) => {
+    if (!req.body.companyLogo) return next();
 
-      next();
-  };
+
+
+    await cloudinary.uploader.upload(
+        req.body.companyLogo, {
+            public_id: `companyLogo/${req.body.firstName.split(" ").join("-")}-companyLogo`,
+        },
+        (error, result) => {
+            console.log(result)
+
+
+            if (error) {
+                console.log("Error uploading utilityBill to cloudinary");
+            } else {
+                req.body.companyLogo = result.secure_url;
+
+            }
+
+        }
+    );
+
+    next();
+};
