@@ -23,6 +23,8 @@ module.exports = async(req, res) => {
             throw new Error(error.message);
         }
 
+        console.log(req.body.companyLogo)
+
         let createdCustomer = await db.customer.create({
             businessName: req.body.businessName,
             businessEmail: req.body.businessEmail,
