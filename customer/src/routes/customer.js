@@ -2,7 +2,7 @@ const express = require('express');
 
 const createCustomer = require('../controllers/createCustomer');
 const updateCustomer = require('../controllers/editCustomer');
-const getAllCustomers = require('../controllers/getAllCustomers');
+const getAllCustomersForBusiness = require('../controllers/getAllCustomersForBusiness');
 const getCustomer = require('../controllers/getCustomer');
 const blacklistCustomer = require('../controllers/blacklistCustomer');
 
@@ -18,7 +18,7 @@ const customerRouter = express.Router();
 
 
 
-customerRouter.get('/api/v1/customer/:businessId', getAllCustomers);
+customerRouter.get('/api/v1/customer/business/:businessId', getAllCustomersForBusiness);
 customerRouter.get('/api/v1/customer/:customerId', getCustomer);
 customerRouter.post('/api/v1/customer', uploadBase64CompanyLogo, processBase64CompanyLogo, createCustomer);
 customerRouter.patch('/api/v1/customer/blacklist/:customerId', blacklistCustomer);
