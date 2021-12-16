@@ -42,6 +42,7 @@ const Invoice = mongoose.model(
       bankName: String,
       accountNumber: String,
       walletId: Number,
+      urlLink: String,
     },
     {
       timestamps: true,

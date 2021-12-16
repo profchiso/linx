@@ -44,7 +44,15 @@ module.exports = async(req, res) => {
             businessId = req.params.businessId
             customerId = req.params.customerId
 
+            const generateURL = `${req.protocol}://${req.get(
+			    "host"
+		    )}/api/v1/invoice/preview/${id}`;
+
             const invoice = await Invoice.create(req.body);
+
+            invoice.urlLink = generateURL;
+
+            await invoice.save()
 
                 // transport object
             const mailOptions = {

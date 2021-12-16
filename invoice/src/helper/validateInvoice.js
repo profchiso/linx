@@ -25,6 +25,7 @@ module.exports.validate = function validate(req) {
         customerEmail: Joi.string(),
         bankName: Joi.string(),
         accountNumber: Joi.string(),
+        urlLink: Joi.string(),
     });
 
     return schema.validate(req);
