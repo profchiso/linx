@@ -21,7 +21,11 @@ module.exports.validate = function validate(req) {
         tax: Joi.string(),
         businessId: Joi.number(),
         customerId: Joi.number(),
+        walletId: Joi.number(),
         customerEmail: Joi.string(),
+        bankName: Joi.string(),
+        accountNumber: Joi.string(),
+        urlLink: Joi.string(),
     });
 
     return schema.validate(req);
