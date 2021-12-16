@@ -2,7 +2,7 @@ const { Invoice } = require("../models/invoice")
 const axios = require("axios")
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
-const { sendWithMailTrap } = require("../helper/emailTransport");
+const { sendMailWithSendGrid } = require("../helper/emailTransport");
 
 module.exports = async(req, res) => {
     try {
@@ -22,18 +22,18 @@ module.exports = async(req, res) => {
         const invoice = Invoice.findById(req.params.id)
 
         if (!invoice) {
-            throw new Error ('No Invoice found')
+            throw new Error('No Invoice found')
         }
 
         // transport object
         const mailOptions = {
             to: customerEmail,
-            from: { email: 'noreply@linx.ng', name: 'LinX' },
+            from: process.env.SENDER_EMAIL,
             subject: 'Your Invoice',
             html: `<p>Here is your Invoice: ${invoice}</p>`,
         };
 
-        await sendWithMailTrap(mailOptions);
+        await sendMailWithSendGrid(mailOptions);
 
         res.status(201).send({
             message: 'Invoice sent successfully',
