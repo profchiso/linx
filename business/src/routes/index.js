@@ -3,9 +3,10 @@ const AWS = require('aws-sdk');
 const { body } = require('express-validator');
 const axios = require("axios")
 const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
-const { businessRegistrationValidation } = require("../utils/business-registration-validation")
+const { RegisteredBusinessRegistrationValidation, freelanceBusinessRegistrationValidation } = require("../utils/business-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
-const db = require("../models/index")
+const db = require("../models/index");
+const { FraudDetector } = require("aws-sdk");
 const businessRouter = express.Router();
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
     // Configure the region 
@@ -35,7 +36,7 @@ businessRouter.get(
 
 
             //get all registered businesses
-            const businesses = await db.businesses.findAll({});
+            const businesses = await db.business.findAll({});
 
             res.status(200).send({ message: "Businesses Fetched", statuscode: 200, data: { businesses } });
 
@@ -47,10 +48,10 @@ businessRouter.get(
     }
 );
 
-//REGISTER BUSINESSES
+//REGISTER BUSINESSES(REGISTERED)
 businessRouter.post(
-    '/api/v1/business',
-    businessRegistrationValidation,
+    '/api/v1/business/registered',
+    RegisteredBusinessRegistrationValidation,
     upload.fields([
         { name: "utilityBill", maxCount: 1 },
         { name: "registrationCertificate", maxCount: 1 },
@@ -76,7 +77,7 @@ businessRouter.post(
             const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
 
             //check if business already exist
-            const existingBusiness = await db.businesses.findOne({ where: { name } });
+            const existingBusiness = await db.business.findOne({ where: { name } });
 
             if (existingBusiness) {
                 throw new BadRequestError(`Business name ${name} already in use`);
@@ -235,7 +236,7 @@ businessRouter.post(
 
             //let userId = req.user.id
             //create business
-            let createdBusiness = await db.businesses.create({
+            let createdBusiness = await db.business.create({
                 name,
                 tradingName,
                 businessType,
@@ -252,11 +253,13 @@ businessRouter.post(
                 otherDocuments: imageData.otherDocuments,
                 tinCertificate: imageData.tinCertificate,
                 alias: alias.toUpperCase(),
-                utilityBillType
+                utilityBillType,
+                email: req.body.email || data.user.email,
+                businessCategory: "Registered"
             })
 
             //create business alias
-            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
+            const businesAlias = await db.alias.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
 
             //create business owners
             let partners = [];
@@ -294,7 +297,7 @@ businessRouter.post(
 
 
 
-                    let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
+                    let createdBusinessOwner = await db.businessOwner.create(busnessOwnerDetails)
                     partners.push(createdBusinessOwner)
                 }
 
@@ -351,6 +354,524 @@ businessRouter.post(
     }
 );
 
+//REGISTER BUSINESSES(FREELANCE)
+businessRouter.post(
+    '/api/v1/business/freelance',
+    freelanceBusinessRegistrationValidation,
+    upload.fields([
+        { name: "utilityBill", maxCount: 1 },
+    ]),
+    async(req, res) => {
+
+        try {
+            //authenticate user
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
+            //console.log("req", req.body)
+
+
+            const { name, tradingName, businessType, description, yearOfOperation, address, country, state, alias, utilityBillType, businessOwners } = req.body
+
+            //check if business already exist
+            const existingBusiness = await db.business.findOne({ where: { name } });
+
+            if (existingBusiness) {
+                throw new BadRequestError(`Business name ${name} already in use`);
+            }
+
+            // initialize file upload fields
+            let imageData = {
+                utilityBill: "",
+                registrationCertificate: "",
+                otherDocuments: "",
+                tinCertificate: ""
+            }
+
+            //upload images
+            //upload images in base64 string
+            if (req.body.utilityBill) {
+
+                await cloudinary.uploader.upload(
+                    req.body.utilityBill, {
+                        public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                    },
+                    (error, result) => {
+
+
+                        if (error) {
+                            console.log("Error uploading utilityBill to cloudinary");
+                        } else {
+                            imageData.utilityBill = result.secure_url;
+
+                        }
+
+                    }
+                );
+            }
+
+
+
+
+
+
+            //upload images in  file format
+            if (req.files) {
+                if (req.files.utilityBill) {
+
+                    await cloudinary.uploader.upload(
+                        req.files.utilityBill[0].path, {
+                            public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                        },
+                        (error, result) => {
+
+
+                            if (error) {
+                                console.log("Error uploading utilityBill to cloudinary");
+                            } else {
+                                imageData.utilityBill = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+            }
+
+
+            //let userId = req.user.id
+            //create business
+            let createdBusiness = await db.business.create({
+                name,
+                tradingName,
+                businessType,
+                description,
+                yearOfOperation,
+                address,
+                country,
+                tin: "",
+                userId: data.user.id,
+                rcNumber: "",
+                state,
+                utilityBill: imageData.utilityBill,
+                registrationCertificate: imageData.registrationCertificate,
+                otherDocuments: imageData.otherDocuments,
+                tinCertificate: imageData.tinCertificate,
+                alias: alias.toUpperCase(),
+                utilityBillType,
+                email: req.body.email || data.user.email,
+                businessCategory: "Freelance"
+            })
+
+            //create business alias
+            const businesAlias = await db.alias.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
+
+            //create business owners
+            let partners = [];
+            console.log("businessOwners", businessOwners)
+            if (businessOwners.length) {
+                for (let businessOwner of businessOwners) {
+                    let busnessOwnerDetails = {
+                        firstName: businessOwner.firstName,
+                        lastName: businessOwner.lastName,
+                        email: businessOwner.email,
+                        idType: businessOwner.idType,
+                        idTypeImage: "",
+                        businessId: createdBusiness.id
+                    }
+
+                    if (businessOwner.idTypeImage) {
+                        await cloudinary.uploader.upload(
+                            businessOwner.idTypeImage, {
+                                public_id: `partnerid-image/${businessOwner.firstName}-${businessOwner.lastName}-idTypeImage`,
+                            },
+                            (error, result) => {
+
+
+                                if (error) {
+                                    console.log("Error uploading partner id image to cloudinary");
+                                } else {
+                                    busnessOwnerDetails.idTypeImage = result.secure_url;
+
+                                }
+
+                            }
+                        );
+                    }
+
+
+
+
+                    let createdBusinessOwner = await db.businessOwner.create(busnessOwnerDetails)
+                    partners.push(createdBusinessOwner)
+                }
+
+            }
+
+            let returnData = {...createdBusiness.dataValues }
+
+            // let businessCreatedPayload = {
+            //     businesId: `${createdBusiness.id}`,
+            //     userId: `${data.user.id}`
+            // }
+
+            // let businessCreatedMessage = {
+            //     MessageAttributes: {
+            //         "businessId": {
+            //             DataType: "String",
+            //             StringValue: `${createdBusiness.id}`
+            //         },
+            //         "userId": {
+            //             DataType: "String",
+            //             StringValue: `${data.user.id}`
+            //         },
+            //         "alias": {
+            //             DataType: "String",
+            //             StringValue: businesAlias.name
+            //         },
+
+            //     },
+            //     MessageBody: JSON.stringify(businessCreatedPayload),
+            //     //MessageDeduplicationId: "test",
+            //     //MessageGroupId: "testing",
+            //     QueueUrl: queueUrl
+            // };
+            // let sendSqsMessage = await sqs.sendMessage(businessCreatedMessage).promise()
+            // console.log(sendSqsMessage)
+
+
+
+
+            returnData.alias = businesAlias
+            returnData.owner = data.user
+            returnData.partners = partners
+
+            res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: returnData } });
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+
+        }
+
+
+
+    }
+);
+
+//REGISTER BUSINESSES(UNREGISTERED)
+businessRouter.post(
+    '/api/v1/business/unregistered',
+    UnregisteredBusinessRegistrationValidation,
+    upload.fields([
+        { name: "utilityBill", maxCount: 1 },
+        { name: "registrationCertificate", maxCount: 1 },
+        { name: "otherDocuments", maxCount: 1 },
+        { name: "tinCertificate", maxCount: 1 },
+    ]),
+    async(req, res) => {
+
+        try {
+            //authenticate user
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
+            //console.log("req", req.body)
+
+
+            const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
+
+            //check if business already exist
+            const existingBusiness = await db.business.findOne({ where: { name } });
+
+            if (existingBusiness) {
+                throw new BadRequestError(`Business name ${name} already in use`);
+            }
+
+            // initialize file upload fields
+            let imageData = {
+                utilityBill: "",
+                registrationCertificate: "",
+                otherDocuments: "",
+                tinCertificate: ""
+            }
+
+            //upload images
+            //upload images in base64 string
+            if (req.body.utilityBill) {
+
+                await cloudinary.uploader.upload(
+                    req.body.utilityBill, {
+                        public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                    },
+                    (error, result) => {
+
+
+                        if (error) {
+                            console.log("Error uploading utilityBill to cloudinary");
+                        } else {
+                            imageData.utilityBill = result.secure_url;
+
+                        }
+
+                    }
+                );
+            }
+            if (req.body.registrationCertificate) {
+                await cloudinary.uploader.upload(
+                    req.body.registrationCertificate, {
+                        public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
+                    },
+                    (error, result) => {
+
+                        if (error) {
+                            console.log("Error uploading registration Certificate to cloudinary");
+                        } else {
+                            imageData.registrationCertificate = result.secure_url;
+
+                        }
+
+                    }
+                );
+            }
+            if (req.body.otherDocuments) {
+                await cloudinary.uploader.upload(
+                    req.body.otherDocuments, {
+                        public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
+                    },
+                    (error, result) => {
+                        if (error) {
+                            console.log("Error uploading other Documents to cloudinary");
+                        } else {
+                            imageData.otherDocuments = result.secure_url;
+                        }
+                    }
+                );
+            }
+
+            if (req.body.tinCertificate) {
+                await cloudinary.uploader.upload(
+                    req.body.tinCertificate, {
+                        public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
+                    },
+                    (error, result) => {
+
+                        console.log(result)
+                        if (error) {
+                            console.log("Error uploading other Documents to cloudinary");
+                        } else {
+                            imageData.tinCertificate = result.secure_url;
+                        }
+                    }
+                );
+            }
+
+
+            //upload images in  file format
+            if (req.files) {
+                if (req.files.utilityBill) {
+
+                    await cloudinary.uploader.upload(
+                        req.files.utilityBill[0].path, {
+                            public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                        },
+                        (error, result) => {
+
+
+                            if (error) {
+                                console.log("Error uploading utilityBill to cloudinary");
+                            } else {
+                                imageData.utilityBill = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+                if (req.files.registrationCertificate) {
+                    await cloudinary.uploader.upload(
+                        req.files.registrationCertificate[0].path, {
+                            public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
+                        },
+                        (error, result) => {
+
+                            if (error) {
+                                console.log("Error uploading registration Certificate to cloudinary");
+                            } else {
+                                imageData.registrationCertificate = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+                if (req.files.otherDocuments) {
+                    await cloudinary.uploader.upload(
+                        req.files.otherDocuments[0].path, {
+                            public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
+                        },
+                        (error, result) => {
+                            if (error) {
+                                console.log("Error uploading other Documents to cloudinary");
+                            } else {
+                                imageData.otherDocuments = result.secure_url;
+                            }
+                        }
+                    );
+                }
+
+                if (req.files.tinCertificate) {
+                    await cloudinary.uploader.upload(
+                        req.files.tinCertificate[0].path, {
+                            public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
+                        },
+                        (error, result) => {
+
+                            console.log(result)
+                            if (error) {
+                                console.log("Error uploading other Documents to cloudinary");
+                            } else {
+                                imageData.tinCertificate = result.secure_url;
+                            }
+                        }
+                    );
+                }
+            }
+
+
+            //let userId = req.user.id
+            //create business
+            let createdBusiness = await db.business.create({
+                name,
+                tradingName,
+                businessType,
+                description,
+                yearOfOperation,
+                address,
+                country,
+                tin,
+                userId: data.user.id,
+                rcNumber,
+                state,
+                utilityBill: imageData.utilityBill,
+                registrationCertificate: imageData.registrationCertificate,
+                otherDocuments: imageData.otherDocuments,
+                tinCertificate: imageData.tinCertificate,
+                alias: alias.toUpperCase(),
+                utilityBillType,
+                email: req.body.email || data.user.email,
+                businessCategory: "Registered"
+            })
+
+            //create business alias
+            const businesAlias = await db.alias.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
+
+            //create business owners
+            let partners = [];
+            console.log("businessOwners", businessOwners)
+            if (businessOwners.length) {
+                for (let businessOwner of businessOwners) {
+                    let busnessOwnerDetails = {
+                        firstName: businessOwner.firstName,
+                        lastName: businessOwner.lastName,
+                        email: businessOwner.email,
+                        idType: businessOwner.idType,
+                        idTypeImage: "",
+                        businessId: createdBusiness.id
+                    }
+
+                    if (businessOwner.idTypeImage) {
+                        await cloudinary.uploader.upload(
+                            businessOwner.idTypeImage, {
+                                public_id: `partnerid-image/${businessOwner.firstName}-${businessOwner.lastName}-idTypeImage`,
+                            },
+                            (error, result) => {
+
+
+                                if (error) {
+                                    console.log("Error uploading partner id image to cloudinary");
+                                } else {
+                                    busnessOwnerDetails.idTypeImage = result.secure_url;
+
+                                }
+
+                            }
+                        );
+                    }
+
+
+
+
+                    let createdBusinessOwner = await db.businessOwner.create(busnessOwnerDetails)
+                    partners.push(createdBusinessOwner)
+                }
+
+            }
+
+            let returnData = {...createdBusiness.dataValues }
+
+            // let businessCreatedPayload = {
+            //     businesId: `${createdBusiness.id}`,
+            //     userId: `${data.user.id}`
+            // }
+
+            // let businessCreatedMessage = {
+            //     MessageAttributes: {
+            //         "businessId": {
+            //             DataType: "String",
+            //             StringValue: `${createdBusiness.id}`
+            //         },
+            //         "userId": {
+            //             DataType: "String",
+            //             StringValue: `${data.user.id}`
+            //         },
+            //         "alias": {
+            //             DataType: "String",
+            //             StringValue: businesAlias.name
+            //         },
+
+            //     },
+            //     MessageBody: JSON.stringify(businessCreatedPayload),
+            //     //MessageDeduplicationId: "test",
+            //     //MessageGroupId: "testing",
+            //     QueueUrl: queueUrl
+            // };
+            // let sendSqsMessage = await sqs.sendMessage(businessCreatedMessage).promise()
+            // console.log(sendSqsMessage)
+
+
+
+
+            returnData.alias = businesAlias
+            returnData.owner = data.user
+            returnData.partners = partners
+
+            res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: returnData } });
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+
+        }
+
+
+
+    }
+);
+
+
 //GET  BUSINESSES BY USE ID
 businessRouter.get(
     '/api/v1/business/my-businesses/:userId',
@@ -370,7 +891,7 @@ businessRouter.get(
             }
 
             const { userId } = req.params;
-            const business = await db.businesses.findAll({ where: { userId } });
+            const business = await db.business.findAll({ where: { userId } });
             let myBusinesses = [];
             if (business.length > 0) {
                 for (let b of business) {
@@ -411,7 +932,7 @@ businessRouter.get(
             const { alias } = req.params;
 
             //CHECK IF ALIAS ALREADY EXIST
-            const existingAlias = await db.aliases.findOne({ where: { name: alias.toUpperCase() } });
+            const existingAlias = await db.alias.findOne({ where: { name: alias.toUpperCase() } });
             if (existingAlias) {
                 throw new BadRequestError("Business alias already in use please choose another alias")
             }
@@ -484,7 +1005,7 @@ businessRouter.patch(
 
             const { businessId } = req.params
 
-            const existingBusiness = await db.businesses.findOne({ where: { businessId } });
+            const existingBusiness = await db.business.findOne({ where: { businessId } });
             if (!existingBusiness) {
                 throw new BadRequestError('Invalid business id');
             }

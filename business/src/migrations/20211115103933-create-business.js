@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
     up: async(queryInterface, Sequelize) => {
-        await queryInterface.createTable('businesses', {
+        await queryInterface.createTable('business', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -59,6 +59,12 @@ module.exports = {
             utilityBillType: {
                 type: Sequelize.STRING
             },
+            email: {
+                type: Sequelize.STRING
+            },
+            businessCategory: {
+                type: Sequelize.STRING
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
@@ -70,6 +76,6 @@ module.exports = {
         });
     },
     down: async(queryInterface, Sequelize) => {
-        await queryInterface.dropTable('businesses');
+        await queryInterface.dropTable('business');
     }
 };

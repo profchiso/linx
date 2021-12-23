@@ -1,14 +1,43 @@
 'use strict';
 module.exports = {
     up: async(queryInterface, Sequelize) => {
-        await queryInterface.createTable('alias', {
+        await queryInterface.createTable('witness', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            name: {
+            firstName: {
+                type: Sequelize.STRING
+            },
+            lastName: {
+                type: Sequelize.STRING
+            },
+            middleName: {
+                type: Sequelize.STRING
+            },
+            email: {
+                type: Sequelize.STRING
+            },
+            phone: {
+                type: Sequelize.STRING
+            },
+            dateOfBirth: {
+                type: Sequelize.STRING
+            },
+            gender: {
+                type: Sequelize.STRING
+            },
+
+            occupation: {
+                type: Sequelize.STRING
+            },
+            address: {
+                type: Sequelize.STRING
+            },
+
+            signature: {
                 type: Sequelize.STRING
             },
             businessId: {
@@ -17,9 +46,6 @@ module.exports = {
                     model: 'business', // 'businesses' refers to table name
                     key: 'id', // 'id' refers to column name in businesses table
                 }
-            },
-            userId: {
-                type: Sequelize.INTEGER
             },
             createdAt: {
                 allowNull: false,
@@ -32,6 +58,6 @@ module.exports = {
         });
     },
     down: async(queryInterface, Sequelize) => {
-        await queryInterface.dropTable('alias');
+        await queryInterface.dropTable('witness');
     }
 };
