@@ -31,10 +31,18 @@ module.exports = async (req, res) => {
       customerId = req.params.customerId;
 
       const invoice = await Invoice.create(req.body);
+      res.status(201).send({
+        message: "Invoice saved as draft",
+        statuscode: 201,
+        type: "success",
+        data: {
+          invoice,
+        },
+      });
     } else {
-        const n = await Invoice.estimatedDocumentCount();
+      const n = await Invoice.estimatedDocumentCount();
 
-        id = n + 1;
+      id = n + 1;
 
       businessId = req.params.businessId;
       customerId = req.params.customerId;
@@ -49,8 +57,6 @@ module.exports = async (req, res) => {
 
       await invoice.save();
 
-      console.log("=========", invoice)
-
       // transport object
       const mailOptions = {
         to: customerEmail,
@@ -60,18 +66,15 @@ module.exports = async (req, res) => {
       };
 
       await sendMailWithSendGrid(mailOptions);
+      res.status(201).send({
+        message: "Invoice created",
+        statuscode: 201,
+        type: "success",
+        data: {
+          invoice,
+        },
+      });
     }
-    const message = (status = "draft")
-      ? "Invoice saved as draft"
-      : "Invoice created";
-    res.status(201).send({
-      message,
-      statuscode: 201,
-      type: "success",
-      data: {
-        invoice,
-      },
-    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
