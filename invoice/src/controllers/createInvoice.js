@@ -24,20 +24,17 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
 
-    const { businessId, customerId, customerEmail, id, status } = req.body;
+    let { businessId, customerId, customerEmail, id, status } = req.body;
 
     if (status == "draft") {
-      const n = await Invoice.estimatedDocumentCount();
-      id = n + 1;
-
       businessId = req.params.businessId;
       customerId = req.params.customerId;
 
       const invoice = await Invoice.create(req.body);
     } else {
-      const n = await Invoice.estimatedDocumentCount();
+        const n = await Invoice.estimatedDocumentCount();
 
-      id = n + 1;
+        id = n + 1;
 
       businessId = req.params.businessId;
       customerId = req.params.customerId;
@@ -51,6 +48,8 @@ module.exports = async (req, res) => {
       invoice.urlLink = generateURL;
 
       await invoice.save();
+
+      console.log("=========", invoice)
 
       // transport object
       const mailOptions = {
