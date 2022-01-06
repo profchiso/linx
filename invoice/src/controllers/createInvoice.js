@@ -24,13 +24,23 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
 
-    let { businessId, customerId, customerEmail, status } = req.body;
+    let { customerEmail, status } = req.body;
+    let { businessId, customerId } = req.params;
 
     if (status == "draft") {
-      businessId = req.params.businessId;
-      customerId = req.params.customerId;
+      const n = await Invoice.estimatedDocumentCount();
+
+      let id = n + 1;
 
       const invoice = await Invoice.create(req.body);
+
+      invoice.id = id;
+
+      invoice.businessId = businessId;
+      invoice.customerId = customerId;
+
+      await invoice.save();
+
       res.status(201).send({
         message: "Invoice saved as draft",
         statuscode: 201,
@@ -44,9 +54,6 @@ module.exports = async (req, res) => {
 
       let id = n + 1;
 
-      businessId = req.params.businessId;
-      customerId = req.params.customerId;
-
       const generateURL = `${req.protocol}://${req.get(
         "host"
       )}/api/v1/invoice/preview/${id}`;
@@ -56,6 +63,9 @@ module.exports = async (req, res) => {
       invoice.urlLink = generateURL;
 
       invoice.id = id;
+
+      invoice.businessId = businessId;
+      invoice.customerId = customerId;
 
       await invoice.save();
 

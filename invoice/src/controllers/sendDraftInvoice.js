@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
     await sendMailWithSendGrid(mailOptions);
 
     res.status(201).send({
-      message: "Invoice sent successfully",
+      message: `Invoice sent successfully to ${customerEmail}`,
       statuscode: 201,
       type: "success",
       data: {

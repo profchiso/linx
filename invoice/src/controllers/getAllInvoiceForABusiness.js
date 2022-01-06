@@ -19,7 +19,8 @@ module.exports = async (req, res) => {
     const invoice = await Invoice.find({ id: req.params.businessId });
 
     if (!invoice) {
-      throw new error("No invoice found");
+      res.status(404);
+      throw new Error("No invoice found");
     }
 
     res.status(200).send({
