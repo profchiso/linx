@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
 
-    let { businessId, customerId, customerEmail, id, status } = req.body;
+    let { businessId, customerId, customerEmail, status } = req.body;
 
     if (status == "draft") {
       businessId = req.params.businessId;
@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
     } else {
       const n = await Invoice.estimatedDocumentCount();
 
-      id = n + 1;
+      let id = n + 1;
 
       businessId = req.params.businessId;
       customerId = req.params.customerId;
@@ -54,6 +54,8 @@ module.exports = async (req, res) => {
       const invoice = await Invoice.create(req.body);
 
       invoice.urlLink = generateURL;
+
+      invoice.id = id;
 
       await invoice.save();
 
