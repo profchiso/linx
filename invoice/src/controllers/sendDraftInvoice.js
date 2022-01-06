@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
 
     const { customerEmail } = req.body;
 
-    const invoice = await Invoice.findById(req.params.id);
+    const invoice = await Invoice.find({ id: req.params.id });
 
     if (!invoice) {
       throw new Error("No Invoice found");
