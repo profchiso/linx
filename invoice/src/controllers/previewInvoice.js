@@ -16,7 +16,11 @@ module.exports = async (req, res) => {
     //     throw new NotAuthorisedError()
     // }
 
-    const invoice = await Invoice.find({ id: req.params.id });
+    const invoice = await Invoice.findOne({
+      id: req.params.id,
+      businessId: req.params.businessId,
+      customerId: req.params.customerId,
+    });
 
     if (!invoice) {
       throw new Error("No invoice found");
