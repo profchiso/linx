@@ -39,6 +39,15 @@ module.exports = async (req, res) => {
       invoice.businessId = businessId;
       invoice.customerId = customerId;
 
+      let invoiceGoodsDetailArray = [];
+
+      invoice.goodsDetail.forEach((element) => {
+        element.totalAmount = element.cost * element.quantity;
+        invoiceGoodsDetailArray.push(element);
+      });
+
+      invoice.goodsDetail = invoiceGoodsDetailArray;
+
       await invoice.save();
 
       res.status(201).send({
@@ -66,6 +75,15 @@ module.exports = async (req, res) => {
 
       invoice.businessId = businessId;
       invoice.customerId = customerId;
+
+      let invoiceGoodsDetailArray = [];
+
+      invoice.goodsDetail.forEach((element) => {
+        element.totalAmount = element.cost * element.quantity;
+        invoiceGoodsDetailArray.push(element);
+      });
+
+      invoice.goodsDetail = invoiceGoodsDetailArray;
 
       await invoice.save();
 

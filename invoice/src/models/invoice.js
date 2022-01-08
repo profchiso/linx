@@ -30,6 +30,7 @@ const invoiceSchema = new mongoose.Schema(
         description: { type: String, required: true, lowercase: true },
         cost: { type: Number, required: true, lowercase: true },
         quantity: { type: Number, required: true, lowercase: true },
+        totalAmount: { type: Number, lowercase: true, default: 0 },
       },
     ],
     discount: Number,
