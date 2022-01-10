@@ -2,7 +2,6 @@ const { Invoice } = require("../models/invoice");
 const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
-const { sendMailWithSendGrid } = require("../helper/emailTransport");
 
 module.exports = async (req, res) => {
   try {
@@ -17,31 +16,16 @@ module.exports = async (req, res) => {
     //     throw new NotAuthorisedError()
     // }
 
-    const { customerEmail } = req.body;
-
-    const invoice = await Invoice.findOne({
-      id: req.params.id,
-      businessId: req.params.businessId,
-      customerId: req.params.customerId,
-    });
+    const invoice = await Invoice.find({ businessId: req.params.businessId });
 
     if (!invoice) {
-      throw new Error("No Invoice found");
+      res.status(404);
+      throw new Error("No invoice found");
     }
 
-    // transport object
-    const mailOptions = {
-      to: customerEmail,
-      from: process.env.SENDER_EMAIL,
-      subject: "Your Invoice",
-      html: `<p>Here is your Invoice: ${invoice}</p>`,
-    };
-
-    await sendMailWithSendGrid(mailOptions);
-
-    res.status(201).send({
-      message: `Invoice sent successfully to ${customerEmail}`,
-      statuscode: 201,
+    res.status(200).send({
+      message: "Invoice(s) found successfully",
+      statuscode: 200,
       type: "success",
       data: {
         invoice,

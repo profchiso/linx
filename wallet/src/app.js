@@ -15,11 +15,13 @@ const AWS = require('aws-sdk');
 
 // Create an SQS service object
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
-const queueUrlBusiness = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue1";
-const queueUrlStaff = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueuestaff";
+//const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
+const businessCreationQueueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/business-creation-queue";
+const staffCreationQueueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/staff-creation-queue";
+const businessPrimaryWalletQueueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/business-primary-wallet-creation-queue1";
+const staffPrimaryWalletQueueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/staff-primary-wallet-creation-queue";
 let params = {
-    QueueUrl: queueUrl
+    QueueUrl: businessCreationQueueUrl
 };
 sqs.receiveMessage(params, async function(err, data) {
     if (err) throw new Error(err.message) 
@@ -54,7 +56,7 @@ sqs.receiveMessage(params, async function(err, data) {
                             StringValue: "Wallet created"
                         }
                     },
-                    QueueUrl: queueUrlBusiness,
+                    QueueUrl: businessPrimaryWalletQueueUrl,
                     MessageBody: JSON.stringify(testingPayload),
                 };
                 let sqsWallet = await sqs.sendMessage(sqsWalletData).promise()
@@ -77,7 +79,7 @@ sqs.receiveMessage(params, async function(err, data) {
                             StringValue: "Wallet created"
                         }
                     },
-                    QueueUrl: queueUrlStaff,
+                    QueueUrl: staffPrimaryWalletQueueUrl,
                     MessageBody: JSON.stringify(testingPayload),
                 };
                 let sqsWallet = await sqs.sendMessage(sqsWalletData).promise()

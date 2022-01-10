@@ -1,50 +1,53 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 // const connectDB = require('../startup/db');
 
 // autoIncrement.initialize(mongoose.connection);
 
-const Invoice = mongoose.model(
-  'Invoice',
-  new mongoose.Schema(
-    {
-      id: Number,
-      name: String,
-      status: {
-        type: String,
-        enum: {
-          values: ['create', 'draft'],
-        },
-        default: 'create',
+const invoiceSchema = new mongoose.Schema(
+  {
+    id: Number,
+    name: String,
+    status: {
+      type: String,
+      enum: {
+        values: ["create", "draft"],
       },
-      client: String,
-      date: Number,
-      amount: Number,
-      paymentMethod: {
-        type: String,
-        enum: {
-          values: ['wallet', 'bank'],
-        },
-        default: 'wallet',
-      },
-      goodsDetail: [
-        {
-          description: { type: String, required: true, lowercase: true },
-          cost: { type: Number, required: true, lowercase: true },
-          quantity: { type: Number, required: true, lowercase: true },
-        },
-      ],
-      discount: Number,
-      tax: Number,
-      businessId: Number,
-      customerId: Number,
-      customerEmail: String,
+      default: "create",
     },
-    {
-      timestamps: true,
-    }
-  )
+    client: String,
+    date: Number,
+    amount: Number,
+    paymentMethod: {
+      type: String,
+      enum: {
+        values: ["wallet", "bank"],
+      },
+      default: "wallet",
+    },
+    goodsDetail: [
+      {
+        description: { type: String, required: true, lowercase: true },
+        cost: { type: Number, required: true, lowercase: true },
+        quantity: { type: Number, required: true, lowercase: true },
+        totalAmount: { type: Number, lowercase: true, default: 0 },
+      },
+    ],
+    discount: Number,
+    tax: Number,
+    businessId: Number,
+    customerId: Number,
+    customerEmail: String,
+    bankName: String,
+    accountNumber: String,
+    walletId: Number,
+    urlLink: String,
+  },
+  {
+    timestamps: true,
+  }
 );
 
+const Invoice = mongoose.model("Invoice", invoiceSchema);
 
-exports.invoiceSchema = Invoice;
+exports.Invoice = Invoice;
