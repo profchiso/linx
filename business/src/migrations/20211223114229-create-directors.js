@@ -64,7 +64,7 @@ module.exports = {
             businessId: {
                 type: Sequelize.INTEGER,
                 references: {
-                    model: 'business', // 'businesses' refers to table name
+                    model: 'businesses', // 'businesses' refers to table name
                     key: 'id', // 'id' refers to column name in businesses table
                 }
             },

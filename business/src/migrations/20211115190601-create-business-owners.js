@@ -11,10 +11,34 @@ module.exports = {
             firstName: {
                 type: Sequelize.STRING
             },
+            middleName: {
+                type: Sequelize.STRING
+            },
             lastName: {
                 type: Sequelize.STRING
             },
             email: {
+                type: Sequelize.STRING
+            },
+            phone: {
+                type: Sequelize.STRING
+            },
+            dateOfBirth: {
+                type: Sequelize.STRING
+            },
+            nationality: {
+                type: Sequelize.STRING
+            },
+            state: {
+                type: Sequelize.STRING
+            },
+            lga: {
+                type: Sequelize.STRING
+            },
+            occupation: {
+                type: Sequelize.STRING
+            },
+            address: {
                 type: Sequelize.STRING
             },
             idType: {
@@ -23,10 +47,19 @@ module.exports = {
             idImage: {
                 type: Sequelize.STRING
             },
+            idNumber: {
+                type: Sequelize.STRING
+            },
+            passport: {
+                type: Sequelize.STRING
+            },
+            signature: {
+                type: Sequelize.STRING
+            },
             businessId: {
                 type: Sequelize.INTEGER,
                 references: {
-                    model: 'business', // 'businesses' refers to table name
+                    model: 'businesses', // 'businesses' refers to table name
                     key: 'id', // 'id' refers to column name in businesses table
                 }
             },

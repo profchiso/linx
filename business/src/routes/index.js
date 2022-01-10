@@ -62,15 +62,15 @@ businessRouter.post(
 
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
             //console.log("req", req.body)
 
 
@@ -234,7 +234,7 @@ businessRouter.post(
             }
 
 
-            //let userId = req.user.id
+            //userId = req.user.id
             //create business
             let createdBusiness = await db.businesses.create({
                 name,
@@ -245,7 +245,7 @@ businessRouter.post(
                 address,
                 country,
                 tin,
-                userId, //: data.user.id || userId,
+                userId: data.user.id || userId,
                 rcNumber,
                 state,
                 utilityBill: imageData.utilityBill,
@@ -259,8 +259,10 @@ businessRouter.post(
             })
 
             //create business alias
-            //data.user.id ||
-            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: 1 })
+
+
+            console.log("biz id", createdBusiness.id)
+            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
 
             //create business owners
             let partners = [];
@@ -345,8 +347,8 @@ businessRouter.post(
             returnData.owner = data.user
             returnData.businessOwners = partners
 
-            let bussinessWithAllDetails = await db.businesses.findOne({ where: { id: createdBusiness.id }, include: [{ model: "aliases", as: "alias" }, { model: "businessOwners", as: "businessOwners" }, { model: "directors", as: "directors" }, { model: "secretaries", as: "secretaries" }, { model: "witnesses", as: "witnesses" }] })
-            console.log("data with include", bussinessWithAllDetails)
+            //let bussinessWithAllDetails = await db.businesses.findOne({ where: { id: createdBusiness.id }, include: [{ model: "aliases", as: "alias" }, { model: "businessOwners", as: "businessOwners" }, { model: "directors", as: "directors" }, { model: "secretaries", as: "secretaries" }, { model: "witnesses", as: "witnesses" }] })
+            //console.log("data with include", bussinessWithAllDetails)
 
             res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: returnData } });
 
