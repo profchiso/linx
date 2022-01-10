@@ -24,72 +24,12 @@ const staffPrimaryWalletQueueUrl = "https://sqs.us-east-1.amazonaws.com/32254406
 let params = {
     QueueUrl: businessCreationQueueUrl
 };
-sqs.receiveMessage(params, async function(err, data) {
-    if (err) throw new Error(err.message)
-
-    let checkOwnerId = parsedMessage.idType == 'business' ? Number(parsedMessage.businessId) : Number(parsedMessage.staffId)
 
 
-    let createdWallet = await db.wallet.create({
-        walletId: Number(Date.now().toString().substring(0, 10)),
-        name: parsedMessage.name || "Testing",
-        ownerId: checkOwnerId,
-        alias: parsedMessage.alias,
-        credit: 0,
-        debit: 0,
-        balance: 0,
-        type: parsedMessage.idType
-    })
-    console.log("createdWallet", createdWallet)
-
-    if (createdWallet.dataValues.type == 'business') {
-
-        let testingPayload = {
-            businessId: `${createdWallet.dataValues.ownerId}`,
-            userId: "2",
-            alias: `${createdWallet.dataValues.alias}`
-        }
-
-        let sqsWalletData = {
-            MessageAttributes: {
-                "wallet": {
-                    DataType: "String",
-                    StringValue: "Wallet created"
-                }
-            },
-            QueueUrl: businessPrimaryWalletQueueUrl,
-            MessageBody: JSON.stringify(testingPayload),
-        };
-        let sqsWallet = await sqs.sendMessage(sqsWalletData).promise()
-        console.log("sqsWallet", sqsWallet)
-
-    }
-
-    if (createdWallet.dataValues.type == 'staff') {
-
-        let testingPayload = {
-            staffId: `${createdWallet.dataValues.ownerId}`,
-            userId: "2",
-            alias: `${createdWallet.dataValues.alias}`
-        }
-
-        let sqsWalletData = {
-            MessageAttributes: {
-                "wallet": {
-                    DataType: "String",
-                    StringValue: "Wallet created"
-                }
-            },
-            QueueUrl: staffPrimaryWalletQueueUrl,
-            MessageBody: JSON.stringify(testingPayload),
-        };
-        let sqsWallet = await sqs.sendMessage(sqsWalletData).promise()
-        console.log("sqsWallet", sqsWallet)
-    }
-});
 
 
 const walletRouter = require('./routes/wallet');
+const { JSON } = require("sequelize/types");
 
 const app = express();
 app.set('trust proxy', true);
@@ -113,5 +53,86 @@ app.all('*', async() => {
 });
 
 app.use(errorHandler);
+
+cronJob.schedule("*/5 * * * *", () => {
+    sqs.receiveMessage(params, async function(err, data) {
+        if (err) throw new Error(err.message)
+
+        let parsedData = JSON.parse(data.Messages[0].Body)
+
+
+        let checkOwnerId = Number(parsedData.businessId)
+
+
+        let createdPromoWallet = await db.wallet.create({
+            walletId: Number(Date.now().toString().substring(0, 10)),
+            name: parsedMessage.name || "Testing",
+            ownerId: checkOwnerId,
+            alias: parsedMessage.alias,
+            credit: 0,
+            debit: 0,
+            balance: 0,
+            walletType: "Promo"
+        })
+
+        let createdPrimaryWallet = await db.wallet.create({
+            walletId: Number(Date.now().toString().substring(0, 10)),
+            name: parsedMessage.name || "Testing",
+            ownerId: checkOwnerId,
+            alias: parsedMessage.alias,
+            credit: 0,
+            debit: 0,
+            balance: 0,
+            walletType: "Primary"
+        })
+
+        if (createdWallet.dataValues.type == 'business') {
+
+            let testingPayload = {
+                businessId: `${createdWallet.dataValues.ownerId}`,
+                userId: "2",
+                alias: `${createdWallet.dataValues.alias}`
+            }
+
+            let sqsWalletData = {
+                MessageAttributes: {
+                    "wallet": {
+                        DataType: "String",
+                        StringValue: "Wallet created"
+                    }
+                },
+                QueueUrl: businessPrimaryWalletQueueUrl,
+                MessageBody: JSON.stringify(testingPayload),
+            };
+            let sqsWallet = await sqs.sendMessage(sqsWalletData).promise()
+            console.log("sqsWallet", sqsWallet)
+
+        }
+
+        if (createdWallet.dataValues.type == 'staff') {
+
+            let testingPayload = {
+                staffId: `${createdWallet.dataValues.ownerId}`,
+                userId: "2",
+                alias: `${createdWallet.dataValues.alias}`
+            }
+
+            let sqsWalletData = {
+                MessageAttributes: {
+                    "wallet": {
+                        DataType: "String",
+                        StringValue: "Wallet created"
+                    }
+                },
+                QueueUrl: staffPrimaryWalletQueueUrl,
+                MessageBody: JSON.stringify(testingPayload),
+            };
+            let sqsWallet = await sqs.sendMessage(sqsWalletData).promise()
+            console.log("sqsWallet", sqsWallet)
+        }
+    });
+
+})
+
 
 module.exports = { app };
