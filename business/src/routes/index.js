@@ -13,7 +13,8 @@ const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
 AWS.config.update({ region: 'us-east-1' });
 AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
+//const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
+const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/business-creation-queue"
 
 
 
