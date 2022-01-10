@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
     up: async(queryInterface, Sequelize) => {
-        await queryInterface.createTable('director', {
+        await queryInterface.createTable('directors', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -11,6 +11,56 @@ module.exports = {
             firstName: {
                 type: Sequelize.STRING
             },
+
+            lastName: {
+                type: Sequelize.STRING
+            },
+            middleName: {
+                type: Sequelize.STRING
+            },
+            email: {
+                type: Sequelize.STRING
+            },
+            phone: {
+                type: Sequelize.STRING
+            },
+            dateOfBirth: {
+                type: Sequelize.STRING
+            },
+            gender: {
+                type: Sequelize.STRING
+            },
+            nationality: {
+                type: Sequelize.STRING
+            },
+            state: {
+                type: Sequelize.STRING
+            },
+            lga: {
+                type: Sequelize.STRING
+            },
+            occupation: {
+                type: Sequelize.STRING
+            },
+            address: {
+                type: Sequelize.STRING
+            },
+            idType: {
+                type: Sequelize.STRING
+            },
+            idNumber: {
+                type: Sequelize.STRING
+            },
+            idImage: {
+                type: Sequelize.STRING
+            },
+            passport: {
+                type: Sequelize.STRING
+            },
+            signature: {
+                type: Sequelize.STRING
+            },
+
             businessId: {
                 type: Sequelize.INTEGER,
                 references: {
@@ -29,6 +79,6 @@ module.exports = {
         });
     },
     down: async(queryInterface, Sequelize) => {
-        await queryInterface.dropTable('director');
+        await queryInterface.dropTable('directors');
     }
 };

@@ -3,7 +3,7 @@ const AWS = require('aws-sdk');
 const { body } = require('express-validator');
 const axios = require("axios")
 const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
-const { RegisteredBusinessRegistrationValidation, freelanceBusinessRegistrationValidation } = require("../utils/business-registration-validation")
+const { RegisteredBusinessRegistrationValidation, freelanceBusinessRegistrationValidation, UnregisteredBusinessRegistrationValidation } = require("../utils/business-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
 const db = require("../models/index");
 const { FraudDetector } = require("aws-sdk");
@@ -36,7 +36,7 @@ businessRouter.get(
 
 
             //get all registered businesses
-            const businesses = await db.business.findAll({});
+            const businesses = await db.businesses.findAll({});
 
             res.status(200).send({ message: "Businesses Fetched", statuscode: 200, data: { businesses } });
 
@@ -62,22 +62,22 @@ businessRouter.post(
 
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                throw new NotAuthorisedError()
-            }
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     throw new NotAuthorisedError()
+            // }
             //console.log("req", req.body)
 
 
             const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
 
             //check if business already exist
-            const existingBusiness = await db.business.findOne({ where: { name } });
+            const existingBusiness = await db.businesses.findOne({ where: { name } });
 
             if (existingBusiness) {
                 throw new BadRequestError(`Business name ${name} already in use`);
@@ -236,7 +236,7 @@ businessRouter.post(
 
             //let userId = req.user.id
             //create business
-            let createdBusiness = await db.business.create({
+            let createdBusiness = await db.businesses.create({
                 name,
                 tradingName,
                 businessType,
@@ -245,7 +245,7 @@ businessRouter.post(
                 address,
                 country,
                 tin,
-                userId: data.user.id,
+                userId, //: data.user.id || userId,
                 rcNumber,
                 state,
                 utilityBill: imageData.utilityBill,
@@ -259,16 +259,20 @@ businessRouter.post(
             })
 
             //create business alias
-            const businesAlias = await db.alias.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
+            //data.user.id ||
+            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: 1 })
 
             //create business owners
             let partners = [];
-            console.log("businessOwners", businessOwners)
+
             if (businessOwners.length) {
                 for (let businessOwner of businessOwners) {
                     let busnessOwnerDetails = {
                         firstName: businessOwner.firstName,
                         lastName: businessOwner.lastName,
+                        middleName: businessOwner.lastName || "",
+                        dateOfBirth: businessOwner.dateOfBirth || "",
+                        phone: businessOwner.phone || "",
                         email: businessOwner.email,
                         idType: businessOwner.idType,
                         idTypeImage: "",
@@ -297,7 +301,7 @@ businessRouter.post(
 
 
 
-                    let createdBusinessOwner = await db.businessOwner.create(busnessOwnerDetails)
+                    let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
                     partners.push(createdBusinessOwner)
                 }
 
@@ -339,7 +343,10 @@ businessRouter.post(
 
             returnData.alias = businesAlias
             returnData.owner = data.user
-            returnData.partners = partners
+            returnData.businessOwners = partners
+
+            let bussinessWithAllDetails = await db.businesses.findOne({ where: { id: createdBusiness.id }, include: [{ model: "aliases", as: "alias" }, { model: "businessOwners", as: "businessOwners" }, { model: "directors", as: "directors" }, { model: "secretaries", as: "secretaries" }, { model: "witnesses", as: "witnesses" }] })
+            console.log("data with include", bussinessWithAllDetails)
 
             res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: returnData } });
 
@@ -380,7 +387,7 @@ businessRouter.post(
             const { name, tradingName, businessType, description, yearOfOperation, address, country, state, alias, utilityBillType, businessOwners } = req.body
 
             //check if business already exist
-            const existingBusiness = await db.business.findOne({ where: { name } });
+            const existingBusiness = await db.businesses.findOne({ where: { name } });
 
             if (existingBusiness) {
                 throw new BadRequestError(`Business name ${name} already in use`);
@@ -447,7 +454,7 @@ businessRouter.post(
 
             //let userId = req.user.id
             //create business
-            let createdBusiness = await db.business.create({
+            let createdBusiness = await db.businesses.create({
                 name,
                 tradingName,
                 businessType,
@@ -470,7 +477,7 @@ businessRouter.post(
             })
 
             //create business alias
-            const businesAlias = await db.alias.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
+            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
 
             //create business owners
             let partners = [];
@@ -594,7 +601,7 @@ businessRouter.post(
             const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
 
             //check if business already exist
-            const existingBusiness = await db.business.findOne({ where: { name } });
+            const existingBusiness = await db.businesses.findOne({ where: { name } });
 
             if (existingBusiness) {
                 throw new BadRequestError(`Business name ${name} already in use`);
@@ -753,7 +760,7 @@ businessRouter.post(
 
             //let userId = req.user.id
             //create business
-            let createdBusiness = await db.business.create({
+            let createdBusiness = await db.businesses.create({
                 name,
                 tradingName,
                 businessType,
@@ -776,7 +783,7 @@ businessRouter.post(
             })
 
             //create business alias
-            const businesAlias = await db.alias.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
+            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
 
             //create business owners
             let partners = [];
@@ -891,7 +898,7 @@ businessRouter.get(
             }
 
             const { userId } = req.params;
-            const business = await db.business.findAll({ where: { userId } });
+            const business = await db.businesses.findAll({ where: { userId } });
             let myBusinesses = [];
             if (business.length > 0) {
                 for (let b of business) {
@@ -932,7 +939,7 @@ businessRouter.get(
             const { alias } = req.params;
 
             //CHECK IF ALIAS ALREADY EXIST
-            const existingAlias = await db.alias.findOne({ where: { name: alias.toUpperCase() } });
+            const existingAlias = await db.aliases.findOne({ where: { name: alias.toUpperCase() } });
             if (existingAlias) {
                 throw new BadRequestError("Business alias already in use please choose another alias")
             }
@@ -1005,7 +1012,7 @@ businessRouter.patch(
 
             const { businessId } = req.params
 
-            const existingBusiness = await db.business.findOne({ where: { businessId } });
+            const existingBusiness = await db.businesses.findOne({ where: { businessId } });
             if (!existingBusiness) {
                 throw new BadRequestError('Invalid business id');
             }

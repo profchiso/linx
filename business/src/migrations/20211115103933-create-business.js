@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
     up: async(queryInterface, Sequelize) => {
-        await queryInterface.createTable('business', {
+        await queryInterface.createTable('businesses', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -14,10 +14,22 @@ module.exports = {
             alias: {
                 type: Sequelize.STRING
             },
+            utilityBillImage: {
+                type: Sequelize.STRING
+            },
+            businessPhoneNumber: {
+                type: Sequelize.STRING
+            },
+            businessEmail: {
+                type: Sequelize.STRING
+            },
             tradingName: {
                 type: Sequelize.STRING
             },
             businessType: {
+                type: Sequelize.STRING
+            },
+            businessSubType: {
                 type: Sequelize.STRING
             },
             description: {
@@ -62,9 +74,44 @@ module.exports = {
             email: {
                 type: Sequelize.STRING
             },
+            headOfficeAddress: {
+                type: Sequelize.STRING
+            },
             businessCategory: {
                 type: Sequelize.STRING
             },
+
+            service: {
+                type: Sequelize.STRING
+            },
+            ownershipType: {
+                type: Sequelize.STRING
+            },
+            prefferedBusinessNameOne: {
+                type: Sequelize.STRING
+            },
+            prefferedBusinessNameTwo: {
+                type: Sequelize.STRING
+            },
+            branchAddress: {
+                type: Sequelize.STRING
+            },
+            branchCountry: {
+                type: Sequelize.STRING
+            },
+            branchState: {
+                type: Sequelize.STRING
+            },
+            branchLGA: {
+                type: Sequelize.STRING
+            },
+            companyObjectives: {
+                type: Sequelize.STRING
+            },
+            companyShareCapital: {
+                type: Sequelize.STRING
+            },
+
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
@@ -76,6 +123,6 @@ module.exports = {
         });
     },
     down: async(queryInterface, Sequelize) => {
-        await queryInterface.dropTable('business');
+        await queryInterface.dropTable('businesses');
     }
 };
