@@ -54,7 +54,7 @@ businessRouter.post(
     '/api/v1/business/registered',
     RegisteredBusinessRegistrationValidation,
     upload.fields([
-        { name: "utilityBill", maxCount: 1 },
+        { name: "utilityBillImage", maxCount: 1 },
         { name: "registrationCertificate", maxCount: 1 },
         { name: "otherDocuments", maxCount: 1 },
         { name: "tinCertificate", maxCount: 1 },
@@ -86,7 +86,7 @@ businessRouter.post(
 
             // initialize file upload fields
             let imageData = {
-                utilityBill: "",
+                utilityBillImage: "",
                 registrationCertificate: "",
                 otherDocuments: "",
                 tinCertificate: ""
@@ -94,10 +94,10 @@ businessRouter.post(
 
             //upload images
             //upload images in base64 string
-            if (req.body.utilityBill) {
+            if (req.body.utilityBillImage) {
 
                 await cloudinary.uploader.upload(
-                    req.body.utilityBill, {
+                    req.body.utilityBillImage, {
                         public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
                     },
                     (error, result) => {
@@ -106,7 +106,7 @@ businessRouter.post(
                         if (error) {
                             console.log("Error uploading utilityBill to cloudinary");
                         } else {
-                            imageData.utilityBill = result.secure_url;
+                            imageData.utilityBillImage = result.secure_url;
 
                         }
 
@@ -165,10 +165,10 @@ businessRouter.post(
 
             //upload images in  file format
             if (req.files) {
-                if (req.files.utilityBill) {
+                if (req.files.utilityBillImage) {
 
                     await cloudinary.uploader.upload(
-                        req.files.utilityBill[0].path, {
+                        req.files.utilityBillImage[0].path, {
                             public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
                         },
                         (error, result) => {
@@ -177,7 +177,7 @@ businessRouter.post(
                             if (error) {
                                 console.log("Error uploading utilityBill to cloudinary");
                             } else {
-                                imageData.utilityBill = result.secure_url;
+                                imageData.utilityBillImage = result.secure_url;
 
                             }
 
@@ -249,13 +249,14 @@ businessRouter.post(
                 userId: data.user.id || userId,
                 rcNumber,
                 state,
-                utilityBill: imageData.utilityBill,
+                utilityBillImage: imageData.utilityBillImage,
                 registrationCertificate: imageData.registrationCertificate,
                 otherDocuments: imageData.otherDocuments,
                 tinCertificate: imageData.tinCertificate,
                 alias: alias.toUpperCase(),
                 utilityBillType,
-                email: req.body.email || data.user.email,
+                email: req.body.businessEmail || data.user.email,
+                businessEmail: req.body.businessEmail || data.user.email,
                 businessCategory: "Registered"
             })
 
@@ -344,14 +345,14 @@ businessRouter.post(
 
 
 
-            returnData.alias = businesAlias
+            returnData.alias = businesAlias.dataValues
             returnData.owner = data.user
             returnData.businessOwners = partners
 
             //let bussinessWithAllDetails = await db.businesses.findOne({ where: { id: createdBusiness.id }, include: [{ model: "aliases", as: "alias" }, { model: "businessOwners", as: "businessOwners" }, { model: "directors", as: "directors" }, { model: "secretaries", as: "secretaries" }, { model: "witnesses", as: "witnesses" }] })
             //console.log("data with include", bussinessWithAllDetails)
 
-            res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: returnData } });
+            res.status(201).send({ message: "Registered Business Created", statuscode: 201, type: "success", data: { business: returnData } });
 
         } catch (error) {
             console.log(error)
@@ -369,7 +370,7 @@ businessRouter.post(
     '/api/v1/business/freelance',
     freelanceBusinessRegistrationValidation,
     upload.fields([
-        { name: "utilityBill", maxCount: 1 },
+        { name: "utilityBillImage", maxCount: 1 },
     ]),
     async(req, res) => {
 
@@ -387,30 +388,27 @@ businessRouter.post(
             //console.log("req", req.body)
 
 
-            const { name, tradingName, businessType, description, yearOfOperation, address, country, state, alias, utilityBillType, businessOwners } = req.body
+            const { tradingName, alias, businessType, description, yearOfOperation, address, country, state, businessEmail, utilityBillType, businessOwners } = req.body
 
             //check if business already exist
-            const existingBusiness = await db.businesses.findOne({ where: { name } });
+            const existingBusiness = await db.businesses.findOne({ where: { tradingName } });
 
             if (existingBusiness) {
-                throw new BadRequestError(`Business name ${name} already in use`);
+                throw new BadRequestError(`Trading name ${tradingName} already in use`);
             }
 
             // initialize file upload fields
             let imageData = {
-                utilityBill: "",
-                registrationCertificate: "",
-                otherDocuments: "",
-                tinCertificate: ""
+                utilityBillImage: "",
             }
 
             //upload images
             //upload images in base64 string
-            if (req.body.utilityBill) {
+            if (req.body.utilityBillImage) {
 
                 await cloudinary.uploader.upload(
-                    req.body.utilityBill, {
-                        public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                    req.body.utilityBillImage, {
+                        public_id: `utility-bill/${tradingName.split(" ").join("-")}-utility-bill`,
                     },
                     (error, result) => {
 
@@ -418,7 +416,7 @@ businessRouter.post(
                         if (error) {
                             console.log("Error uploading utilityBill to cloudinary");
                         } else {
-                            imageData.utilityBill = result.secure_url;
+                            imageData.utilityBillImage = result.secure_url;
 
                         }
 
@@ -433,11 +431,11 @@ businessRouter.post(
 
             //upload images in  file format
             if (req.files) {
-                if (req.files.utilityBill) {
+                if (req.files.utilityBillImage) {
 
                     await cloudinary.uploader.upload(
-                        req.files.utilityBill[0].path, {
-                            public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                        req.files.utilityBillImage[0].path, {
+                            public_id: `utility-bill/${tradingName.split(" ").join("-")}-utility-bill`,
                         },
                         (error, result) => {
 
@@ -445,7 +443,7 @@ businessRouter.post(
                             if (error) {
                                 console.log("Error uploading utilityBill to cloudinary");
                             } else {
-                                imageData.utilityBill = result.secure_url;
+                                imageData.utilityBillImage = result.secure_url;
 
                             }
 
@@ -457,34 +455,29 @@ businessRouter.post(
 
             //let userId = req.user.id
             //create business
-            let createdBusiness = await db.businesses.create({
-                name,
+            let createdFreelanceBusiness = await db.businesses.create({
                 tradingName,
                 businessType,
                 description,
                 yearOfOperation,
                 address,
                 country,
-                tin: "",
                 userId: data.user.id,
-                rcNumber: "",
                 state,
-                utilityBill: imageData.utilityBill,
-                registrationCertificate: imageData.registrationCertificate,
-                otherDocuments: imageData.otherDocuments,
-                tinCertificate: imageData.tinCertificate,
+                utilityBillImage: imageData.utilityBillImage,
                 alias: alias.toUpperCase(),
                 utilityBillType,
-                email: req.body.email || data.user.email,
+                email: businessEmail || data.user.email,
+                businessEmail: businessEmail || data.user.email,
                 businessCategory: "Freelance"
             })
 
             //create business alias
-            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
+            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdFreelanceBusiness.id, userId: data.user.id })
 
             //create business owners
             let partners = [];
-            console.log("businessOwners", businessOwners)
+
             if (businessOwners.length) {
                 for (let businessOwner of businessOwners) {
                     let busnessOwnerDetails = {
@@ -493,7 +486,7 @@ businessRouter.post(
                         email: businessOwner.email,
                         idType: businessOwner.idType,
                         idTypeImage: "",
-                        businessId: createdBusiness.id
+                        businessId: createdFreelanceBusiness.id
                     }
 
                     if (businessOwner.idTypeImage) {
@@ -524,7 +517,7 @@ businessRouter.post(
 
             }
 
-            let returnData = {...createdBusiness.dataValues }
+            let returnData = {...createdFreelanceBusiness.dataValues }
 
             // let businessCreatedPayload = {
             //     businesId: `${createdBusiness.id}`,
@@ -558,11 +551,11 @@ businessRouter.post(
 
 
 
-            returnData.alias = businesAlias
+            returnData.alias = businesAlias.dataValues
             returnData.owner = data.user
-            returnData.partners = partners
+            returnData.businessOwners = partners
 
-            res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: returnData } });
+            res.status(201).send({ message: " Freelance Business Created", statuscode: 201, type: "success", data: { business: returnData } });
 
         } catch (error) {
             console.log(error)
@@ -580,7 +573,7 @@ businessRouter.post(
     '/api/v1/business/unregistered',
     UnregisteredBusinessRegistrationValidation,
     upload.fields([
-        { name: "utilityBill", maxCount: 1 },
+        { name: " utilityBillImage", maxCount: 1 },
         { name: "registrationCertificate", maxCount: 1 },
         { name: "otherDocuments", maxCount: 1 },
         { name: "tinCertificate", maxCount: 1 },
@@ -601,18 +594,18 @@ businessRouter.post(
             //console.log("req", req.body)
 
 
-            const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
+            const { name, tradingName, businessType, description, yearOfOperation, address, country, state, alias, utilityBillType, businessOwners } = req.body
 
             //check if business already exist
-            const existingBusiness = await db.businesses.findOne({ where: { name } });
+            const existingBusiness = await db.businesses.findOne({ where: { tradingName } });
 
             if (existingBusiness) {
-                throw new BadRequestError(`Business name ${name} already in use`);
+                throw new BadRequestError(`Business trading name ${tradingName} already in use`);
             }
 
             // initialize file upload fields
             let imageData = {
-                utilityBill: "",
+                utilityBillImage: "",
                 registrationCertificate: "",
                 otherDocuments: "",
                 tinCertificate: ""
@@ -623,7 +616,7 @@ businessRouter.post(
             if (req.body.utilityBill) {
 
                 await cloudinary.uploader.upload(
-                    req.body.utilityBill, {
+                    req.body.utilityBillImage, {
                         public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
                     },
                     (error, result) => {
@@ -632,7 +625,7 @@ businessRouter.post(
                         if (error) {
                             console.log("Error uploading utilityBill to cloudinary");
                         } else {
-                            imageData.utilityBill = result.secure_url;
+                            imageData.utilityBillImage = result.secure_url;
 
                         }
 
@@ -775,7 +768,7 @@ businessRouter.post(
                 userId: data.user.id,
                 rcNumber,
                 state,
-                utilityBill: imageData.utilityBill,
+                utilityBillImage: imageData.utilityBillImage,
                 registrationCertificate: imageData.registrationCertificate,
                 otherDocuments: imageData.otherDocuments,
                 tinCertificate: imageData.tinCertificate,

@@ -54,10 +54,7 @@ const RegisteredBusinessRegistrationValidation = [
 
 
 const freelanceBusinessRegistrationValidation = [
-    body("name")
-    .trim()
-    .notEmpty()
-    .withMessage("Business name is required"),
+
     body("tradingName")
     .trim()
     .notEmpty()
@@ -98,11 +95,17 @@ const freelanceBusinessRegistrationValidation = [
 ]
 
 const UnregisteredBusinessRegistrationValidation = [
-    body("name")
+
+    body("tradingName")
     .trim()
     .notEmpty()
-    .withMessage("Business name is required"),
-    body("tradingName")
+    .withMessage("Business trading name is required"),
+    body("alias")
+    .trim()
+    .notEmpty()
+    .withMessage("Business alias is required"),
+
+    body("prefferedBusinessNameOne")
     .trim()
     .notEmpty()
     .withMessage("Business trading name is required"),
@@ -118,6 +121,14 @@ const UnregisteredBusinessRegistrationValidation = [
     .trim()
     .notEmpty()
     .withMessage("Business year of operation is required"),
+    body("businessEmail")
+    .trim()
+    .notEmpty()
+    .withMessage("Business Email is required"),
+    body("businessPhoneNumber")
+    .trim()
+    .notEmpty()
+    .withMessage("Business phone number is required"),
     body("address")
     .trim()
     .notEmpty()
@@ -126,22 +137,10 @@ const UnregisteredBusinessRegistrationValidation = [
     .trim()
     .notEmpty()
     .withMessage("Country of business is required"),
-    body("tin")
-    .trim()
-    .notEmpty()
-    .withMessage("Tax identification number is required"),
-    body("rcNumber")
-    .trim()
-    .notEmpty()
-    .withMessage("Rc number is required"),
     body("state")
     .trim()
     .notEmpty()
-    .withMessage("State is required"),
-    body("alias")
-    .trim()
-    .notEmpty()
-    .withMessage("Business alias is required"),
+    .withMessage("Business state is required"),
     body("utilityBillType")
     .trim()
     .notEmpty()
