@@ -2,9 +2,11 @@ const express = require("express");
 
 const createSecondaryWallet = require("../controllers/createSecondaryWallet");
 const creditOtherWallet = require("../controllers/creditOtherWallet");
+const getWallet = require("../controllers/getWallet");
 
 const walletRouter = express.Router();
 
+walletRouter.get("/api/v1/wallet/:walletId", getWallet);
 walletRouter.post("/api/v1/create-secondary-wallet", createSecondaryWallet);
 walletRouter.post("api/v1/wallet/credit/:walletId/wallet", creditOtherWallet);
 

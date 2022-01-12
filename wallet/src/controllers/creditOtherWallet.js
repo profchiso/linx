@@ -7,10 +7,6 @@ AWS.config.update({ region: "us-east-1" });
 
 // Create an SQS service object
 const sqs = new AWS.SQS({ apiVersion: "2012-11-05" });
-const businessWalletCreditQueue =
-  "https://sqs.us-east-1.amazonaws.com/322544062396/business-wallet-credit-queue";
-const staffWalletCreditQueue =
-  "https://sqs.us-east-1.amazonaws.com/322544062396/staff-wallet-credit-queue";
 
 module.exports = async (req, res) => {
   try {
@@ -46,17 +42,37 @@ module.exports = async (req, res) => {
       throw new Error("recipient wallet cannot be found");
     }
 
-    if (wallet.balance < amount) {
+    if (wallet.dataValues.balance < amount) {
       throw new Error("You don't have enough amount to make this transfer");
     }
 
-    wallet.balance -= amount;
-    let ownersBalance = wallet.balance;
-    recipientWallet.balance += amount;
-    let recipientBalance = recipientWallet.balance;
+    wallet.dataValues.balance -= amount;
+    let ownersBalance = wallet.dataValues.balance;
+    recipientWallet.dataValues.balance += amount;
+    let recipientBalance = recipientWallet.dataValues.balance;
 
-    Promise.all([wallet.save(), recipientWallet.save()]).then(() => {
-      let testingPayload = {
+    // let transaction = await db.transaction.create({
+    //   creditType: "wallet",
+    //   ownersWalletId: walletId,
+    //   recipientWalletId: recipientWalletId,
+    //   amount,
+    //   ownersWalletBalance: ownersBalance,
+    //   recipientWalletBalance: recipientBalance,
+    // });
+
+    Promise.all([
+      db.transaction.create({
+        creditType: "wallet",
+        ownersWalletId: walletId,
+        recipientWalletId: recipientWalletId,
+        amount,
+        ownersWalletBalance: ownersBalance,
+        recipientWalletBalance: recipientBalance,
+      }),
+      wallet.save(),
+      recipientWallet.save(),
+    ]).then(() => {
+      let walletCreditPayload = {
         walletId: walletId,
         recipientId: recipientId,
         amount: amount,
@@ -64,42 +80,21 @@ module.exports = async (req, res) => {
         recipientBalance: recipientBalance,
       };
 
-      let sqsTesting = {
-        MessageAttributes: {
-          walletId: {
-            DataType: "Number",
-            NumberValue: testingPayload.walletId,
-          },
-          recipientId: {
-            DataType: "Number",
-            NumberValue: testingPayload.recipientId,
-          },
-          amount: {
-            DataType: "Number",
-            NumberValue: testingPayload.amount,
-          },
-          ownersBalance: {
-            DataType: "Number",
-            NumberValue: testingPayload.ownersBalance,
-          },
-          recipientBalance: {
-            DataType: "Number",
-            NumberValue: testingPayload.recipientBalance,
-          },
-        },
-        MessageBody: JSON.stringify(testingPayload),
+      let wallletCreditSqs = {
+        MessageBody: JSON.stringify(walletCreditPayload),
         //MessageDeduplicationId: "test",
         //MessageGroupId: "testing",
         QueueUrl:
           recipientType == "business"
-            ? businessWalletCreditQueue
-            : staffWalletCreditQueue,
+            ? process.env.businessWalletCreditQueue
+            : process.env.staffWalletCreditQueue,
       };
-      let sendSqsMessage = sqs.sendMessage(sqsTesting).promise();
+      let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
 
       return res.status(200).send({
         statusCode: 200,
         message: "Recipient wallet successfully credited",
+        data: { wallet },
       });
     });
   } catch (error) {
