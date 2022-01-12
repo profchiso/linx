@@ -11,7 +11,6 @@ exports.sendDataToAWSQueue = async(data, queueURL) => {
             QueueUrl: queueURL
         };
         let sendSqsMessage = await sqs.sendMessage(queuePayload).promise()
-        console.log(sendSqsMessage)
         return sendSqsMessage
 
     } catch (error) {

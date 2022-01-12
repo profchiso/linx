@@ -350,8 +350,19 @@ businessRouter.post(
             returnData.owner = data.user
             returnData.businessOwners = partners
 
-            //let bussinessWithAllDetails = await db.businesses.findOne({ where: { id: createdBusiness.id }, include: [{ model: "aliases", as: "alias" }, { model: "businessOwners", as: "businessOwners" }, { model: "directors", as: "directors" }, { model: "secretaries", as: "secretaries" }, { model: "witnesses", as: "witnesses" }] })
-            //console.log("data with include", bussinessWithAllDetails)
+
+            let awsQueuePayload = {
+                businessId: createdBusiness.id,
+                userId: data.user.id || userId,
+                alias: alias.toUpperCase(),
+                tradingName,
+                name: name || "",
+                email: returnData.email,
+                walletType: "Business"
+            }
+            console.log("queue payload", awsQueuePayload)
+            let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
+            console.log("Business creation queue successfull", queueResponse);
 
             res.status(201).send({ message: "Registered Business Created", statuscode: 201, type: "success", data: { business: returnData } });
 
@@ -520,34 +531,6 @@ businessRouter.post(
 
             let returnData = {...createdFreelanceBusiness.dataValues }
 
-            // let businessCreatedPayload = {
-            //     businesId: `${createdBusiness.id}`,
-            //     userId: `${data.user.id}`
-            // }
-
-            // let businessCreatedMessage = {
-            //     MessageAttributes: {
-            //         "businessId": {
-            //             DataType: "String",
-            //             StringValue: `${createdBusiness.id}`
-            //         },
-            //         "userId": {
-            //             DataType: "String",
-            //             StringValue: `${data.user.id}`
-            //         },
-            //         "alias": {
-            //             DataType: "String",
-            //             StringValue: businesAlias.name
-            //         },
-
-            //     },
-            //     MessageBody: JSON.stringify(businessCreatedPayload),
-            //     //MessageDeduplicationId: "test",
-            //     //MessageGroupId: "testing",
-            //     QueueUrl: queueUrl
-            // };
-            // let sendSqsMessage = await sqs.sendMessage(businessCreatedMessage).promise()
-            // console.log(sendSqsMessage)
 
 
 
@@ -555,6 +538,19 @@ businessRouter.post(
             returnData.alias = businesAlias.dataValues
             returnData.owner = data.user
             returnData.businessOwners = partners
+
+            let awsQueuePayload = {
+                businessId: createdFreelanceBusiness.id,
+                userId: data.user.id || userId,
+                alias: alias.toUpperCase(),
+                tradingName,
+                name: name || "",
+                email: returnData.email,
+                walletType: "Business"
+            }
+            console.log("queue payload", awsQueuePayload)
+            let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
+            console.log("Business creation queue successfull", queueResponse);
 
             res.status(201).send({ message: " Freelance Business Created", statuscode: 201, type: "success", data: { business: returnData } });
 
@@ -719,34 +715,7 @@ businessRouter.post(
 
             let returnData = {...createdBusiness.dataValues }
 
-            // let businessCreatedPayload = {
-            //     businesId: `${createdBusiness.id}`,
-            //     userId: `${data.user.id}`
-            // }
 
-            // let businessCreatedMessage = {
-            //     MessageAttributes: {
-            //         "businessId": {
-            //             DataType: "String",
-            //             StringValue: `${createdBusiness.id}`
-            //         },
-            //         "userId": {
-            //             DataType: "String",
-            //             StringValue: `${data.user.id}`
-            //         },
-            //         "alias": {
-            //             DataType: "String",
-            //             StringValue: businesAlias.name
-            //         },
-
-            //     },
-            //     MessageBody: JSON.stringify(businessCreatedPayload),
-            //     //MessageDeduplicationId: "test",
-            //     //MessageGroupId: "testing",
-            //     QueueUrl: queueUrl
-            // };
-            // let sendSqsMessage = await sqs.sendMessage(businessCreatedMessage).promise()
-            // console.log(sendSqsMessage)
 
 
 
@@ -754,6 +723,19 @@ businessRouter.post(
             returnData.alias = businesAlias
             returnData.owner = data.user
             returnData.partners = partners
+
+            let awsQueuePayload = {
+                businessId: createdUnregisteredBusiness.id,
+                userId: data.user.id || userId,
+                alias: alias.toUpperCase(),
+                tradingName,
+                name: name || "",
+                email: returnData.email,
+                walletType: "Business"
+            }
+            console.log("queue payload", awsQueuePayload)
+            let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
+            console.log("Business creation queue successfull", queueResponse);
 
             res.status(201).send({ message: "Business Created", statuscode: 201, type: "success", data: { business: returnData } });
 
@@ -831,7 +813,7 @@ businessRouter.get(
             //CHECK IF ALIAS ALREADY EXIST
             const existingAlias = await db.aliases.findOne({ where: { name: alias.toUpperCase() } });
             if (existingAlias) {
-                throw new BadRequestError("Business alias already in use please choose another alias")
+                throw new BadRequestError(`Business alias  ${alias} already in use please choose another alias`)
             }
             res.status(200).send({ message: `Business alias ${alias} available`, statuscode: 200, data: { alias } });
 
