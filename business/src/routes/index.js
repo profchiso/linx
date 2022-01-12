@@ -75,7 +75,7 @@ businessRouter.post(
             //console.log("req", req.body)
 
 
-            const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
+            const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, } = req.body
 
             //check if business already exist
             const existingBusiness = await db.businesses.findOne({ where: { name } });
@@ -269,8 +269,8 @@ businessRouter.post(
             //create business owners
             let partners = [];
 
-            if (businessOwners.length) {
-                for (let businessOwner of businessOwners) {
+            if (req.body.businessOwners && req.body.businessOwners.length) {
+                for (let businessOwner of req.body.businessOwners) {
                     let busnessOwnerDetails = {
                         firstName: businessOwner.firstName,
                         lastName: businessOwner.lastName,
@@ -478,8 +478,8 @@ businessRouter.post(
             //create business owners
             let partners = [];
 
-            if (businessOwners.length) {
-                for (let businessOwner of businessOwners) {
+            if (req.body.businessOwners && req.body.businessOwners.length) {
+                for (let businessOwner of req.body.businessOwners) {
                     let busnessOwnerDetails = {
                         firstName: businessOwner.firstName,
                         lastName: businessOwner.lastName,
@@ -511,7 +511,7 @@ businessRouter.post(
 
 
 
-                    let createdBusinessOwner = await db.businessOwner.create(busnessOwnerDetails)
+                    let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
                     partners.push(createdBusinessOwner)
                 }
 
@@ -573,10 +573,7 @@ businessRouter.post(
     '/api/v1/business/unregistered',
     UnregisteredBusinessRegistrationValidation,
     upload.fields([
-        { name: " utilityBillImage", maxCount: 1 },
-        { name: "registrationCertificate", maxCount: 1 },
-        { name: "otherDocuments", maxCount: 1 },
-        { name: "tinCertificate", maxCount: 1 },
+        { name: "utilityBillImage", maxCount: 1 },
     ]),
     async(req, res) => {
 
@@ -594,7 +591,7 @@ businessRouter.post(
             //console.log("req", req.body)
 
 
-            const { name, tradingName, businessType, description, yearOfOperation, address, country, state, alias, utilityBillType, businessOwners } = req.body
+            const { tradingName, alias, businessOwners } = req.body
 
             //check if business already exist
             const existingBusiness = await db.businesses.findOne({ where: { tradingName } });
@@ -606,18 +603,15 @@ businessRouter.post(
             // initialize file upload fields
             let imageData = {
                 utilityBillImage: "",
-                registrationCertificate: "",
-                otherDocuments: "",
-                tinCertificate: ""
             }
 
             //upload images
             //upload images in base64 string
-            if (req.body.utilityBill) {
+            if (req.body.utilityBillImage) {
 
                 await cloudinary.uploader.upload(
                     req.body.utilityBillImage, {
-                        public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                        public_id: `utility-bill/${tradingName.split(" ").join("-")}-utility-bill`,
                     },
                     (error, result) => {
 
@@ -632,62 +626,18 @@ businessRouter.post(
                     }
                 );
             }
-            if (req.body.registrationCertificate) {
-                await cloudinary.uploader.upload(
-                    req.body.registrationCertificate, {
-                        public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
-                    },
-                    (error, result) => {
 
-                        if (error) {
-                            console.log("Error uploading registration Certificate to cloudinary");
-                        } else {
-                            imageData.registrationCertificate = result.secure_url;
 
-                        }
 
-                    }
-                );
-            }
-            if (req.body.otherDocuments) {
-                await cloudinary.uploader.upload(
-                    req.body.otherDocuments, {
-                        public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
-                    },
-                    (error, result) => {
-                        if (error) {
-                            console.log("Error uploading other Documents to cloudinary");
-                        } else {
-                            imageData.otherDocuments = result.secure_url;
-                        }
-                    }
-                );
-            }
 
-            if (req.body.tinCertificate) {
-                await cloudinary.uploader.upload(
-                    req.body.tinCertificate, {
-                        public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
-                    },
-                    (error, result) => {
-
-                        console.log(result)
-                        if (error) {
-                            console.log("Error uploading other Documents to cloudinary");
-                        } else {
-                            imageData.tinCertificate = result.secure_url;
-                        }
-                    }
-                );
-            }
 
 
             //upload images in  file format
             if (req.files) {
-                if (req.files.utilityBill) {
+                if (req.files.utilityBillImage) {
 
                     await cloudinary.uploader.upload(
-                        req.files.utilityBill[0].path, {
+                        req.files.utilityBillImage[0].path, {
                             public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
                         },
                         (error, result) => {
@@ -696,103 +646,46 @@ businessRouter.post(
                             if (error) {
                                 console.log("Error uploading utilityBill to cloudinary");
                             } else {
-                                imageData.utilityBill = result.secure_url;
+                                imageData.utilityBillImage = result.secure_url;
 
                             }
 
                         }
                     );
                 }
-                if (req.files.registrationCertificate) {
-                    await cloudinary.uploader.upload(
-                        req.files.registrationCertificate[0].path, {
-                            public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
-                        },
-                        (error, result) => {
 
-                            if (error) {
-                                console.log("Error uploading registration Certificate to cloudinary");
-                            } else {
-                                imageData.registrationCertificate = result.secure_url;
 
-                            }
-
-                        }
-                    );
-                }
-                if (req.files.otherDocuments) {
-                    await cloudinary.uploader.upload(
-                        req.files.otherDocuments[0].path, {
-                            public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
-                        },
-                        (error, result) => {
-                            if (error) {
-                                console.log("Error uploading other Documents to cloudinary");
-                            } else {
-                                imageData.otherDocuments = result.secure_url;
-                            }
-                        }
-                    );
-                }
-
-                if (req.files.tinCertificate) {
-                    await cloudinary.uploader.upload(
-                        req.files.tinCertificate[0].path, {
-                            public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
-                        },
-                        (error, result) => {
-
-                            console.log(result)
-                            if (error) {
-                                console.log("Error uploading other Documents to cloudinary");
-                            } else {
-                                imageData.tinCertificate = result.secure_url;
-                            }
-                        }
-                    );
-                }
             }
 
 
             //let userId = req.user.id
             //create business
-            let createdBusiness = await db.businesses.create({
-                name,
-                tradingName,
-                businessType,
-                description,
-                yearOfOperation,
-                address,
-                country,
-                tin,
+            const createdUnregisteredBusiness = db.businesses.create({
+                ...req.body,
+                ...req.imageData,
                 userId: data.user.id,
-                rcNumber,
-                state,
-                utilityBillImage: imageData.utilityBillImage,
-                registrationCertificate: imageData.registrationCertificate,
-                otherDocuments: imageData.otherDocuments,
-                tinCertificate: imageData.tinCertificate,
+                businessCategory: "Unregistered",
                 alias: alias.toUpperCase(),
-                utilityBillType,
-                email: req.body.email || data.user.email,
-                businessCategory: "Registered"
+                email: req.body.businessEmail || data.user.email,
+                businessEmail: req.body.businessEmail || data.user.email,
             })
 
+
             //create business alias
-            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
+            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdUnregisteredBusiness.id, userId: data.user.id })
 
             //create business owners
             let partners = [];
-            console.log("businessOwners", businessOwners)
-            if (businessOwners.length) {
-                for (let businessOwner of businessOwners) {
+
+            if (req.body.businessOwners && req.body.businessOwners.length) {
+                for (let businessOwner of req.body.businessOwners) {
                     let busnessOwnerDetails = {
                         firstName: businessOwner.firstName,
                         lastName: businessOwner.lastName,
                         email: businessOwner.email,
                         idType: businessOwner.idType,
                         idTypeImage: "",
-                        businessId: createdBusiness.id
+                        businessId: createdUnregisteredBusiness.id
                     }
 
                     if (businessOwner.idTypeImage) {
@@ -817,7 +710,7 @@ businessRouter.post(
 
 
 
-                    let createdBusinessOwner = await db.businessOwner.create(busnessOwnerDetails)
+                    let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
                     partners.push(createdBusinessOwner)
                 }
 
