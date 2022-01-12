@@ -23,7 +23,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-    res.send("testing staff endpoint")
+    res.send("testing business endpoint")
 })
 app.use(businessRouter);
 app.all('*', async() => {
