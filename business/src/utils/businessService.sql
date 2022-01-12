@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS public.aliases
 (
-    id integer NOT NULL DEFAULT nextval('aliases_id_seq'::regclass),
+    id serial NOT NULL ,
     name character varying(255) COLLATE pg_catalog."default",
     "businessId" integer,
     "userId" integer,
@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS public.aliases
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
+
 
 
 
@@ -46,7 +47,10 @@ CREATE TABLE IF NOT EXISTS public."businessOwners"
 
 CREATE TABLE IF NOT EXISTS public.businesses
 (
-    id integer NOT NULL DEFAULT nextval('businesses_id_seq'::regclass),
+    id serial NOT NULL,
+    "primaryWallet" integer DEFAULT 100000,
+    "secondaryWallet" integer DEFAULT 0,
+    "promoWallet" integer DEFAULT 20000,
     name character varying(255) COLLATE pg_catalog."default",
     alias character varying(255) COLLATE pg_catalog."default",
     "utilityBillImage" character varying(255) COLLATE pg_catalog."default",
@@ -88,7 +92,7 @@ CREATE TABLE IF NOT EXISTS public.businesses
 
 CREATE TABLE IF NOT EXISTS public.directors
 (
-    id integer NOT NULL DEFAULT nextval('directors_id_seq'::regclass),
+    id serial NOT NULL ,
     "firstName" character varying(255) COLLATE pg_catalog."default",
     "lastName" character varying(255) COLLATE pg_catalog."default",
     "middleName" character varying(255) COLLATE pg_catalog."default",
@@ -115,6 +119,7 @@ CREATE TABLE IF NOT EXISTS public.directors
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
+
 
 
 CREATE TABLE IF NOT EXISTS public.secretaries
@@ -148,9 +153,10 @@ CREATE TABLE IF NOT EXISTS public.secretaries
 )
 
 
+
 CREATE TABLE IF NOT EXISTS public.witnesses
 (
-    id integer NOT NULL DEFAULT nextval('witnesses_id_seq'::regclass),
+    id serial NOT NULL ,
     "firstName" character varying(255) COLLATE pg_catalog."default",
     "lastName" character varying(255) COLLATE pg_catalog."default",
     "middleName" character varying(255) COLLATE pg_catalog."default",
@@ -170,4 +176,3 @@ CREATE TABLE IF NOT EXISTS public.witnesses
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
-
