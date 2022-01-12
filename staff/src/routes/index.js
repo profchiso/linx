@@ -23,15 +23,15 @@ staffRouter.get(
     async(req, res) => {
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
 
 
             //get all registered businesses
@@ -59,15 +59,15 @@ staffRouter.post(
 
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
 
 
 
@@ -246,15 +246,15 @@ staffRouter.get(
 
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
 
             const { staffId } = req.params;
 

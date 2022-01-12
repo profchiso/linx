@@ -5,6 +5,7 @@ const axios = require("axios")
 const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
 const { RegisteredBusinessRegistrationValidation, freelanceBusinessRegistrationValidation, UnregisteredBusinessRegistrationValidation } = require("../utils/business-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
+const { sendDataToAWSQueue } = require("../utils/sendDataToQueue")
 const db = require("../models/index");
 const { FraudDetector } = require("aws-sdk");
 const businessRouter = express.Router();
@@ -956,55 +957,16 @@ businessRouter.post("/api/v1/business/upload", upload.single("image"), async(req
 })
 
 businessRouter.post("/api/v1/business/sqs-test", async(req, res) => {
-    console.log("posting data")
-    let testingPayload = {
-        businessId: "1",
-        userId: "2",
+    console.log("posting data to queue", queueUrl, " from business")
+    let awsQueuePayload = {
+        businessId: 1,
+        userId: 2,
         alias: "TEST ALIAS",
         name: "LinX"
     }
+    let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
 
-    let sqsTesting = {
-        MessageAttributes: {
-            "businessId": {
-                DataType: "String",
-                StringValue: "1"
-            },
-            "userId": {
-                DataType: "String",
-                StringValue: "2"
-            },
-            "alias": {
-                DataType: "String",
-                StringValue: "TEST ALIAS"
-            },
-
-        },
-        MessageBody: JSON.stringify(testingPayload),
-        //MessageDeduplicationId: "test",
-        //MessageGroupId: "testing",
-        QueueUrl: queueUrl
-    };
-    let sendSqsMessage = await sqs.sendMessage(sqsTesting).promise()
-    console.log(sendSqsMessage)
-    res.status(200).json({ data: sendSqsMessage })
-        // let batchid= date.now()
-        // for(let item of req.body.items){
-
-
-    //     let record={
-    //         client:req.body.client,
-    //         paymentMethod:req.body.paymentMethod,
-    //         description:item.description,
-    //         cost: item.cost,
-    //         quntity:item.quqntity,
-    //         batchid
-    //     }
-
-    //     let createdItemRecord = await db.invoice.create(record)
-    // }
-
-
+    res.status(200).json({ data: queueResponse })
 })
 
 

@@ -8,6 +8,18 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
+            primaryWallet: {
+                type: Sequelize.INTEGER,
+                defaultValue: 100000,
+            },
+            secondaryWallet: {
+                type: Sequelize.INTEGER,
+                defaultValue: 0,
+            },
+            promoWallet: {
+                type: Sequelize.INTEGER,
+                defaultValue: 20000,
+            },
             name: {
                 type: Sequelize.STRING
             },

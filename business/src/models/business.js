@@ -47,6 +47,9 @@ module.exports = (sequelize, DataTypes) => {
         branchLGA: DataTypes.STRING,
         companyObjectives: DataTypes.STRING,
         companyShareCapital: DataTypes.STRING,
+        primaryWallet: DataTypes.INTEGER,
+        secondaryWallet: DataTypes.INTEGER,
+        promoWallet: DataTypes.INTEGER,
 
     }, {
         sequelize,
