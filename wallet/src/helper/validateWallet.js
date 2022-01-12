@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require("@hapi/joi");
 
 // validate wallet data
 module.exports.validate = function validate(req) {
@@ -10,6 +10,17 @@ module.exports.validate = function validate(req) {
     balance: Joi.string(),
     alias: Joi.string(),
     walletType: Joi.string(),
+  });
+
+  return schema.validate(req);
+};
+
+// validate wallet transaction data
+module.exports.validateWalletCreditData = function validate(req) {
+  const schema = Joi.object({
+    recipientWalletId: Joi.number().required(),
+    amount: Joi.number().required(),
+    recipientType: Joi.string().required(),
   });
 
   return schema.validate(req);
