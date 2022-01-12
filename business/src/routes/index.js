@@ -1,21 +1,13 @@
 const express = require("express");
-const AWS = require('aws-sdk');
-const { body } = require('express-validator');
 const axios = require("axios")
 const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
 const { RegisteredBusinessRegistrationValidation, freelanceBusinessRegistrationValidation, UnregisteredBusinessRegistrationValidation } = require("../utils/business-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
 const { sendDataToAWSQueue } = require("../utils/sendDataToQueue")
 const db = require("../models/index");
-const { FraudDetector } = require("aws-sdk");
 const businessRouter = express.Router();
-const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
-    // Configure the region 
-AWS.config.update({ region: 'us-east-1' });
-AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
-const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-//const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
-const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/business-creation-queue"
+const AUTH_URL = process.env.AUTH_URL
+const queueUrl = process.env.BUSINESS_CREATION_QUEUE
 
 
 
@@ -314,38 +306,6 @@ businessRouter.post(
 
             let returnData = {...createdBusiness.dataValues }
 
-            // let businessCreatedPayload = {
-            //     businesId: `${createdBusiness.id}`,
-            //     userId: `${data.user.id}`
-            // }
-
-            // let businessCreatedMessage = {
-            //     MessageAttributes: {
-            //         "businessId": {
-            //             DataType: "String",
-            //             StringValue: `${createdBusiness.id}`
-            //         },
-            //         "userId": {
-            //             DataType: "String",
-            //             StringValue: `${data.user.id}`
-            //         },
-            //         "alias": {
-            //             DataType: "String",
-            //             StringValue: businesAlias.name
-            //         },
-
-            //     },
-            //     MessageBody: JSON.stringify(businessCreatedPayload),
-            //     //MessageDeduplicationId: "test",
-            //     //MessageGroupId: "testing",
-            //     QueueUrl: queueUrl
-            // };
-            // let sendSqsMessage = await sqs.sendMessage(businessCreatedMessage).promise()
-            // console.log(sendSqsMessage)
-
-
-
-
             returnData.alias = businesAlias.dataValues
             returnData.owner = data.user
             returnData.businessOwners = partners
@@ -356,7 +316,7 @@ businessRouter.post(
                 userId: data.user.id || userId,
                 alias: alias.toUpperCase(),
                 tradingName,
-                name: name || "",
+                name: tradingName || "",
                 email: returnData.email,
                 walletType: "Business"
             }
@@ -544,7 +504,7 @@ businessRouter.post(
                 userId: data.user.id || userId,
                 alias: alias.toUpperCase(),
                 tradingName,
-                name: name || "",
+                name: tradingName || "",
                 email: returnData.email,
                 walletType: "Business"
             }
@@ -729,7 +689,7 @@ businessRouter.post(
                 userId: data.user.id || userId,
                 alias: alias.toUpperCase(),
                 tradingName,
-                name: name || "",
+                name: tradingName || "",
                 email: returnData.email,
                 walletType: "Business"
             }
