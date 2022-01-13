@@ -22,7 +22,6 @@ module.exports = (sequelize, DataTypes) => {
         deduction: DataTypes.INTEGER,
         totalPayable: DataTypes.INTEGER,
         paymentAccountType: DataTypes.INTEGER,
-
         staffId: DataTypes.INTEGER,
         businessPaymentWallet: DataTypes.INTEGER,
         staffWallet: DataTypes.INTEGER,

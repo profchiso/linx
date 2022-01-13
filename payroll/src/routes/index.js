@@ -1,5 +1,6 @@
 const express = require("express");
 const AWS = require('aws-sdk');
+const { uuid } = require('uuidv4')
 const { body } = require('express-validator');
 const axios = require("axios")
 const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
@@ -64,22 +65,26 @@ payrallRouter.post(
             //     throw new NotAuthorisedError()
             // }
 
-
+            let batchId = uuid()
 
             let createdPayrolls = []
             const { payroll } = req.body
             for (let pay of payroll) {
 
                 let createdPayroll = await db.payroll.create({
+                    businessId: pay.businessId,
+                    businessTradingName: pay.businessTradingName,
                     fullName: pay.fullName,
                     salary: pay.salary,
-                    bonuses: pay.bonuses,
-                    deductions: pay.deductions,
+                    bonus: pay.bonus,
+                    deduction: pay.deduction,
                     totalPayable: pay.totalPayable,
-                    paymentChannel: pay.paymentChannel,
+                    paymentAccountType: pay.paymentAccountType,
                     staffId: pay.staffId,
-                    businessId: pay.businessId,
-                    staffStatus: pay.status,
+                    businessPaymentWallet: pay.businessPaymentWallet,
+                    staffWallet: pay.staffWallet,
+                    transactionType: pay.transactionType,
+                    batchId
 
                 })
 
@@ -91,7 +96,7 @@ payrallRouter.post(
                 createdPayrolls.push(returnData)
 
             }
-            res.status(201).send({ message: `${createdPayrolls.length}  staff from  buiness with id of ${createdPayrolls[0].businessId}`, statuscode: 201, type: "success", data: { payrolls: createdPayrolls } });
+            res.status(201).send({ message: `${createdPayrolls.length}  staff from  buiness with trading name of ${createdPayrolls[0].businessTradingName}`, statuscode: 201, type: "success", data: { payrolls: createdPayrolls } });
 
         } catch (error) {
             console.log(error)
