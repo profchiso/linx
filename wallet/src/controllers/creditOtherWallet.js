@@ -63,28 +63,28 @@ module.exports = async (req, res) => {
     recipientWallet.dataValues.balance += amount;
     let recipientBalance = recipientWallet.dataValues.balance;
 
-    const notifyWalletDebited = async () => {
+    const notifyWalletDebited = () => {
       // transport object
-      const mailOptions = {
+      const mailOptionsForDebitAlert = {
         to: walletOwnerEmail,
         from: process.env.SENDER_EMAIL,
         subject: "Debit Alert",
         html: `<p>The amount of ${amount} has been transferred from your wallet to the wallet with the id of ${recipientWalletId}</p>`,
       };
 
-      await sendMailWithSendGrid(mailOptions);
+      sendMailWithSendGrid(mailOptionsForDebitAlert);
     };
 
-    const notifyWalletCredited = async () => {
+    const notifyWalletCredited = () => {
       // transport object
-      const mailOptions = {
+      const mailOptionsForCreditAlert = {
         to: recipientEmail,
         from: process.env.SENDER_EMAIL,
         subject: "Credit Alert",
         html: `<p>The amount of ${amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
       };
 
-      await sendMailWithSendGrid(mailOptions);
+      sendMailWithSendGrid(mailOptionsForCreditAlert);
     };
 
     Promise.all([
