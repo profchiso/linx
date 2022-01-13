@@ -7,12 +7,12 @@ const { staffRegistrationValidation } = require("../utils/staff-registration-val
 const { upload, cloudinary } = require("../utils/imageProcessing")
 const db = require("../models/index")
 const staffRouter = express.Router();
-const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
+const AUTH_URL = process.env.AUTH_URL
     // Configure the region 
 AWS.config.update({ region: 'us-east-1' });
 AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
+const queueUrl = process.env.STAFF_CREATION_QUEUE;
 
 
 
@@ -23,15 +23,15 @@ staffRouter.get(
     async(req, res) => {
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
 
 
             //get all registered businesses
@@ -59,27 +59,25 @@ staffRouter.post(
 
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
 
 
 
-            const { firstName, lastName, email, phoneNumber, dataOfBirth, profilePix, address, country, state, lga, bankName, accountName, accountNumber, role, employmentType, businessId, paymentAccount } = req.body
+            const { firstName, lastName, email, phoneNumber, dataOfBirth, address, country, state, lga, bankName, accountName, accountNumber, role, employmentType, businessId, paymentAccount } = req.body
 
 
 
             // initialize file upload fields
             let imageData = {
                 profilePix: "",
-
-
             }
 
             //upload images
@@ -157,36 +155,18 @@ staffRouter.post(
 
             let returnData = {...createdStaff.dataValues }
 
-
-            // let businessCreatedPayload = {
-            //     businesId: `${createdBusiness.id}`,
-            //     userId: `${data.user.id}`
-            // }
-
-            // let businessCreatedMessage = {
-            //     MessageAttributes: {
-            //         "businessId": {
-            //             DataType: "String",
-            //             StringValue: `${createdBusiness.id}`
-            //         },
-            //         "userId": {
-            //             DataType: "String",
-            //             StringValue: `${data.user.id}`
-            //         },
-            //         "alias": {
-            //             DataType: "String",
-            //             StringValue: businesAlias.name
-            //         },
-
-            //     },
-            //     MessageBody: JSON.stringify(businessCreatedPayload),
-            //     //MessageDeduplicationId: "test",
-            //     //MessageGroupId: "testing",
-            //     QueueUrl: queueUrl
-            // };
-            // let sendSqsMessage = await sqs.sendMessage(businessCreatedMessage).promise()
-            // console.log(sendSqsMessage)
-
+            let awsQueuePayload = {
+                staffId: createdStaff.id,
+                userId: data.user.id,
+                businessId,
+                phoneNumber,
+                name: `${firstName} ${lastName}`,
+                email: email,
+                walletType: "Staff"
+            }
+            console.log("queue payload", awsQueuePayload)
+            let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
+            console.log("staff creation queue successfull", queueResponse);
 
             res.status(201).send({ message: "Staff Created", statuscode: 201, type: "success", data: { staff: returnData } });
 
@@ -207,15 +187,15 @@ staffRouter.get(
     async(req, res) => {
         //authenticate user
         try {
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
 
             const { businessId } = req.params;
             const staff = await db.staff.findAll({ where: { businessId } });
@@ -246,15 +226,15 @@ staffRouter.get(
 
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
 
             const { staffId } = req.params;
 
@@ -280,15 +260,15 @@ staffRouter.patch(
 
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
 
             const { staffId } = req.params;
 
@@ -313,15 +293,15 @@ staffRouter.delete(
 
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                throw new NotAuthorisedError()
+            }
 
             const { staffId } = req.params
 
