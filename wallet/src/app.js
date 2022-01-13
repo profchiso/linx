@@ -119,6 +119,18 @@ cronJob.schedule("*/1 * * * *", () => {
           .sendMessage(businessSqsWalletData)
           .promise();
       }
+      let deleteParams = {
+        QueueUrl: businessCreationQueueUrl,
+        ReceiptHandle: data.Messages[0].ReceiptHandle,
+      };
+
+      sqs.deleteMessage(deleteParams, function (err, data) {
+        if (err) {
+          console.log("Delete Error", err);
+        } else {
+          console.log("Message Deleted", data);
+        }
+      });
     }
   });
 });
@@ -177,6 +189,19 @@ cronJob.schedule("*/2 * * * *", () => {
         let staffSqsWallet = await sqs
           .sendMessage(staffSqsWalletData)
           .promise();
+
+        let deleteParams = {
+          QueueUrl: staffCreationQueueUrl,
+          ReceiptHandle: data.Messages[0].ReceiptHandle,
+        };
+
+        sqs.deleteMessage(deleteParams, function (err, data) {
+          if (err) {
+            console.log("Delete Error", err);
+          } else {
+            console.log("Message Deleted", data);
+          }
+        });
       }
     }
   });
