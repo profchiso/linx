@@ -79,7 +79,7 @@ module.exports = async (req, res) => {
     ]).then(() => {
       let walletCreditPayload = {
         walletId: walletId,
-        recipientId: recipientId,
+        recipientId: recipientWalletId,
         amount: amount,
         ownersBalance: ownersBalance,
         recipientBalance: recipientBalance,
