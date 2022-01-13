@@ -36,6 +36,10 @@ module.exports = {
             // paymentWallet: {
             //     type: Sequelize.INTEGER
             // },
+            batchId: {
+                type: Sequelize.STRING,
+
+            },
             staffId: {
                 type: Sequelize.INTEGER
             },
@@ -56,6 +60,7 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.DATE
             }
+
         });
     },
     down: async(queryInterface, Sequelize) => {
