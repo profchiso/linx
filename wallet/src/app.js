@@ -23,7 +23,7 @@ const businessCreationQueueUrl =
 const staffCreationQueueUrl =
   "https://sqs.us-east-1.amazonaws.com/322544062396/staff-creation-queue";
 const businessPrimaryWalletQueueUrl =
-  "https://sqs.us-east-1.amazonaws.com/322544062396/business-primary-wallet-creation-queue1";
+  "https://sqs.us-east-1.amazonaws.com/322544062396/business-primary-wallet-creation-queue";
 const staffPrimaryWalletQueueUrl =
   "https://sqs.us-east-1.amazonaws.com/322544062396/staff-primary-wallet-creation-queue";
 
