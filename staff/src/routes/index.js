@@ -1,5 +1,4 @@
 const express = require("express");
-const AWS = require('aws-sdk');
 const { body } = require('express-validator');
 const axios = require("axios")
 const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
@@ -8,14 +7,7 @@ const { upload, cloudinary } = require("../utils/imageProcessing")
 const db = require("../models/index")
 const staffRouter = express.Router();
 const AUTH_URL = process.env.AUTH_URL
-    // Configure the region 
-AWS.config.update({ region: 'us-east-1' });
-AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
-const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 const queueUrl = process.env.STAFF_CREATION_QUEUE;
-
-
-
 
 //GET ALL STAFF
 staffRouter.get(
