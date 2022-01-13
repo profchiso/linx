@@ -1,5 +1,5 @@
 const express = require("express");
-require("dotenv").config();
+//require("dotenv").config();
 const cronJob = require("node-cron");
 
 const cors = require("cors");
@@ -8,7 +8,7 @@ require("express-async-errors");
 
 const cookieSession = require("cookie-session");
 const { errorHandler, NotFoundError } = require("@bc_tickets/common");
-const db = require("../src/models/index");
+const db = require("./models/index");
 const AWS = require("aws-sdk");
 const { sendMailWithSendGrid } = require("./helper/emailTransport");
 // Configure the region
@@ -18,12 +18,25 @@ AWS.config.update({ region: "us-east-1" });
 // Create an SQS service object
 const sqs = new AWS.SQS({ apiVersion: "2012-11-05" });
 
+const businessCreationQueueUrl =
+  "https://sqs.us-east-1.amazonaws.com/322544062396/business-creation-queue";
+const staffCreationQueueUrl =
+  "https://sqs.us-east-1.amazonaws.com/322544062396/staff-creation-queue";
+const businessPrimaryWalletQueueUrl =
+  "https://sqs.us-east-1.amazonaws.com/322544062396/business-primary-wallet-creation-queue1";
+const staffPrimaryWalletQueueUrl =
+  "https://sqs.us-east-1.amazonaws.com/322544062396/staff-primary-wallet-creation-queue";
+const businessWalletCreditQueue =
+  "https://sqs.us-east-1.amazonaws.com/322544062396/business-wallet-credit-queue";
+const staffWalletCreditQueue =
+  "https://sqs.us-east-1.amazonaws.com/322544062396/staff-wallet-credit-queue";
+
 let businessParams = {
-  QueueUrl: process.env.businessCreationQueueUrl,
+  QueueUrl: businessCreationQueueUrl,
 };
 
 let staffParams = {
-  QueueUrl: process.env.staffCreationQueueUrl,
+  QueueUrl: staffCreationQueueUrl,
 };
 
 const walletRouter = require("./routes/wallet");
@@ -56,9 +69,13 @@ cronJob.schedule("*/1 * * * *", () => {
   sqs.receiveMessage(businessParams, async function (err, data) {
     if (err) throw new Error(err.message);
 
+    if (!data.Messages) {
+      return "There is no message in the queue";
+    }
+
     let parsedData = JSON.parse(data.Messages[0].Body);
 
-    console.log(parsedData);
+    // console.log(parsedData);
 
     let checkOwnerId = Number(parsedData.businessId);
 
@@ -97,19 +114,27 @@ cronJob.schedule("*/1 * * * *", () => {
     };
 
     let businessSqsWalletData = {
-      QueueUrl: process.env.businessPrimaryWalletQueueUrl,
+      QueueUrl: businessPrimaryWalletQueueUrl,
       MessageBody: JSON.stringify(businessWalletPayload),
     };
     let businessSqsWallet = await sqs
       .sendMessage(businessSqsWalletData)
       .promise();
   });
+});
 
+cronJob.schedule("*/2 * * * *", () => {
   // Staff wallet creation
   sqs.receiveMessage(staffParams, async function (err, data) {
     if (err) throw new Error(err.message);
 
+    if (!data.Messages) {
+      return "There is no message in the queue";
+    }
+
     let parsedData = JSON.parse(data.Messages[0].Body);
+
+    //console.log(parsedData);
 
     let checkBusinessOwnerId = Number(parsedData.businessId);
 
@@ -144,7 +169,7 @@ cronJob.schedule("*/1 * * * *", () => {
     };
 
     let staffSqsWalletData = {
-      QueueUrl: process.env.staffPrimaryWalletQueueUrl,
+      QueueUrl: staffPrimaryWalletQueueUrl,
       MessageBody: JSON.stringify(staffWalletPayload),
     };
     let staffSqsWallet = await sqs.sendMessage(staffSqsWalletData).promise();
