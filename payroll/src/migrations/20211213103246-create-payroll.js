@@ -14,7 +14,7 @@ module.exports = {
             businessTradingName: {
                 type: Sequelize.STRING
             },
-            fullname: {
+            fullName: {
                 type: Sequelize.STRING
             },
             salary: {
