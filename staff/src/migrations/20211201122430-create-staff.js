@@ -54,6 +54,14 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 defaultValue: 0
             },
+            bankAccountBalance: {
+                type: Sequelize.INTEGER,
+                defaultValue: 0
+            },
+            status: {
+                type: Sequelize.INTEGER,
+                defaultValue: "Active"
+            },
             role: {
                 type: Sequelize.STRING,
                 defaultValue: "staff"
