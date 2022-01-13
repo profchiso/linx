@@ -68,7 +68,7 @@ payrollRouter.post(
             let batchId = uuid()
 
             let createdPayrolls = []
-            const { payroll } = req.body
+            const { payroll, totalAmount } = req.body
             for (let pay of payroll) {
 
                 let createdPayroll = await db.payroll.create({
@@ -84,7 +84,8 @@ payrollRouter.post(
                     businessPaymentWallet: pay.businessPaymentWallet,
                     staffWallet: pay.staffWallet,
                     transactionType: pay.transactionType,
-                    batchId
+                    batchId,
+                    totalAmount
 
                 })
 
