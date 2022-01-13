@@ -43,19 +43,19 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(
-    cookieSession({
-        signed: false,
-        secure: process.env.NODE_ENV != "test",
-    })
+  cookieSession({
+    signed: false,
+    secure: process.env.NODE_ENV != "test",
+  })
 );
 
 app.get("/", (req, res) => {
-    res.send("welcome to wallet");
+  res.send("welcome to wallet");
 });
 app.use(walletRouter);
 
-app.all("*", async() => {
-    throw new NotFoundError();
+app.all("*", async () => {
+  throw new NotFoundError();
 });
 
 app.use(errorHandler);
@@ -75,6 +75,18 @@ cronJob.schedule("*/1 * * * *", () => {
 
     let checkOwnerId = Number(parsedData.businessId);
 
+    let createdPrimaryWallet = await db.wallet.create({
+      walletId: Number(Date.now().toString().substring(0, 10)),
+      name: parsedData.name || "Testing",
+      businessId: checkOwnerId,
+      alias: parsedData.alias,
+      credit: 0,
+      debit: 0,
+      balance: 100000,
+      walletType: "Primary",
+      userId: parsedData.userId,
+    });
+
     let createdPromoWallet = await db.wallet.create({
       walletId: Number(Date.now().toString().substring(0, 10)),
       name: parsedData.name || "Testing",
@@ -85,53 +97,6 @@ cronJob.schedule("*/1 * * * *", () => {
       balance: 20000,
       walletType: "Promo",
       userId: parsedData.userId,
-    });
-
-    // Staff wallet creation
-    sqs.receiveMessage(staffParams, async function(err, data) {
-        if (err) throw new Error(err.message);
-
-
-
-        let parsedData = JSON.parse(data.Messages[0].Body);
-
-        let checkBusinessOwnerId = Number(parsedData.businessId);
-
-        let createdPrimaryWallet = await db.wallet.create({
-            walletId: Number(Date.now().toString().substring(0, 10)),
-            name: parsedData.name || "Testing",
-            businessId: checkBusinessOwnerId,
-            userId: parsedData.userId,
-            alias: parsedData.alias,
-            credit: 0,
-            debit: 0,
-            balance: 0,
-            walletType: "Primary",
-            email: parsedData.email,
-        });
-
-        // transport object
-        const mailOptions = {
-            to: createdPrimaryWallet.email,
-            from: process.env.SENDER_EMAIL,
-            subject: "Wallet Creation",
-            html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
-        };
-
-        await sendMailWithSendGrid(mailOptions);
-
-        let staffWalletPayload = {
-            businessId: `${createdPrimaryWallet.dataValues.businessOwnerId}`,
-            userId: `${createdPrimaryWallet.dataValues.userId}`,
-            alias: `${createdPrimaryWallet.dataValues.alias}`,
-            walletBalance: `${createdPrimaryWallet.dataValues.balance}`,
-        };
-
-        let staffSqsWalletData = {
-            QueueUrl: process.env.staffPrimaryWalletQueueUrl,
-            MessageBody: JSON.stringify(staffWalletPayload),
-        };
-        let staffSqsWallet = await sqs.sendMessage(staffSqsWalletData).promise();
     });
 
     let businessWalletPayload = {
