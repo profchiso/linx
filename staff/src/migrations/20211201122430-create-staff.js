@@ -59,7 +59,7 @@ module.exports = {
                 defaultValue: 0
             },
             status: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.STRING,
                 defaultValue: "Active"
             },
             role: {
