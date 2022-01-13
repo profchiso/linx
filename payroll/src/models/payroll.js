@@ -21,12 +21,13 @@ module.exports = (sequelize, DataTypes) => {
         bonus: DataTypes.INTEGER,
         deduction: DataTypes.INTEGER,
         totalPayable: DataTypes.INTEGER,
-        paymentAccountType: DataTypes.INTEGER,
+        paymentAccountType: DataTypes.STRING,
         staffId: DataTypes.INTEGER,
-        businessPaymentWallet: DataTypes.INTEGER,
-        staffWallet: DataTypes.INTEGER,
+        businessPaymentWallet: DataTypes.STRING,
+        staffWallet: DataTypes.STRING,
         transactionType: DataTypes.STRING,
         batchId: DataTypes.STRING,
+        totalAmount: DataTypes.DECIMAL
     }, {
         sequelize,
         modelName: 'payroll',

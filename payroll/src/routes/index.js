@@ -7,7 +7,7 @@ const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = 
 //const { staffRegistrationValidation } = require("../utils/payroll-registration-validation")
 // const { upload, cloudinary } = require("../utils/imageProcessing")
 const db = require("../models/index")
-const payrallRouter = express.Router();
+const payrollRouter = express.Router();
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
     // Configure the region 
 AWS.config.update({ region: 'us-east-1' });
@@ -19,7 +19,7 @@ const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/linxqueue";
 
 
 //GET ALL PAYROLL ENTERY
-payrallRouter.get(
+payrollRouter.get(
     '/api/v1/payroll',
     async(req, res) => {
         try {
@@ -49,7 +49,7 @@ payrallRouter.get(
 );
 
 //CREATE A PAYROLL ENTERY
-payrallRouter.post(
+payrollRouter.post(
     '/api/v1/payroll',
     async(req, res) => {
 
@@ -108,7 +108,7 @@ payrallRouter.post(
 );
 
 //GET  PAYROLL RECORDS FOR A BUSINESS
-payrallRouter.get(
+payrollRouter.get(
     '/api/v1/payroll/business/:businessId',
     //validateRequest,
     // authenticate,
@@ -140,7 +140,7 @@ payrallRouter.get(
 );
 
 //GET A PAYROLL RECORD
-payrallRouter.get(
+payrollRouter.get(
     '/api/v1/payroll/:payrollId',
     async(req, res) => {
 
@@ -174,7 +174,7 @@ payrallRouter.get(
 
 
 //UPDATE A PAYROLL RECORD
-payrallRouter.patch(
+payrollRouter.patch(
     '/api/v1/payroll/:payrollId',
     async(req, res) => {
 
@@ -207,7 +207,7 @@ payrallRouter.patch(
 );
 
 //DELETE PAYROLL
-payrallRouter.delete(
+payrollRouter.delete(
     '/api/v1/payroll/:payrollId',
     async(req, res) => {
 
@@ -239,4 +239,4 @@ payrallRouter.delete(
 );
 
 
-module.exports = { payrallRouter };
+module.exports = { payrollRouter };

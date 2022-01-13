@@ -5,7 +5,7 @@ const cors = require("cors")
 require('express-async-errors');
 const cookieSession = require('cookie-session');
 const { errorHandler, NotFoundError } = require('@bc_tickets/common');
-const { staffRouter } = require('./routes/index');
+const { payrollRouter } = require('./routes/index');
 
 
 const app = express();
@@ -25,7 +25,7 @@ app.use(
 app.get("/", (req, res) => {
     res.send("testing staff endpoint")
 })
-app.use(staffRouter);
+app.use(payrollRouter);
 app.all('*', async() => {
     throw new NotFoundError();
 });

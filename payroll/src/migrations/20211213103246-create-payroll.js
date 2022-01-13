@@ -18,16 +18,16 @@ module.exports = {
                 type: Sequelize.STRING
             },
             salary: {
-                type: Sequelize.INTEGER
+                type: Sequelize.DECIMAL
             },
             bonus: {
-                type: Sequelize.INTEGER
+                type: Sequelize.DECIMAL
             },
             deduction: {
-                type: Sequelize.INTEGER
+                type: Sequelize.DECIMAL
             },
             totalPayable: {
-                type: Sequelize.INTEGER
+                type: Sequelize.DECIMAL
             },
             paymentAccountType: {
                 type: Sequelize.STRING,
@@ -41,13 +41,16 @@ module.exports = {
 
             },
             staffId: {
-                type: Sequelize.INTEGER
+                type: Sequelize.STRING
             },
             businessPaymentWallet: {
-                type: Sequelize.INTEGER
+                type: Sequelize.STRING
             },
             staffWallet: {
-                type: Sequelize.INTEGER
+                type: Sequelize.STRING
+            },
+            totalAmount: {
+                type: Sequelize.DECIMAL
             },
             transactionType: {
                 type: Sequelize.INTEGER
