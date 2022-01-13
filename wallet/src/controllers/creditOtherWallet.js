@@ -87,8 +87,6 @@ module.exports = async (req, res) => {
 
       let wallletCreditSqs = {
         MessageBody: JSON.stringify(walletCreditPayload),
-        //MessageDeduplicationId: "test",
-        //MessageGroupId: "testing",
         QueueUrl:
           recipientType == "business"
             ? businessWalletCreditQueue
