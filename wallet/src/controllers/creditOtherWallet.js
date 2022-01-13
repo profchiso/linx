@@ -8,6 +8,11 @@ AWS.config.update({ region: "us-east-1" });
 // Create an SQS service object
 const sqs = new AWS.SQS({ apiVersion: "2012-11-05" });
 
+const businessWalletCreditQueue =
+  "https://sqs.us-east-1.amazonaws.com/322544062396/business-wallet-credit-queue";
+const staffWalletCreditQueue =
+  "https://sqs.us-east-1.amazonaws.com/322544062396/staff-wallet-credit-queue";
+
 module.exports = async (req, res) => {
   try {
     // const { data } = await axios.get(`${AUTH_URL}`, {
@@ -86,8 +91,8 @@ module.exports = async (req, res) => {
         //MessageGroupId: "testing",
         QueueUrl:
           recipientType == "business"
-            ? process.env.businessWalletCreditQueue
-            : process.env.staffWalletCreditQueue,
+            ? businessWalletCreditQueue
+            : staffWalletCreditQueue,
       };
       let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
 
