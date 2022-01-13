@@ -187,7 +187,7 @@ payrallRouter.patch(
 
             const { payrollId } = req.params;
 
-            const updatedPayroll = await db.payroll.update(req.body, { where: { id: staffId }, returning: true, plain: true })
+            const updatedPayroll = await db.payroll.update(req.body, { where: { id: payrollId }, returning: true, plain: true })
 
             res.status(200).send({ message: `Payroll record updated`, statuscode: 200, data: { payroll: updatedPayroll[1] } });
 
@@ -203,7 +203,7 @@ payrallRouter.patch(
 
 //DELETE PAYROLL
 payrallRouter.delete(
-    '/api/v1/payroll/:staffId',
+    '/api/v1/payroll/:payrollId',
     async(req, res) => {
 
         try {
@@ -218,11 +218,11 @@ payrallRouter.delete(
             //     throw new NotAuthorisedError()
             // }
 
-            const { staffId } = req.params
+            const { payrollId } = req.params
 
-            await db.staff.destroy({ where: { staffId } });
+            await db.payroll.destroy({ where: { payrollId } });
 
-            res.status(204).send({ message: "Staff deleted", statuscode: 204, data: { staff: {} } });
+            res.status(204).send({ message: "Staff deleted", statuscode: 204, data: { payroll: {} } });
 
         } catch (error) {
             console.log(error)
