@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS public.staffs
 (
-    id serial NOT NULL),
+    id serial NOT NULL,
     "firstName" character varying(255) COLLATE pg_catalog."default",
     "lastName" character varying(255) COLLATE pg_catalog."default",
     email character varying(255) COLLATE pg_catalog."default",
@@ -15,7 +15,9 @@ CREATE TABLE IF NOT EXISTS public.staffs
     "accountName" character varying(255) COLLATE pg_catalog."default",
     "accountNumber" integer,
     "walletId" integer,
-	"walletBalance" integer DEFAULT 0,
+    "walletBalance" integer DEFAULT 0,
+    "bankAccountBalance" integer DEFAULT 0,
+    status character varying(255) COLLATE pg_catalog."default" DEFAULT 'Active'::character varying,
     role character varying(255) COLLATE pg_catalog."default" DEFAULT 'staff'::character varying,
     "employmentType" character varying(255) COLLATE pg_catalog."default",
     "businessId" integer,
