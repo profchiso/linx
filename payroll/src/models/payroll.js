@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     payroll.init({
         businessId: DataTypes.INTEGER,
         businessTradingName: DataTypes.STRING,
-        fullname: DataTypes.STRING,
+        fullName: DataTypes.STRING,
         salary: DataTypes.INTEGER,
         bonus: DataTypes.INTEGER,
         deduction: DataTypes.INTEGER,
