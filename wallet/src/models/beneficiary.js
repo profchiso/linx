@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.wallet, { as: "wallet" });
+      //this.belongsTo(models.wallet, { as: "wallet" });
     }
   }
   beneficiary.init(

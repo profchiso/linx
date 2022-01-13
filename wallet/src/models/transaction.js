@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.wallet, {
-        foreignKey: "transactionId",
-        as: "transactions",
-        onDelete: "CASCADE",
-      });
+      // this.belongsTo(models.wallet, {
+      //   foreignKey: "transactionId",
+      //   as: "transactions",
+      //   onDelete: "CASCADE",
+      // });
     }
   }
   transaction.init(

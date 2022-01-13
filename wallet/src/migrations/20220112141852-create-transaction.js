@@ -41,16 +41,16 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      transactionId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        onDelete: "CASCADE",
-        references: {
-          model: "wallets",
-          key: "id",
-          as: "transactionId",
-        },
-      },
+      //   transactionId: {
+      //     type: Sequelize.INTEGER,
+      //     allowNull: false,
+      //     onDelete: "CASCADE",
+      //     references: {
+      //       model: "wallets",
+      //       key: "id",
+      //       as: "transactionId",
+      //     },
+      //   },
     });
   },
   down: async (queryInterface, Sequelize) => {

@@ -9,18 +9,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasMany(models.transaction, {
-        foreignKey: "transactionId",
-        as: "transactions",
-        onDelete: "cascade",
-        hooks: true,
-      });
-      this.hasMany(models.beneficiary, {
-        foreignKey: "beneficiaryId",
-        as: "beneficiary",
-        onDelete: "cascade",
-        hooks: true,
-      });
+      // this.hasMany(models.transaction, {
+      //   foreignKey: "transactionId",
+      //   as: "transactions",
+      //   onDelete: "cascade",
+      //   hooks: true,
+      // });
+      // this.hasMany(models.beneficiary, {
+      //   foreignKey: "beneficiaryId",
+      //   as: "beneficiary",
+      //   onDelete: "cascade",
+      //   hooks: true,
+      // });
     }
   }
   wallet.init(
