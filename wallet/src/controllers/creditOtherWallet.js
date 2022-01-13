@@ -59,33 +59,31 @@ module.exports = async (req, res) => {
     }
 
     wallet.dataValues.balance -= amount;
+    wallet.dataValues.debit = amount;
     let ownersBalance = wallet.dataValues.balance;
     recipientWallet.dataValues.balance += amount;
+    recipientWallet.dataValues.credit = amount;
     let recipientBalance = recipientWallet.dataValues.balance;
 
-    const notifyWalletDebited = () => {
-      // transport object
-      const mailOptionsForDebitAlert = {
-        to: walletOwnerEmail,
-        from: process.env.SENDER_EMAIL,
-        subject: "Debit Alert",
-        html: `<p>The amount of ${amount} has been transferred from your wallet to the wallet with the id of ${recipientWalletId}</p>`,
-      };
-
-      sendMailWithSendGrid(mailOptionsForDebitAlert);
+    // transport object
+    const mailOptionsForDebitAlert = {
+      to: walletOwnerEmail,
+      from: process.env.SENDER_EMAIL,
+      subject: "Debit Alert",
+      html: `<p>The amount of ${amount} has been transferred from your wallet to the wallet with the id of ${recipientWalletId}</p>`,
     };
 
-    const notifyWalletCredited = () => {
-      // transport object
-      const mailOptionsForCreditAlert = {
-        to: recipientEmail,
-        from: process.env.SENDER_EMAIL,
-        subject: "Credit Alert",
-        html: `<p>The amount of ${amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
-      };
+    await sendMailWithSendGrid(mailOptionsForDebitAlert);
 
-      sendMailWithSendGrid(mailOptionsForCreditAlert);
+    // transport object
+    const mailOptionsForCreditAlert = {
+      to: recipientEmail,
+      from: process.env.SENDER_EMAIL,
+      subject: "Credit Alert",
+      html: `<p>The amount of ${amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
     };
+
+    await sendMailWithSendGrid(mailOptionsForCreditAlert);
 
     Promise.all([
       db.transaction.create({
@@ -98,8 +96,6 @@ module.exports = async (req, res) => {
       }),
       wallet.save(),
       recipientWallet.save(),
-      notifyWalletDebited(),
-      notifyWalletCredited(),
     ]).then(() => {
       let walletCreditPayload = {
         walletId: walletId,
