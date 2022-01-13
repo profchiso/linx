@@ -76,14 +76,14 @@ module.exports = async (req, res) => {
     await sendMailWithSendGrid(mailOptionsForDebitAlert);
 
     // transport object
-    const mailOptionsForCreditAlert = {
-      to: recipientEmail,
-      from: process.env.SENDER_EMAIL,
-      subject: "Credit Alert",
-      html: `<p>The amount of ${amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
-    };
+    // const mailOptionsForCreditAlert = {
+    //   to: recipientEmail,
+    //   from: process.env.SENDER_EMAIL,
+    //   subject: "Credit Alert",
+    //   html: `<p>The amount of ${amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
+    // };
 
-    await sendMailWithSendGrid(mailOptionsForCreditAlert);
+    // await sendMailWithSendGrid(mailOptionsForCreditAlert);
 
     Promise.all([
       db.transaction.create({
