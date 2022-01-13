@@ -4,7 +4,7 @@
     "description": "Auth services",
     "main": "index.js",
     "scripts": {
-        "customer-dev": "nodemon customer/src/index.js",
+        "dev": "nodemon staff/src/index.js",
         "start": "node staff/src/index.js",
         "auth-dev": "nodemon auth/src/index.js",
         "wallet-dev": "nodemon wallet/src/index.js",
