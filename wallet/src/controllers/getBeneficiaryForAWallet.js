@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
     const { walletId } = req.params;
     const wallet = await db.wallet.findOne({
       where: { walletId: walletId },
-      include: [{ model: "transactions", as: "transactions" }],
+      include: [{ model: "beneficiaries", as: "beneficiaries" }],
     });
 
     if (!wallet) {

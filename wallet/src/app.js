@@ -69,53 +69,57 @@ cronJob.schedule("*/1 * * * *", () => {
       return "There is no message in the queue";
     }
 
-    let parsedData = JSON.parse(data.Messages[0].Body);
+    if (data.Messages && data.Messages.length) {
+      let messageBody = data.Messages;
 
-    // console.log(parsedData);
+      for (let message of messageBody) {
+        let parsedData = JSON.parse(message.Body);
 
-    let checkOwnerId = Number(parsedData.businessId);
+        let checkOwnerId = Number(parsedData.businessId);
 
-    let createdPrimaryWallet = await db.wallet.create({
-      walletId: Number(Date.now().toString().substring(0, 10)),
-      name: parsedData.name || "Testing",
-      businessId: checkOwnerId,
-      alias: parsedData.alias,
-      credit: 0,
-      debit: 0,
-      balance: 100000,
-      walletType: "Primary",
-      userId: parsedData.userId,
-    });
+        let createdPrimaryWallet = await db.wallet.create({
+          walletId: Number(Date.now().toString().substring(0, 10)),
+          name: parsedData.name || "Testing",
+          businessId: checkOwnerId,
+          alias: parsedData.alias,
+          credit: 0,
+          debit: 0,
+          balance: 100000,
+          walletType: "Primary",
+          userId: parsedData.userId,
+        });
 
-    let createdPromoWallet = await db.wallet.create({
-      walletId: Number(Date.now().toString().substring(0, 10)),
-      name: parsedData.name || "Testing",
-      businessId: checkOwnerId,
-      alias: parsedData.alias,
-      credit: 0,
-      debit: 0,
-      balance: 20000,
-      walletType: "Promo",
-      userId: parsedData.userId,
-    });
+        let createdPromoWallet = await db.wallet.create({
+          walletId: Number(Date.now().toString().substring(0, 10)),
+          name: parsedData.name || "Testing",
+          businessId: checkOwnerId,
+          alias: parsedData.alias,
+          credit: 0,
+          debit: 0,
+          balance: 20000,
+          walletType: "Promo",
+          userId: parsedData.userId,
+        });
 
-    let businessWalletPayload = {
-      businessId: `${createdPrimaryWallet.dataValues.ownerId}`,
-      primaryWalletId: `${createdPrimaryWallet.dataValues.walletId}`,
-      promoWalletId: `${createdPromoWallet.dataValues.walletId}`,
-      userId: `${createdPrimaryWallet.dataValues.userId}`,
-      alias: `${createdPrimaryWallet.dataValues.alias}`,
-      primaryWalletBalance: `${createdPrimaryWallet.dataValues.balance}`,
-      promoWalletBalance: `${createdPromoWallet.dataValues.balance}`,
-    };
+        let businessWalletPayload = {
+          businessId: `${createdPrimaryWallet.dataValues.ownerId}`,
+          primaryWalletId: `${createdPrimaryWallet.dataValues.walletId}`,
+          promoWalletId: `${createdPromoWallet.dataValues.walletId}`,
+          userId: `${createdPrimaryWallet.dataValues.userId}`,
+          alias: `${createdPrimaryWallet.dataValues.alias}`,
+          primaryWalletBalance: `${createdPrimaryWallet.dataValues.balance}`,
+          promoWalletBalance: `${createdPromoWallet.dataValues.balance}`,
+        };
 
-    let businessSqsWalletData = {
-      QueueUrl: businessPrimaryWalletQueueUrl,
-      MessageBody: JSON.stringify(businessWalletPayload),
-    };
-    let businessSqsWallet = await sqs
-      .sendMessage(businessSqsWalletData)
-      .promise();
+        let businessSqsWalletData = {
+          QueueUrl: businessPrimaryWalletQueueUrl,
+          MessageBody: JSON.stringify(businessWalletPayload),
+        };
+        let businessSqsWallet = await sqs
+          .sendMessage(businessSqsWalletData)
+          .promise();
+      }
+    }
   });
 });
 
@@ -128,47 +132,53 @@ cronJob.schedule("*/2 * * * *", () => {
       return "There is no message in the queue";
     }
 
-    let parsedData = JSON.parse(data.Messages[0].Body);
+    if (data.Messages && data.Messages.length) {
+      let messageBody = data.Messages;
 
-    //console.log(parsedData);
+      for (let message of messageBody) {
+        let parsedData = JSON.parse(message.Body);
 
-    let checkBusinessOwnerId = Number(parsedData.businessId);
+        let checkBusinessOwnerId = Number(parsedData.businessId);
 
-    let createdPrimaryWallet = await db.wallet.create({
-      walletId: Number(Date.now().toString().substring(0, 10)),
-      name: parsedData.name || "Testing",
-      businessId: checkBusinessOwnerId,
-      userId: parsedData.userId,
-      alias: parsedData.alias,
-      credit: 0,
-      debit: 0,
-      balance: 0,
-      walletType: "Primary",
-      email: parsedData.email,
-    });
+        let createdPrimaryWallet = await db.wallet.create({
+          walletId: Number(Date.now().toString().substring(0, 10)),
+          name: parsedData.name || "Testing",
+          businessId: checkBusinessOwnerId,
+          userId: parsedData.userId,
+          alias: parsedData.alias,
+          credit: 0,
+          debit: 0,
+          balance: 0,
+          walletType: "Primary",
+          email: parsedData.email,
+        });
 
-    // transport object
-    const mailOptions = {
-      to: createdPrimaryWallet.email,
-      from: process.env.SENDER_EMAIL,
-      subject: "Wallet Creation",
-      html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
-    };
+        // transport object
+        const mailOptions = {
+          to: createdPrimaryWallet.email,
+          from: process.env.SENDER_EMAIL,
+          subject: "Wallet Creation",
+          html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
+        };
 
-    await sendMailWithSendGrid(mailOptions);
+        await sendMailWithSendGrid(mailOptions);
 
-    let staffWalletPayload = {
-      businessId: `${createdPrimaryWallet.dataValues.businessOwnerId}`,
-      userId: `${createdPrimaryWallet.dataValues.userId}`,
-      alias: `${createdPrimaryWallet.dataValues.alias}`,
-      walletBalance: `${createdPrimaryWallet.dataValues.balance}`,
-    };
+        let staffWalletPayload = {
+          businessId: `${createdPrimaryWallet.dataValues.businessOwnerId}`,
+          userId: `${createdPrimaryWallet.dataValues.userId}`,
+          alias: `${createdPrimaryWallet.dataValues.alias}`,
+          walletBalance: `${createdPrimaryWallet.dataValues.balance}`,
+        };
 
-    let staffSqsWalletData = {
-      QueueUrl: staffPrimaryWalletQueueUrl,
-      MessageBody: JSON.stringify(staffWalletPayload),
-    };
-    let staffSqsWallet = await sqs.sendMessage(staffSqsWalletData).promise();
+        let staffSqsWalletData = {
+          QueueUrl: staffPrimaryWalletQueueUrl,
+          MessageBody: JSON.stringify(staffWalletPayload),
+        };
+        let staffSqsWallet = await sqs
+          .sendMessage(staffSqsWalletData)
+          .promise();
+      }
+    }
   });
 });
 

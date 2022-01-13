@@ -2,10 +2,11 @@ const db = require("../models/index");
 const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
+const { validateBeneficiaryData } = require("../helper/validateWallet");
 
 module.exports = async (req, res) => {
-  //authenticate user
   try {
+    //authenticate user
     // const { data } = await axios.get(`${AUTH_URL}`, {
     //         headers: {
     //             authorization: req.headers.authorization
@@ -15,20 +16,26 @@ module.exports = async (req, res) => {
     // if (!data.user) {
     //     throw new NotAuthorisedError()
     // }
-    const { walletId } = req.params;
-    const wallet = await db.wallet.findOne({
-      where: { walletId: walletId },
-      include: [{ model: "transactions", as: "transactions" }],
-    });
-
-    if (!wallet) {
-      throw new Error("wallet cannot be found");
+    // customer validation
+    const { error } = validateBeneficiaryData(req.body);
+    if (error) {
+      res.status(400);
+      throw new Error(error.message);
     }
 
-    res.status(200).send({
-      message: "Wallet found successfully",
-      statuscode: 200,
-      data: { wallet },
+    let createdBeneficiary = await db.beneficiary.create({
+      bankName: req.body.bankName,
+      accountNumber: req.body.accountNumber,
+      walletId: req.params.walletId,
+    });
+
+    res.status(201).send({
+      message: "Beneficiary saved",
+      statuscode: 201,
+      type: "success",
+      data: {
+        beneficiary: createdBeneficiary,
+      },
     });
   } catch (error) {
     console.log(error);

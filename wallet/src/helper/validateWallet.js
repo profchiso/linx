@@ -21,6 +21,19 @@ module.exports.validateWalletCreditData = function validate(req) {
     recipientWalletId: Joi.number().required(),
     amount: Joi.number().required(),
     recipientType: Joi.string().required(),
+    walletOwnerEmail: Joi.string().required(),
+    recipientEmail: Joi.string().required(),
+  });
+
+  return schema.validate(req);
+};
+
+// validate beneficiary data
+module.exports.validateBeneficiaryData = function validate(req) {
+  const schema = Joi.object({
+    bankName: Joi.string().required(),
+    accountNumber: Joi.string().required(),
+    walletId: Joi.number().required(),
   });
 
   return schema.validate(req);

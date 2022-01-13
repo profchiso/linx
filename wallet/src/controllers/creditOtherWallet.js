@@ -1,6 +1,7 @@
 const AWS = require("aws-sdk");
 const db = require("../models/index");
 const { validateWalletCreditData } = require("../helper/validateWallet");
+const { sendMailWithSendGrid } = require("../helper/emailTransport");
 
 AWS.config.update({ region: "us-east-1" });
 //AWS.config.update({accessKeyId: process.env.AWS_ACCESS_KEY_ID,secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,});
@@ -32,7 +33,13 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
     const { walletId } = req.params;
-    const { recipientWalletId, amount, recipientType } = req.body;
+    const {
+      recipientWalletId,
+      amount,
+      recipientType,
+      walletOwnerEmail,
+      recipientEmail,
+    } = req.body;
     const wallet = await db.wallet.findOne({ where: { walletId: walletId } });
 
     if (!wallet) {
@@ -56,14 +63,29 @@ module.exports = async (req, res) => {
     recipientWallet.dataValues.balance += amount;
     let recipientBalance = recipientWallet.dataValues.balance;
 
-    // let transaction = await db.transaction.create({
-    //   creditType: "wallet",
-    //   ownersWalletId: walletId,
-    //   recipientWalletId: recipientWalletId,
-    //   amount,
-    //   ownersWalletBalance: ownersBalance,
-    //   recipientWalletBalance: recipientBalance,
-    // });
+    const notifyWalletDebited = async () => {
+      // transport object
+      const mailOptions = {
+        to: walletOwnerEmail,
+        from: process.env.SENDER_EMAIL,
+        subject: "Debit Alert",
+        html: `<p>The amount of ${amount} has been transferred from your wallet to the wallet with the id of ${recipientWalletId}</p>`,
+      };
+
+      await sendMailWithSendGrid(mailOptions);
+    };
+
+    const notifyWalletCredited = async () => {
+      // transport object
+      const mailOptions = {
+        to: recipientEmail,
+        from: process.env.SENDER_EMAIL,
+        subject: "Credit Alert",
+        html: `<p>The amount of ${amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
+      };
+
+      await sendMailWithSendGrid(mailOptions);
+    };
 
     Promise.all([
       db.transaction.create({
@@ -76,6 +98,8 @@ module.exports = async (req, res) => {
       }),
       wallet.save(),
       recipientWallet.save(),
+      notifyWalletDebited(),
+      notifyWalletCredited(),
     ]).then(() => {
       let walletCreditPayload = {
         walletId: walletId,
