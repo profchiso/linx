@@ -53,7 +53,7 @@ module.exports = {
                 type: Sequelize.DECIMAL
             },
             transactionType: {
-                type: Sequelize.INTEGER
+                type: Sequelize.STRING
             },
             createdAt: {
                 allowNull: false,
