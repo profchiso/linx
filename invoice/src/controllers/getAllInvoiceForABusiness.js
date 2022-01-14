@@ -18,6 +18,8 @@ module.exports = async (req, res) => {
 
     const invoice = await Invoice.find({ businessId: req.params.businessId });
 
+    console.log(invoice);
+
     if (!invoice) {
       res.status(404);
       throw new Error("No invoice found");

@@ -65,7 +65,7 @@ module.exports = async (req, res) => {
 
       const generateURL = `${req.protocol}://${req.get(
         "host"
-      )}/api/v1/invoice/preview/${id}`;
+      )}/api/v1/${businessId}/${customerId}/invoice/preview/${id}`;
 
       const invoice = await Invoice.create(req.body);
 
