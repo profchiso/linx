@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       alias: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
     },
     {
