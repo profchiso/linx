@@ -26,7 +26,8 @@ exports.authenticate = async(req, res, next) => {
             // console.log("apiError", apiError);
             // return res.status(401).json(apiError);
             //return res.status(401).redirect('/');
-            throw new NotAuthorisedError()
+
+            return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
         }
         //decode the acesss token
         const decodedToken = await jwt.verify(accessToken, JWT_SECRET);
@@ -40,7 +41,7 @@ exports.authenticate = async(req, res, next) => {
             // console.log("apiError", apiError);
             // return res.status(401).json(apiError);
             // //return res.status(401).redirect(401, '/');
-            throw new NotFoundError()
+            return res.status(404).send({ message: `User not found`, statuscode: 404, data: [] });
         }
         //Allow access to protected route
         req.user = user;
@@ -55,12 +56,12 @@ exports.authenticate = async(req, res, next) => {
             console.log("apiError", apiError);
             return res.status(401).json(apiError);
         }
-        throw new NotAuthorisedError()
-            // apiError.message = `Invalid accessToken`;
-            // apiError.success = false;
-            // console.log("apiError", apiError);
-            // return res.status(401).json(apiError);
-            //return res.status(401).rediect(401, '/');
+        return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+        // apiError.message = `Invalid accessToken`;
+        // apiError.success = false;
+        // console.log("apiError", apiError);
+        // return res.status(401).json(apiError);
+        //return res.status(401).rediect(401, '/');
     }
 };
 
