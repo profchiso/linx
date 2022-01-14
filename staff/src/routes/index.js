@@ -4,6 +4,7 @@ const axios = require("axios")
 const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
 const { staffRegistrationValidation } = require("../utils/staff-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
+const { sendDataToAWSQueue } = require("../utils/sendDataToQueue");
 const db = require("../models/index")
 const staffRouter = express.Router();
 const AUTH_URL = process.env.AUTH_URL
