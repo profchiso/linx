@@ -23,7 +23,7 @@ staffRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
 
@@ -59,7 +59,7 @@ staffRouter.post(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
 
@@ -187,7 +187,7 @@ staffRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
             const { businessId } = req.params;
@@ -226,7 +226,7 @@ staffRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
             const { staffId } = req.params;
@@ -260,7 +260,7 @@ staffRouter.patch(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
             const { staffId } = req.params;
@@ -293,7 +293,7 @@ staffRouter.delete(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
             const { staffId } = req.params
