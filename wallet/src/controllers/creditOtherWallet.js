@@ -65,6 +65,18 @@ module.exports = async (req, res) => {
     recipientWallet.dataValues.credit = amount;
     let recipientBalance = recipientWallet.dataValues.balance;
 
+    await wallet.save();
+    await recipientWallet.save();
+
+    const updatedUserWallet = await db.wallet.update(
+      { balance: ownersBalance },
+      { where: { walletId }, returning: true, plain: true }
+    );
+    const updatedRecipientWallet = await db.wallet.update(
+      { balance: recipientBalance },
+      { where: { walletId: recipientWalletId }, returning: true, plain: true }
+    );
+
     // transport object
     const mailOptionsForDebitAlert = {
       to: walletOwnerEmail,
@@ -94,8 +106,6 @@ module.exports = async (req, res) => {
         ownersWalletBalance: ownersBalance,
         recipientWalletBalance: recipientBalance,
       }),
-      wallet.save(),
-      recipientWallet.save(),
     ]).then(() => {
       let walletCreditPayload = {
         walletId: walletId,
@@ -117,7 +127,7 @@ module.exports = async (req, res) => {
       return res.status(200).send({
         statusCode: 200,
         message: "Recipient wallet successfully credited",
-        data: { wallet },
+        data: { updatedUserWallet },
       });
     });
   } catch (error) {
