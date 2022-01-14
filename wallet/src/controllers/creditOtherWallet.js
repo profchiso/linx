@@ -57,6 +57,9 @@ module.exports = async (req, res) => {
     if (wallet.dataValues.balance < amount) {
       throw new Error("You don't have enough amount to make this transfer");
     }
+    if (amount <= 0) {
+      throw new Error("The amount to be transferred must be greater than 0");
+    }
 
     wallet.dataValues.balance -= amount;
     wallet.dataValues.debit = amount;
