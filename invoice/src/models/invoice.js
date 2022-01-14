@@ -34,7 +34,7 @@ const invoiceSchema = new mongoose.Schema(
       },
     ],
     discount: Number,
-    tax: Number,
+    vat: Number,
     businessId: Number,
     customerId: Number,
     customerEmail: String,

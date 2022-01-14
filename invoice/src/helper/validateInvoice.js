@@ -19,7 +19,7 @@ module.exports.validate = function validate(req) {
       })
     ),
     discount: Joi.string(),
-    tax: Joi.string(),
+    vat: Joi.string(),
     businessId: Joi.number(),
     customerId: Joi.number(),
     walletId: Joi.number(),
