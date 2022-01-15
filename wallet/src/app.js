@@ -61,150 +61,178 @@ app.all("*", async () => {
 app.use(errorHandler);
 
 cronJob.schedule("*/1 * * * *", () => {
-  // Business wallet creation
-  sqs.receiveMessage(businessParams, async function (err, data) {
-    if (err) throw new Error(err.message);
+  try {
+    // Business wallet creation
+    sqs.receiveMessage(businessParams, async function (err, data) {
+      if (err) throw new Error(err.message);
 
-    if (!data.Messages) {
-      return "There is no message in the queue";
-    }
-
-    if (data.Messages && data.Messages.length) {
-      let messageBody = data.Messages;
-
-      for (let message of messageBody) {
-        let parsedData = JSON.parse(message.Body);
-
-        let checkOwnerId = Number(parsedData.businessId);
-
-        let createdPrimaryWallet = await db.wallet.create({
-          walletId: Number(Date.now().toString().substring(0, 10)),
-          name: parsedData.name || "Testing",
-          businessId: checkOwnerId,
-          alias: parsedData.alias,
-          credit: 0,
-          debit: 0,
-          balance: 100000,
-          walletType: "Primary",
-          userId: parsedData.userId,
-        });
-
-        let createdPromoWallet = await db.wallet.create({
-          walletId: Number(Date.now().toString().substring(0, 10)),
-          name: parsedData.name || "Testing",
-          businessId: checkOwnerId,
-          alias: parsedData.alias,
-          credit: 0,
-          debit: 0,
-          balance: 20000,
-          walletType: "Promo",
-          userId: parsedData.userId,
-        });
-
-        let businessWalletPayload = {
-          businessId: `${createdPrimaryWallet.dataValues.ownerId}`,
-          primaryWalletId: `${createdPrimaryWallet.dataValues.walletId}`,
-          promoWalletId: `${createdPromoWallet.dataValues.walletId}`,
-          userId: `${createdPrimaryWallet.dataValues.userId}`,
-          alias: `${createdPrimaryWallet.dataValues.alias}`,
-          primaryWalletBalance: `${createdPrimaryWallet.dataValues.balance}`,
-          promoWalletBalance: `${createdPromoWallet.dataValues.balance}`,
-        };
-
-        let businessSqsWalletData = {
-          QueueUrl: businessPrimaryWalletQueueUrl,
-          MessageBody: JSON.stringify(businessWalletPayload),
-        };
-        let businessSqsWallet = await sqs
-          .sendMessage(businessSqsWalletData)
-          .promise();
+      if (!data.Messages) {
+        return;
       }
-      let deleteParams = {
-        QueueUrl: businessCreationQueueUrl,
-        ReceiptHandle: data.Messages[0].ReceiptHandle,
-      };
 
-      sqs.deleteMessage(deleteParams, function (err, data) {
-        if (err) {
-          console.log("Delete Error", err);
-        } else {
-          console.log("Message Deleted", data);
+      if (data.Messages && data.Messages.length) {
+        let messageBody = data.Messages;
+
+        for (let message of messageBody) {
+          let parsedData = JSON.parse(message.Body);
+
+          let checkOwnerId = Number(parsedData.businessId);
+
+          let createdPrimaryWallet = await db.wallet.create({
+            walletId: Number(Date.now().toString().substring(0, 10)),
+            name: parsedData.name || "Testing",
+            businessId: checkOwnerId || 1,
+            alias: parsedData.alias,
+            credit: 0,
+            debit: 0,
+            balance: 100000,
+            walletType: "Primary",
+            userId: parsedData.userId,
+          });
+
+          let createdPromoWallet = await db.wallet.create({
+            walletId: Number(Date.now().toString().substring(0, 10)),
+            name: parsedData.name || "Testing",
+            businessId: checkOwnerId || 1,
+            alias: parsedData.alias,
+            credit: 0,
+            debit: 0,
+            balance: 20000,
+            walletType: "Promo",
+            userId: parsedData.userId,
+          });
+
+          let businessWalletPayload = {
+            businessId: `${createdPrimaryWallet.dataValues.ownerId}`,
+            primaryWalletId: `${createdPrimaryWallet.dataValues.walletId}`,
+            promoWalletId: `${createdPromoWallet.dataValues.walletId}`,
+            userId: `${createdPrimaryWallet.dataValues.userId}`,
+            alias: `${createdPrimaryWallet.dataValues.alias}`,
+            primaryWalletBalance: `${createdPrimaryWallet.dataValues.balance}`,
+            promoWalletBalance: `${createdPromoWallet.dataValues.balance}`,
+          };
+
+          let businessSqsWalletData = {
+            QueueUrl: businessPrimaryWalletQueueUrl,
+            MessageBody: JSON.stringify(businessWalletPayload),
+          };
+          let businessSqsWallet = await sqs
+            .sendMessage(businessSqsWalletData)
+            .promise();
+          console.log(
+            "Business wallet successfully pushed to business queue",
+            businessSqsWallet
+          );
+
+          let deleteParams = {
+            QueueUrl: businessCreationQueueUrl,
+            ReceiptHandle: data.Messages[0].ReceiptHandle,
+          };
+
+          sqs.deleteMessage(deleteParams, function (err, data) {
+            if (err) {
+              console.log("Delete Error", err);
+            } else {
+              console.log("Business Message Deleted", data);
+            }
+          });
         }
-      });
-    }
-  });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Something went wrong",
+      statuscode: 500,
+      errors: [{ message: error.message || "internal server error" }],
+    });
+  }
 });
 
 cronJob.schedule("*/2 * * * *", () => {
-  // Staff wallet creation
-  sqs.receiveMessage(staffParams, async function (err, data) {
-    if (err) throw new Error(err.message);
+  try {
+    // Staff wallet creation
+    sqs.receiveMessage(staffParams, async function (err, data) {
+      if (err) throw new Error(err.message);
 
-    if (!data.Messages) {
-      return "There is no message in the queue";
-    }
-
-    if (data.Messages && data.Messages.length) {
-      let messageBody = data.Messages;
-
-      for (let message of messageBody) {
-        let parsedData = JSON.parse(message.Body);
-
-        let checkBusinessOwnerId = Number(parsedData.businessId);
-
-        let createdPrimaryWallet = await db.wallet.create({
-          walletId: Number(Date.now().toString().substring(0, 10)),
-          name: parsedData.name || "Testing",
-          businessId: checkBusinessOwnerId,
-          userId: parsedData.userId,
-          alias: parsedData.alias,
-          credit: 0,
-          debit: 0,
-          balance: 0,
-          walletType: "Primary",
-          email: parsedData.email,
-        });
-
-        // transport object
-        const mailOptions = {
-          to: createdPrimaryWallet.email,
-          from: process.env.SENDER_EMAIL,
-          subject: "Wallet Creation",
-          html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
-        };
-
-        await sendMailWithSendGrid(mailOptions);
-
-        let staffWalletPayload = {
-          businessId: `${createdPrimaryWallet.dataValues.businessOwnerId}`,
-          userId: `${createdPrimaryWallet.dataValues.userId}`,
-          alias: `${createdPrimaryWallet.dataValues.alias}`,
-          walletBalance: `${createdPrimaryWallet.dataValues.balance}`,
-        };
-
-        let staffSqsWalletData = {
-          QueueUrl: staffPrimaryWalletQueueUrl,
-          MessageBody: JSON.stringify(staffWalletPayload),
-        };
-        let staffSqsWallet = await sqs
-          .sendMessage(staffSqsWalletData)
-          .promise();
-
-        let deleteParams = {
-          QueueUrl: staffCreationQueueUrl,
-          ReceiptHandle: data.Messages[0].ReceiptHandle,
-        };
-
-        sqs.deleteMessage(deleteParams, function (err, data) {
-          if (err) {
-            console.log("Delete Error", err);
-          } else {
-            console.log("Message Deleted", data);
-          }
-        });
+      if (!data.Messages) {
+        return;
       }
-    }
-  });
+
+      if (data.Messages && data.Messages.length) {
+        let messageBody = data.Messages;
+
+        for (let message of messageBody) {
+          let parsedData = JSON.parse(message.Body);
+
+          let checkBusinessOwnerId = Number(parsedData.businessId);
+
+          let createdPrimaryWallet = await db.wallet.create({
+            walletId: Number(Date.now().toString().substring(0, 10)),
+            name: parsedData.name || "Testing",
+            businessId: checkBusinessOwnerId || 1,
+            userId: parsedData.userId,
+            alias: parsedData.alias,
+            credit: 0,
+            debit: 0,
+            balance: 0,
+            walletType: "Primary",
+            email: parsedData.email,
+          });
+
+          // transport object
+          const mailOptions = {
+            to: createdPrimaryWallet.email || "j2k4@yahoo.com",
+            from: process.env.SENDER_EMAIL,
+            subject: "Wallet Creation",
+            html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
+          };
+
+          await sendMailWithSendGrid(mailOptions);
+
+          let staffWalletPayload = {
+            businessId: `${createdPrimaryWallet.dataValues.businessOwnerId}`,
+            userId: `${createdPrimaryWallet.dataValues.userId}`,
+            alias: `${createdPrimaryWallet.dataValues.alias}`,
+            walletBalance: `${createdPrimaryWallet.dataValues.balance}`,
+          };
+
+          let staffSqsWalletData = {
+            QueueUrl: staffPrimaryWalletQueueUrl,
+            MessageBody: JSON.stringify(staffWalletPayload),
+          };
+          let staffSqsWallet = await sqs
+            .sendMessage(staffSqsWalletData)
+            .promise();
+
+          console.log(
+            "Staff wallet successfully pushed to business queue",
+            staffSqsWallet
+          );
+
+          let deleteParams = {
+            QueueUrl: staffCreationQueueUrl,
+            ReceiptHandle: data.Messages[0].ReceiptHandle,
+          };
+
+          sqs.deleteMessage(deleteParams, function (err, data) {
+            if (err) {
+              console.log("Delete Error", err);
+            } else {
+              console.log("Staff Message Deleted", data);
+            }
+          });
+        }
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Something went wrong",
+      statuscode: 500,
+      errors: [{ message: error.message || "internal server error" }],
+    });
+  }
 });
 
 module.exports = { app };
