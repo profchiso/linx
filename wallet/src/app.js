@@ -92,7 +92,7 @@ cronJob.schedule("*/1 * * * *", () => {
           });
 
           let createdPromoWallet = await db.wallet.create({
-            walletId: Number(Date.now().toString().substring(0, 10)),
+            walletId: Number(Date.now().toString().substring(0, 10)) - 1,
             name: parsedData.name || "Testing",
             businessId: checkOwnerId || 1,
             alias: parsedData.alias,

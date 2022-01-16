@@ -16,19 +16,17 @@ module.exports = async (req, res) => {
     //     throw new NotAuthorisedError()
     // }
     const { walletId } = req.params;
-    const wallet = await db.wallet.findOne({
-      where: { walletId: walletId },
-      // include: [{ model: "beneficiaries", as: "beneficiaries" }],
+    const beneficiaries = await db.beneficiary.findAll({
+      where: { ownersWalletId: walletId },
     });
-
-    if (!wallet) {
-      throw new Error("wallet cannot be found");
+    if (!beneficiaries) {
+      throw new Error("There are no beneficiaries found");
     }
 
     res.status(200).send({
-      message: "Wallet found successfully",
+      message: "beneficiaries found successfully",
       statuscode: 200,
-      data: { wallet },
+      data: { beneficiaries },
     });
   } catch (error) {
     console.log(error);

@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS public.beneficiaries
     id serial NOT NULL ,
     "bankName" character varying(255) COLLATE pg_catalog."default" NOT NULL DEFAULT 'GTB'::character varying,
     "accountNumber" character varying(255) COLLATE pg_catalog."default" NOT NULL DEFAULT '0123456789'::character varying,
-    "walletId" integer NOT NULL,
+    "beneficiaryWalletId" integer NOT NULL,
+    "ownersWalletId" integer NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT beneficiaries_pkey PRIMARY KEY (id),
@@ -26,7 +27,7 @@ CREATE TABLE IF NOT EXISTS public.businesses
 CREATE TABLE IF NOT EXISTS public.transactions
 (
     id serial NOT NULL,
-    "creditType" "enum_transactions_creditType" DEFAULT 'wallet'::"enum_transactions_creditType",
+    "creditType" character varying(255) COLLATE pg_catalog."default",
     "ownersWalletId" integer NOT NULL,
     "recipientWalletId" integer NOT NULL,
     amount integer NOT NULL,
@@ -45,9 +46,10 @@ CREATE TABLE IF NOT EXISTS public.wallets
 (
     id serial NOT NULL,
     name character varying(255) COLLATE pg_catalog."default",
+    email character varying(255) COLLATE pg_catalog."default",
     "businessId" integer,
     "userId" integer,
-    "walletType" "enum_wallets_walletType" DEFAULT 'Primary'::"enum_wallets_walletType",
+    "walletType" character varying(255) COLLATE pg_catalog."default",
     credit integer,
     debit integer,
     balance integer,
