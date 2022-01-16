@@ -23,7 +23,6 @@ module.exports = async (req, res) => {
     if (!wallet) {
       throw new Error("wallet cannot be found");
     }
-    console.log(wallet.dataValues);
     res.status(200).send({
       message: "Wallet found successfully",
       statuscode: 200,

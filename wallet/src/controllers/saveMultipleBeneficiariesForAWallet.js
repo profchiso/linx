@@ -2,7 +2,7 @@ const db = require("../models/index");
 const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
-const { validateBeneficiaryData } = require("../helper/validateWallet");
+const { validateBeneficiariesData } = require("../helper/validateWallet");
 
 module.exports = async (req, res) => {
   try {
@@ -16,26 +16,34 @@ module.exports = async (req, res) => {
     // if (!data.user) {
     //     throw new NotAuthorisedError()
     // }
-    // beneficiary validation
-    const { error } = validateBeneficiaryData(req.body);
+    // beneficiaries validation
+    const { error } = validateBeneficiariesData(req.body);
     if (error) {
       res.status(400);
       throw new Error(error.message);
     }
 
-    let createdBeneficiary = await db.beneficiary.create({
-      bankName: req.body.bankName,
-      accountNumber: req.body.accountNumber,
-      beneficiaryWalletId: req.body.beneficiaryWalletId,
-      ownersWalletId: req.params.walletId,
-    });
+    let createdBeneficiaries = [];
+    const { beneficiaries } = req.body;
+
+    for (let beneficiary of beneficiaries) {
+      let createdBeneficiary = await db.beneficiary.create({
+        bankName: beneficiary.bankName,
+        accountNumber: beneficiary.accountNumber,
+        beneficiaryWalletId: beneficiary.beneficiaryWalletId,
+        ownersWalletId: req.params.walletId,
+      });
+
+      let returnData = { ...createdBeneficiary.dataValues };
+      createdBeneficiaries.push(returnData);
+    }
 
     res.status(201).send({
-      message: "Beneficiary saved",
+      message: "Beneficiaries saved",
       statuscode: 201,
       type: "success",
       data: {
-        beneficiary: createdBeneficiary,
+        beneficiaries: createdBeneficiaries,
       },
     });
   } catch (error) {

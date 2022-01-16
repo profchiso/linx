@@ -68,9 +68,6 @@ module.exports = async (req, res) => {
     recipientWallet.dataValues.credit = amount;
     let recipientBalance = recipientWallet.dataValues.balance;
 
-    await wallet.save();
-    await recipientWallet.save();
-
     const updatedUserWallet = await db.wallet.update(
       { balance: ownersBalance },
       { where: { walletId }, returning: true, plain: true }
@@ -100,39 +97,39 @@ module.exports = async (req, res) => {
 
     await sendMailWithSendGrid(mailOptionsForCreditAlert);
 
-    Promise.all([
-      db.transaction.create({
-        creditType: "wallet",
-        ownersWalletId: walletId,
-        recipientWalletId: recipientWalletId,
-        amount,
-        ownersWalletBalance: ownersBalance,
-        recipientWalletBalance: recipientBalance,
-      }),
-    ]).then(() => {
-      let walletCreditPayload = {
-        walletId: walletId,
-        recipientId: recipientWalletId,
-        amount: amount,
-        ownersBalance: ownersBalance,
-        recipientBalance: recipientBalance,
-      };
-
-      let wallletCreditSqs = {
-        MessageBody: JSON.stringify(walletCreditPayload),
-        QueueUrl:
-          recipientType == "business"
-            ? businessWalletCreditQueue
-            : staffWalletCreditQueue,
-      };
-      let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
-
-      return res.status(200).send({
-        statusCode: 200,
-        message: "Recipient wallet successfully credited",
-        data: { updatedUserWallet },
-      });
+    //Promise.all([
+    let transaction = db.transaction.create({
+      creditType: "wallet",
+      ownersWalletId: walletId,
+      recipientWalletId: recipientWalletId,
+      amount,
+      ownersWalletBalance: ownersBalance,
+      recipientWalletBalance: recipientBalance,
     });
+    //]).then(() => {
+    let walletCreditPayload = {
+      walletId: walletId,
+      recipientId: recipientWalletId,
+      amount: amount,
+      ownersBalance: ownersBalance,
+      recipientBalance: recipientBalance,
+    };
+
+    let wallletCreditSqs = {
+      MessageBody: JSON.stringify(walletCreditPayload),
+      QueueUrl:
+        recipientType == "business"
+          ? businessWalletCreditQueue
+          : staffWalletCreditQueue,
+    };
+    let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
+
+    return res.status(200).send({
+      statusCode: 200,
+      message: "Recipient wallet successfully credited",
+      data: { updatedUserWallet },
+    });
+    //});
   } catch (error) {
     console.log(error);
     res.status(500).json({

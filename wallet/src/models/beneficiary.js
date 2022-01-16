@@ -24,7 +24,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: "0123456789",
       },
-      walletId: {
+      beneficiaryWalletId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      ownersWalletId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },

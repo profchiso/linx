@@ -2,9 +2,11 @@ const express = require("express");
 
 const createSecondaryWallet = require("../controllers/createSecondaryWallet");
 const creditOtherWallet = require("../controllers/creditOtherWallet");
+const creditMultipleWallets = require("../controllers/creditMultipleWallets");
 const getWallet = require("../controllers/getWallet");
 const getAllWalletForABusiness = require("../controllers/getAllWalletForABusiness");
 const saveBeneficiaryForAWallet = require("../controllers/saveBeneficiaryForAWallet");
+const saveMultipleBeneficiariesForAWallet = require("../controllers/saveMultipleBeneficiariesForAWallet");
 const getBeneficiaryForAWallet = require("../controllers/getBeneficiaryForAWallet");
 const getAllCreditTransactions = require("../controllers/getAllCreditTransactions");
 const getAllDebitTransactions = require("../controllers/getAllDebitTransactions");
@@ -35,8 +37,16 @@ walletRouter.get(
 walletRouter.post("/api/v1/create-secondary-wallet", createSecondaryWallet);
 walletRouter.post("/api/v1/wallet/credit/:walletId/wallet", creditOtherWallet);
 walletRouter.post(
+  "/api/v1/wallet/credit/:walletId/wallet/multiple",
+  creditMultipleWallets
+);
+walletRouter.post(
   "/api/v1/wallet/:walletId/beneficiary",
   saveBeneficiaryForAWallet
+);
+walletRouter.post(
+  "/api/v1/wallet/:walletId/beneficiary/multiple",
+  saveMultipleBeneficiariesForAWallet
 );
 
 module.exports = walletRouter;

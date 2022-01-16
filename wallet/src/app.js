@@ -88,6 +88,7 @@ cronJob.schedule("*/1 * * * *", () => {
             balance: 100000,
             walletType: "Primary",
             userId: parsedData.userId,
+            email: parsedData.email || "j2k4@yahoo.com",
           });
 
           let createdPromoWallet = await db.wallet.create({
@@ -100,6 +101,7 @@ cronJob.schedule("*/1 * * * *", () => {
             balance: 20000,
             walletType: "Promo",
             userId: parsedData.userId,
+            email: parsedData.email || "j2k4@yahoo.com",
           });
 
           let businessWalletPayload = {
@@ -177,7 +179,7 @@ cronJob.schedule("*/2 * * * *", () => {
             debit: 0,
             balance: 0,
             walletType: "Primary",
-            email: parsedData.email,
+            email: parsedData.email || "j2k4@yahoo.com",
           });
 
           // transport object
