@@ -66,7 +66,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      walletCategory: {
+      category: {
         type: DataTypes.STRING,
         allowNull: true,
       },

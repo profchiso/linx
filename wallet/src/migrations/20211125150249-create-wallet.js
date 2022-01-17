@@ -40,7 +40,7 @@ module.exports = {
       alias: {
         type: Sequelize.STRING,
       },
-      walletCategory: {
+      category: {
         type: Sequelize.STRING,
       },
       createdAt: {

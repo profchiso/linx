@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS public.wallets
     balance integer,
     "walletId" integer,
     alias character varying(255) COLLATE pg_catalog."default",
-    walletCategory character varying(255) COLLATE pg_catalog."default",
+    category character varying(255) COLLATE pg_catalog."default",
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT wallets_pkey PRIMARY KEY (id)
