@@ -40,6 +40,9 @@ module.exports = {
       alias: {
         type: Sequelize.STRING,
       },
+      walletCategory: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

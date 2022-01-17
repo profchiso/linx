@@ -16,7 +16,7 @@ module.exports = async(req, res) => {
         //     throw new NotAuthorisedError()
         // }
         const { businessId } = req.params
-        const wallets = await db.wallet.findAll({ where: { businessId } });
+        const wallets = await db.wallet.findAll({ where: { businessId, walletCategory : 'Business' } });
         if (!wallets) {
             throw new Error('There are no wallets found')
         }
