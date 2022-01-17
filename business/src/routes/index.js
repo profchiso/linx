@@ -25,7 +25,7 @@ businessRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
 
@@ -65,7 +65,7 @@ businessRouter.post(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
             //console.log("req", req.body)
 
@@ -403,7 +403,7 @@ businessRouter.post(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
             //console.log("req", req.body)
 
@@ -634,7 +634,7 @@ businessRouter.post(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
             //console.log("req", req.body)
 
@@ -859,7 +859,7 @@ businessRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
             const { userId } = req.params;
@@ -898,7 +898,7 @@ businessRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
             const { alias } = req.params;
@@ -936,7 +936,7 @@ businessRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
             const { rcNumber } = req.params;
@@ -972,7 +972,7 @@ businessRouter.patch(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
             const { businessId } = req.params
