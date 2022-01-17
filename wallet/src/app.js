@@ -70,6 +70,8 @@ cronJob.schedule("*/1 * * * *", () => {
         return;
       }
 
+      console.log(data);
+
       if (data.Messages && data.Messages.length) {
         let messageBody = data.Messages;
 
@@ -89,7 +91,7 @@ cronJob.schedule("*/1 * * * *", () => {
             walletType: "Primary",
             userId: parsedData.userId,
             email: parsedData.email || "j2k4@yahoo.com",
-            walletCategory: parsedData.walletCategory,
+            walletCategory: parsedData.walletCategory || 'Business',
           });
 
           let createdPromoWallet = await db.wallet.create({
