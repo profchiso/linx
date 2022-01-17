@@ -3,6 +3,7 @@ const Joi = require('@hapi/joi');
 // validate customer data
 module.exports.validate = function validate(req) {
     const schema = Joi.object({
+        id: Joi.number(),
         name: Joi.string().required(),
         status: Joi.string().required(),
         client: Joi.string().required(),

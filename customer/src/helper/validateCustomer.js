@@ -16,7 +16,7 @@ module.exports.validate = function validate(req) {
         lastName: Joi.string(),
         email: Joi.string().required(),
         phoneNumber: Joi.string().required(),
-        alias: Joi.string(),
+        alias: Joi.string().required(),
         businessId: Joi.number().required()
     });
 
@@ -44,4 +44,4 @@ module.exports.validateUpdate = function validate(req) {
     });
 
     return schema.validate(req);
-  };
+};
