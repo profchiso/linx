@@ -7,11 +7,7 @@ CREATE TABLE IF NOT EXISTS public.beneficiaries
     "ownersWalletId" integer NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
-    CONSTRAINT beneficiaries_pkey PRIMARY KEY (id),
-    CONSTRAINT beneficiaries_id_fkey FOREIGN KEY (id)
-        REFERENCES public.wallets (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+    CONSTRAINT beneficiaries_pkey PRIMARY KEY (id)
 )
 
 CREATE TABLE IF NOT EXISTS public.businesses
@@ -35,11 +31,7 @@ CREATE TABLE IF NOT EXISTS public.transactions
     "recipientWalletBalance" integer NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
-    CONSTRAINT transactions_pkey PRIMARY KEY (id),
-    CONSTRAINT transactions_id_fkey FOREIGN KEY (id)
-        REFERENCES public.wallets (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+    CONSTRAINT transactions_pkey PRIMARY KEY (id)
 )
 
 CREATE TABLE IF NOT EXISTS public.wallets
