@@ -1,5 +1,5 @@
 const express = require("express");
-const { body } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const { validateRequest, BadRequestError } = require("@bc_tickets/common");
 const { generateVerificationCode } = require("../utils/generateVerificationCode")
@@ -18,6 +18,12 @@ signupRouter.post(
     validateRequest,
     async(req, res) => {
         try {
+
+            //validation
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
             const { firstName, lastName, email, phone, password } = req.body;
             let verificationCode = generateVerificationCode();
 
@@ -80,11 +86,15 @@ signupRouter.post(
     '/api/v1/auth/verify', [
         body('verificationCode').notEmpty().withMessage('Verification code cannot be empty'),
     ],
-    validateRequest,
     authenticate,
     async(req, res) => {
         try {
             const { verificationCode } = req.body;
+            //validation
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
 
             let id = req.user.id
 

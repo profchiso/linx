@@ -1,5 +1,5 @@
 const express = require('express');
-const { body } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const axios = require("axios")
 const { validateRequest, BadRequestError } = require('@bc_tickets/common');
@@ -26,7 +26,16 @@ signinRouter.post(
 
         try {
             const { email, password, alias } = req.body
-                //CHECK IF USER EXIST
+
+            //validation
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+
+
+            //CHECK IF USER EXIST
             const existingUser = await db.User.findOne({ where: { email } });
             if (!existingUser) {
                 throw new BadRequestError('Invalid user credentials')
