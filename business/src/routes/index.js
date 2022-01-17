@@ -43,6 +43,7 @@ businessRouter.get(
 );
 
 //REGISTER BUSINESSES(REGISTERED)
+
 businessRouter.post(
     '/api/v1/business/registered',
     RegisteredBusinessRegistrationValidation,
@@ -51,6 +52,7 @@ businessRouter.post(
         { name: "registrationCertificate", maxCount: 1 },
         { name: "otherDocuments", maxCount: 1 },
         { name: "tinCertificate", maxCount: 1 },
+        { name: "businessLogo", maxCount: 1 },
     ]),
     async(req, res) => {
 
@@ -82,7 +84,8 @@ businessRouter.post(
                 utilityBillImage: "",
                 registrationCertificate: "",
                 otherDocuments: "",
-                tinCertificate: ""
+                tinCertificate: "",
+                businessLogo: ""
             }
 
             //upload images
@@ -100,6 +103,26 @@ businessRouter.post(
                             console.log("Error uploading utilityBill to cloudinary");
                         } else {
                             imageData.utilityBillImage = result.secure_url;
+
+                        }
+
+                    }
+                );
+            }
+
+            if (req.body.businessLogo) {
+
+                await cloudinary.uploader.upload(
+                    req.body.businessLogo, {
+                        public_id: `businessLogo/${name.split(" ").join("-")}-businessLogo`,
+                    },
+                    (error, result) => {
+
+
+                        if (error) {
+                            console.log("Error uploading businessLogo to cloudinary");
+                        } else {
+                            imageData.businessLogo = result.secure_url;
 
                         }
 
@@ -177,6 +200,30 @@ businessRouter.post(
                         }
                     );
                 }
+
+                if (req.files.businessLogo) {
+
+                    await cloudinary.uploader.upload(
+                        req.body.businessLogo, {
+                            public_id: `businessLogo/${name.split(" ").join("-")}-businessLogo`,
+                        },
+                        (error, result) => {
+
+
+                            if (error) {
+                                console.log("Error uploading businessLogo to cloudinary");
+                            } else {
+                                imageData.businessLogo = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+
+
+
+
                 if (req.files.registrationCertificate) {
                     await cloudinary.uploader.upload(
                         req.files.registrationCertificate[0].path, {
@@ -250,7 +297,8 @@ businessRouter.post(
                 utilityBillType,
                 email: req.body.businessEmail || data.user.email,
                 businessEmail: req.body.businessEmail || data.user.email,
-                businessCategory: "Registered"
+                businessCategory: "Registered",
+                businessLogo: imageData.businessLogo
             })
 
             //create business alias
@@ -318,7 +366,7 @@ businessRouter.post(
                 tradingName,
                 name: tradingName || "",
                 email: returnData.email,
-                walletType: "Business"
+                walletCategory: "Business"
             }
             console.log("queue payload", awsQueuePayload)
             let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
@@ -372,6 +420,7 @@ businessRouter.post(
             // initialize file upload fields
             let imageData = {
                 utilityBillImage: "",
+                businessLogo: "",
             }
 
             //upload images
@@ -389,6 +438,26 @@ businessRouter.post(
                             console.log("Error uploading utilityBill to cloudinary");
                         } else {
                             imageData.utilityBillImage = result.secure_url;
+
+                        }
+
+                    }
+                );
+            }
+
+            if (req.body.businessLogo) {
+
+                await cloudinary.uploader.upload(
+                    req.body.businessLogo, {
+                        public_id: `businessLogo/${name.split(" ").join("-")}-businessLogo`,
+                    },
+                    (error, result) => {
+
+
+                        if (error) {
+                            console.log("Error uploading businessLogo to cloudinary");
+                        } else {
+                            imageData.businessLogo = result.secure_url;
 
                         }
 
@@ -422,6 +491,25 @@ businessRouter.post(
                         }
                     );
                 }
+                if (req.files.businessLogo) {
+
+                    await cloudinary.uploader.upload(
+                        req.body.businessLogo, {
+                            public_id: `businessLogo/${tradingName.split(" ").join("-")}-businessLogo`,
+                        },
+                        (error, result) => {
+
+
+                            if (error) {
+                                console.log("Error uploading businessLogo to cloudinary");
+                            } else {
+                                imageData.businessLogo = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
             }
 
 
@@ -441,7 +529,8 @@ businessRouter.post(
                 utilityBillType,
                 email: businessEmail || data.user.email,
                 businessEmail: businessEmail || data.user.email,
-                businessCategory: "Freelance"
+                businessCategory: "Freelance",
+                businessLogo: imageData.businessLogo
             })
 
             //create business alias
@@ -506,7 +595,7 @@ businessRouter.post(
                 tradingName,
                 name: tradingName || "",
                 email: returnData.email,
-                walletType: "Business"
+                walletCategory: "Business"
             }
             console.log("queue payload", awsQueuePayload)
             let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
@@ -531,6 +620,8 @@ businessRouter.post(
     UnregisteredBusinessRegistrationValidation,
     upload.fields([
         { name: "utilityBillImage", maxCount: 1 },
+        { name: "businessLogo", maxCount: 1 },
+
     ]),
     async(req, res) => {
 
@@ -560,6 +651,7 @@ businessRouter.post(
             // initialize file upload fields
             let imageData = {
                 utilityBillImage: "",
+                businessLogo: ""
             }
 
             //upload images
@@ -584,6 +676,26 @@ businessRouter.post(
                 );
             }
 
+            if (req.body.businessLogo) {
+
+                await cloudinary.uploader.upload(
+                    req.body.businessLogo, {
+                        public_id: `businessLogo/${tradingName.split(" ").join("-")}-businessLogo`,
+                    },
+                    (error, result) => {
+
+
+                        if (error) {
+                            console.log("Error uploading businessLogo to cloudinary");
+                        } else {
+                            imageData.businessLogo = result.secure_url;
+
+                        }
+
+                    }
+                );
+            }
+
 
 
 
@@ -595,7 +707,7 @@ businessRouter.post(
 
                     await cloudinary.uploader.upload(
                         req.files.utilityBillImage[0].path, {
-                            public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                            public_id: `utility-bill/${tradingName.split(" ").join("-")}-utility-bill`,
                         },
                         (error, result) => {
 
@@ -604,6 +716,26 @@ businessRouter.post(
                                 console.log("Error uploading utilityBill to cloudinary");
                             } else {
                                 imageData.utilityBillImage = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+
+                if (req.files.businessLogo) {
+
+                    await cloudinary.uploader.upload(
+                        req.body.businessLogo, {
+                            public_id: `businessLogo/${tradingName.split(" ").join("-")}-businessLogo`,
+                        },
+                        (error, result) => {
+
+
+                            if (error) {
+                                console.log("Error uploading businessLogo to cloudinary");
+                            } else {
+                                imageData.businessLogo = result.secure_url;
 
                             }
 
@@ -622,6 +754,7 @@ businessRouter.post(
                 ...req.imageData,
                 userId: data.user.id,
                 businessCategory: "Unregistered",
+                businessLogo: imageData.businessLogo,
                 alias: alias.toUpperCase(),
                 email: req.body.businessEmail || data.user.email,
                 businessEmail: req.body.businessEmail || data.user.email,
@@ -691,7 +824,7 @@ businessRouter.post(
                 tradingName,
                 name: tradingName || "",
                 email: returnData.email,
-                walletType: "Business"
+                walletCategory: "Business"
             }
             console.log("queue payload", awsQueuePayload)
             let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)

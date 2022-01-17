@@ -46,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
         branchState: DataTypes.STRING,
         branchLGA: DataTypes.STRING,
         companyObjectives: DataTypes.STRING,
+        businessLogo: DataTypes.STRING,
         companyShareCapital: DataTypes.STRING,
         primaryWallet: DataTypes.INTEGER,
         secondaryWallet: DataTypes.INTEGER,

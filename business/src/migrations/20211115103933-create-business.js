@@ -123,6 +123,9 @@ module.exports = {
             companyShareCapital: {
                 type: Sequelize.STRING
             },
+            businessLogo: {
+                type: Sequelize.STRING
+            },
 
             createdAt: {
                 allowNull: false,
