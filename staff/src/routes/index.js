@@ -30,7 +30,7 @@ staffRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
 
@@ -66,7 +66,7 @@ staffRouter.post(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
 
@@ -207,15 +207,15 @@ staffRouter.get(
     async(req, res) => {
         //authenticate user
         try {
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+            }
 
             const { businessId } = req.params;
             const staff = await db.staff.findAll({ where: { businessId } });
@@ -253,7 +253,7 @@ staffRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                throw new NotAuthorisedError()
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
 
             const { staffId } = req.params;
@@ -280,15 +280,15 @@ staffRouter.patch(
 
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     throw new NotAuthorisedError()
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+            }
 
             const { staffId } = req.params;
 
