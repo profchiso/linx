@@ -89,6 +89,8 @@ module.exports = {
                 defaultValue: "wallet"
             },
 
+
+
             password: {
                 type: Sequelize.STRING
             },

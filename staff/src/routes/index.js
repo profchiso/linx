@@ -65,7 +65,7 @@ staffRouter.post(
 
 
 
-            const { firstName, lastName, email, phoneNumber, dataOfBirth, address, country, state, lga, bankName, accountName, accountNumber, role, employmentType, businessId, paymentAccount } = req.body
+            const { firstName, lastName, email, phoneNumber, dataOfBirth, address, country, state, lga, bankName, accountName, accountNumber, role, employmentType, businessId, paymentAccount, password, businessTradingName, businessAlias, companyStaffId } = req.body
 
 
             //request body validation
@@ -129,6 +129,9 @@ staffRouter.post(
 
             }
 
+            //hashpassword
+
+            //generate staffid
 
 
             //create staff
@@ -148,7 +151,8 @@ staffRouter.post(
                 role: role || "staff",
                 employmentType,
                 businessId,
-                profilePix: imageData.profilePix
+                profilePix: imageData.profilePix,
+
             })
 
 
