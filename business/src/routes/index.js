@@ -1,5 +1,6 @@
 const express = require("express");
 const axios = require("axios")
+const { validationResult } = require("express-validator")
 const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
 const { RegisteredBusinessRegistrationValidation, freelanceBusinessRegistrationValidation, UnregisteredBusinessRegistrationValidation } = require("../utils/business-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
@@ -68,6 +69,12 @@ businessRouter.post(
                 return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
             //console.log("req", req.body)
+
+            //request body validation
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
 
 
             const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, } = req.body
@@ -406,6 +413,11 @@ businessRouter.post(
                 return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
             //console.log("req", req.body)
+            //request body validation
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
 
 
             const { tradingName, alias, businessType, description, yearOfOperation, address, country, state, businessEmail, utilityBillType, businessOwners } = req.body
@@ -636,7 +648,11 @@ businessRouter.post(
             if (!data.user) {
                 return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
             }
-            //console.log("req", req.body)
+            //request body validation
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
 
 
             const { tradingName, alias, businessOwners } = req.body
