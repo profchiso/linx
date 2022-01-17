@@ -1,10 +1,11 @@
 const express = require("express");
-const { body } = require('express-validator');
+const { validationResult } = require('express-validator');
 const axios = require("axios")
 const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
 const { staffRegistrationValidation } = require("../utils/staff-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
 const { sendDataToAWSQueue } = require("../utils/sendDataToQueue");
+const { generateEntityId } = require("../utils/generateEntityId")
 const db = require("../models/index")
 const staffRouter = express.Router();
 const AUTH_URL = process.env.AUTH_URL
@@ -67,6 +68,11 @@ staffRouter.post(
             const { firstName, lastName, email, phoneNumber, dataOfBirth, address, country, state, lga, bankName, accountName, accountNumber, role, employmentType, businessId, paymentAccount } = req.body
 
 
+            //request body validation
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
 
             // initialize file upload fields
             let imageData = {

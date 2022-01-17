@@ -88,16 +88,24 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
 
-        // firstName: DataTypes.STRING,
-        // lastName: DataTypes.STRING,
-        // email: DataTypes.STRING,
-        // phoneNumber: DataTypes.STRING,
-        // dataOfBirth: DataTypes.STRING,
-        // profilePix: DataTypes.STRING,
-        // address: DataTypes.STRING,
-        // country: DataTypes.STRING,
-        // state: DataTypes.STRING,
-        // lga: DataTypes.STRING
+
+        password: {
+            type: DataTypes.STRING
+        },
+        businessTradingName: {
+            type: DataTypes.STRING
+        },
+        staffId: {
+            type: DataTypes.STRING
+        },
+        businessAlias: {
+            type: DataTypes.STRING
+        },
+        companyStaffId: {
+            type: DataTypes.STRING
+        },
+
+
     }, {
         sequelize,
         modelName: 'staff',

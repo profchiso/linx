@@ -75,6 +75,12 @@ businessRouter.post(
 
             const { rcNumber, name, tradingName, businessType, description, yearOfOperation, address, country, tin, state, alias, utilityBillType, userId, businessOwners } = req.body
 
+            //request body validation
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             //check if business already exist
             const existingBusiness = await db.businesses.findOne({ where: { name } });
 

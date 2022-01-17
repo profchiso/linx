@@ -89,6 +89,22 @@ module.exports = {
                 defaultValue: "wallet"
             },
 
+            password: {
+                type: Sequelize.STRING
+            },
+            businessTradingName: {
+                type: Sequelize.STRING
+            },
+            staffId: {
+                type: Sequelize.STRING
+            },
+            businessAlias: {
+                type: Sequelize.STRING
+            },
+            companyStaffId: {
+                type: Sequelize.STRING
+            },
+
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
