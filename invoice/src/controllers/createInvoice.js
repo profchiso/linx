@@ -59,6 +59,11 @@ module.exports = async (req, res) => {
         },
       });
     } else {
+      if (req.body.amount <= 0) {
+        res.status(400);
+        throw new Error("Your amount must be greater than 0");
+      }
+
       const n = await Invoice.estimatedDocumentCount();
 
       let id = n + 1;
