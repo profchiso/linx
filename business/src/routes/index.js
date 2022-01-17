@@ -398,6 +398,8 @@ businessRouter.post(
     freelanceBusinessRegistrationValidation,
     upload.fields([
         { name: "utilityBillImage", maxCount: 1 },
+        { name: "businessLogo", maxCount: 1 },
+
     ]),
     async(req, res) => {
 
