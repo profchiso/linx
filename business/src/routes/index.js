@@ -372,7 +372,7 @@ businessRouter.post(
                 alias: alias.toUpperCase(),
                 tradingName,
                 name: tradingName || "",
-                email: returnData.email,
+                email: req.body.businessEmail || data.user.email,
                 walletCategory: "Business"
             }
             console.log("queue payload", awsQueuePayload)
@@ -608,7 +608,7 @@ businessRouter.post(
                 alias: alias.toUpperCase(),
                 tradingName,
                 name: tradingName || "",
-                email: returnData.email,
+                email: req.body.businessEmail || data.user.email,
                 walletCategory: "Business"
             }
             console.log("queue payload", awsQueuePayload)
@@ -841,7 +841,7 @@ businessRouter.post(
                 alias: alias.toUpperCase(),
                 tradingName,
                 name: tradingName || "",
-                email: returnData.email,
+                email: req.body.businessEmail || data.user.email,
                 walletCategory: "Business"
             }
             console.log("queue payload", awsQueuePayload)
