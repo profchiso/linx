@@ -17,6 +17,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      businessId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       recipientWalletId: {
         type: Sequelize.INTEGER,
         allowNull: false,

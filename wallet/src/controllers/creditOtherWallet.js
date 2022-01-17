@@ -39,6 +39,7 @@ module.exports = async (req, res) => {
       recipientType,
       walletOwnerEmail,
       recipientEmail,
+      businessId
     } = req.body;
     const wallet = await db.wallet.findOne({ where: { walletId: walletId } });
 
@@ -102,6 +103,7 @@ module.exports = async (req, res) => {
       creditType: "wallet",
       ownersWalletId: walletId,
       recipientWalletId: recipientWalletId,
+      businessId,
       amount,
       ownersWalletBalance: ownersBalance,
       recipientWalletBalance: recipientBalance,

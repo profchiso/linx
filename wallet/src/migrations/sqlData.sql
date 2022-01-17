@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS public.transactions
     "creditType" character varying(255) COLLATE pg_catalog."default",
     "ownersWalletId" integer NOT NULL,
     "recipientWalletId" integer NOT NULL,
+    "businessId" integer NOT NULL,
     amount integer NOT NULL,
     "ownersWalletBalance" integer NOT NULL,
     "recipientWalletBalance" integer NOT NULL,
