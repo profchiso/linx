@@ -134,7 +134,7 @@ staffRouter.post(
 
             //hashpassword
             let tempPassword = generateRandomLengthPassword(8) //generate password for staff to login
-            let password = hashUserPassword(tempPassword) // has generated password
+            let hashedPassword = hashUserPassword(tempPassword) // has generated password
 
 
             //generate staffid
@@ -166,7 +166,7 @@ staffRouter.post(
                 businessTradingName,
                 businessAlias: formattedBusinessAlias,
                 companyStaffId: companyStaffId || "",
-                password,
+                password: hashedPassword,
                 staffId
             })
 
