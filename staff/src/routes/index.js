@@ -152,6 +152,9 @@ staffRouter.post(
                 role: role || "staff",
                 employmentType,
                 businessId,
+                businessTradingName,
+                businessAlias,
+                companyStaffId: companyStaffId || ""
 
 
             })
