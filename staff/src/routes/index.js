@@ -1,10 +1,12 @@
 const express = require("express");
 const { validationResult } = require('express-validator');
 const axios = require("axios")
-const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
+
 const { staffRegistrationValidation } = require("../utils/staff-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
 const { sendDataToAWSQueue } = require("../utils/sendDataToQueue");
+const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing")
+const { generateRandomLengthPassword } = require("../utils/generateRandomPassword")
 const { generateEntityId } = require("../utils/generateEntityId")
 const db = require("../models/index")
 const staffRouter = express.Router();
@@ -130,8 +132,16 @@ staffRouter.post(
             }
 
             //hashpassword
+            let tempPassword = generateRandomLengthPassword(8) //generate password for staff to login
+            let password = hashUserPassword(tempPassword) // has generated password
+
 
             //generate staffid
+            const staff = await db.staff.findAll({ where: { businessId } });
+            let staffSerialNumber = generateEntityId(staff.length)
+            let staffId = `${businessAlias.toUpperCase()}${staffSerialNumber}`
+
+
 
 
             //create staff
@@ -154,9 +164,9 @@ staffRouter.post(
                 businessId,
                 businessTradingName,
                 businessAlias,
-                companyStaffId: companyStaffId || ""
-
-
+                companyStaffId: companyStaffId || "",
+                password,
+                staffId
             })
 
 
