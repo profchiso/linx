@@ -969,6 +969,13 @@ businessRouter.get(
 //UPDATE BUSINESS DATA
 businessRouter.patch(
     '/api/v1/business/:businessId',
+    upload.fields([
+        { name: "utilityBillImage", maxCount: 1 },
+        { name: "registrationCertificate", maxCount: 1 },
+        { name: "otherDocuments", maxCount: 1 },
+        { name: "tinCertificate", maxCount: 1 },
+        { name: "businessLogo", maxCount: 1 },
+    ]),
     async(req, res) => {
 
         try {
@@ -990,6 +997,190 @@ businessRouter.patch(
                 return res.status(400).send({ message: `Invalid business id  ${businessId} `, statuscode: 400, errors: [{ message: `Invalid business id  ${businessId}` }] });
                 //throw new BadRequestError('Invalid business id');
             }
+
+
+            //upload images
+            //upload images in base64 string
+            if (req.body.utilityBillImage) {
+
+                await cloudinary.uploader.upload(
+                    req.body.utilityBillImage, {
+                        public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                    },
+                    (error, result) => {
+
+
+                        if (error) {
+                            console.log("Error uploading utilityBill to cloudinary");
+                        } else {
+                            req.body.utilityBillImage = result.secure_url;
+
+                        }
+
+                    }
+                );
+            }
+
+            if (req.body.businessLogo) {
+
+                await cloudinary.uploader.upload(
+                    req.body.businessLogo, {
+                        public_id: `businessLogo/${name.split(" ").join("-")}-businessLogo`,
+                    },
+                    (error, result) => {
+
+
+                        if (error) {
+                            console.log("Error uploading businessLogo to cloudinary");
+                        } else {
+                            req.body.businessLogo = result.secure_url;
+
+                        }
+
+                    }
+                );
+            }
+            if (req.body.registrationCertificate) {
+                await cloudinary.uploader.upload(
+                    req.body.registrationCertificate, {
+                        public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
+                    },
+                    (error, result) => {
+
+                        if (error) {
+                            console.log("Error uploading registration Certificate to cloudinary");
+                        } else {
+                            req.body.registrationCertificate = result.secure_url;
+
+                        }
+
+                    }
+                );
+            }
+            if (req.body.otherDocuments) {
+                await cloudinary.uploader.upload(
+                    req.body.otherDocuments, {
+                        public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
+                    },
+                    (error, result) => {
+                        if (error) {
+                            console.log("Error uploading other Documents to cloudinary");
+                        } else {
+                            req.body.otherDocuments = result.secure_url;
+                        }
+                    }
+                );
+            }
+
+            if (req.body.tinCertificate) {
+                await cloudinary.uploader.upload(
+                    req.body.tinCertificate, {
+                        public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
+                    },
+                    (error, result) => {
+
+                        console.log(result)
+                        if (error) {
+                            console.log("Error uploading other Documents to cloudinary");
+                        } else {
+                            req.body.tinCertificate = result.secure_url;
+                        }
+                    }
+                );
+            }
+
+
+            //upload images in  file format
+            if (req.files) {
+                if (req.files.utilityBillImage) {
+
+                    await cloudinary.uploader.upload(
+                        req.files.utilityBillImage[0].path, {
+                            public_id: `utility-bill/${name.split(" ").join("-")}-utility-bill`,
+                        },
+                        (error, result) => {
+
+
+                            if (error) {
+                                console.log("Error uploading utilityBill to cloudinary");
+                            } else {
+                                req.body.utilityBillImage = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+
+                if (req.files.businessLogo) {
+
+                    await cloudinary.uploader.upload(
+                        req.body.businessLogo, {
+                            public_id: `businessLogo/${name.split(" ").join("-")}-businessLogo`,
+                        },
+                        (error, result) => {
+
+
+                            if (error) {
+                                console.log("Error uploading businessLogo to cloudinary");
+                            } else {
+                                req.body.businessLogo = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+                if (req.files.registrationCertificate) {
+                    await cloudinary.uploader.upload(
+                        req.files.registrationCertificate[0].path, {
+                            public_id: `registration-certificate/${name.split(" ").join("-")}-registration-certificate`,
+                        },
+                        (error, result) => {
+
+                            if (error) {
+                                console.log("Error uploading registration Certificate to cloudinary");
+                            } else {
+                                req.body.registrationCertificate = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+                if (req.files.otherDocuments) {
+                    await cloudinary.uploader.upload(
+                        req.files.otherDocuments[0].path, {
+                            public_id: `other-documents/${name.split(" ").join("-")}-other-documents`,
+                        },
+                        (error, result) => {
+                            if (error) {
+                                console.log("Error uploading other Documents to cloudinary");
+                            } else {
+                                req.body.otherDocuments = result.secure_url;
+                            }
+                        }
+                    );
+                }
+
+                if (req.files.tinCertificate) {
+                    await cloudinary.uploader.upload(
+                        req.files.tinCertificate[0].path, {
+                            public_id: `tin-certificate/${name.split(" ").join("-")}-tin-certificate`,
+                        },
+                        (error, result) => {
+
+                            console.log(result)
+                            if (error) {
+                                console.log("Error uploading other Documents to cloudinary");
+                            } else {
+                                req.body.tinCertificate = result.secure_url;
+                            }
+                        }
+                    );
+                }
+            }
+
             const updatedBusiness = await db.businesses.update(req.body, { where: { id: businessId }, returning: true, plain: true })
 
             res.status(200).send({ message: "Business updated successfully", statuscode: 200, data: { business: updatedBusiness } });
