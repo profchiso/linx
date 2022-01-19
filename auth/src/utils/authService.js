@@ -21,13 +21,7 @@ exports.authenticate = async(req, res, next) => {
 
         //check if the access token actually exist
         if (!accessToken) {
-            // apiError.message = `Acesss denied, No authorization token`;
-            // apiError.success = false;
-            // console.log("apiError", apiError);
-            // return res.status(401).json(apiError);
-            //return res.status(401).redirect('/');
-
-            return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+            return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
         }
         //decode the acesss token
         const decodedToken = await jwt.verify(accessToken, JWT_SECRET);
@@ -36,12 +30,9 @@ exports.authenticate = async(req, res, next) => {
 
         const user = await db.User.findOne({ where: { id: decodedToken.user.id } });
         if (!user) {
-            // apiError.message = `Acesss denied, User with the token might have been deleted or deactivated`;
-            // apiError.success = false;
-            // console.log("apiError", apiError);
-            // return res.status(401).json(apiError);
-            // //return res.status(401).redirect(401, '/');
-            return res.status(404).send({ message: `User not found`, statuscode: 404, data: [] });
+            return res.status(404).send({ message: `User not found`, statuscode: 404, errors: [{ message: `User not found` }] });
+
+
         }
         //Allow access to protected route
         req.user = user;
@@ -51,17 +42,10 @@ exports.authenticate = async(req, res, next) => {
     } catch (error) {
         console.log(error);
         if (error.message.includes("jwt expired")) {
-            apiError.message = `jwt expired`;
-            apiError.success = false;
-            console.log("apiError", apiError);
-            return res.status(401).json(apiError);
+            return res.status(401).send({ message: `Token expired`, statuscode: 401, errors: [{ message: `Token expired` }] });
         }
-        return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
-        // apiError.message = `Invalid accessToken`;
-        // apiError.success = false;
-        // console.log("apiError", apiError);
-        // return res.status(401).json(apiError);
-        //return res.status(401).rediect(401, '/');
+        return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+
     }
 };
 

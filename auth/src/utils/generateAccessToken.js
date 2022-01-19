@@ -7,7 +7,7 @@ console.log(JWT_SECRET)
 exports.generateAccessToken = async(payload) => {
     try {
         let accessToken = jwt.sign(payload, JWT_SECRET, {
-            expiresIn: "2 days",
+            expiresIn: "10 days",
         });
         return accessToken;
     } catch (error) {
