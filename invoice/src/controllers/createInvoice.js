@@ -4,6 +4,7 @@ const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
 const { validate } = require("../helper/validateInvoice");
 const { sendMailWithSendGrid } = require("../helper/emailTransport");
+const { formatInvoiceMail } = require("../helper/emailFormat");
 
 module.exports = async (req, res) => {
   try {
@@ -96,11 +97,13 @@ module.exports = async (req, res) => {
       const mailOptions = {
         to: customerEmail,
         from: process.env.SENDER_EMAIL,
-        subject: "Your Invoice",
-        html: `<p>Here is your Invoice: ${invoice}</p>`,
+        subject: `Dear ${invoice.name}, your invoice is here`,
+        //html: `<p>Here is your Invoice: ${invoice}</p>`,
+        html: formatInvoiceMail(invoice),
       };
 
       await sendMailWithSendGrid(mailOptions);
+
       res.status(201).send({
         message: "Invoice created",
         statuscode: 201,
