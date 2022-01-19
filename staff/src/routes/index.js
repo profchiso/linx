@@ -298,6 +298,10 @@ staffRouter.get(
 //UPDATE STAFF DETAILS
 staffRouter.patch(
     '/api/v1/staff/:staffId',
+    upload.fields([
+        { name: "profilePix", maxCount: 1 },
+
+    ]),
     async(req, res) => {
 
         try {
@@ -313,6 +317,53 @@ staffRouter.patch(
             }
 
             const { staffId } = req.params;
+            if (req.body.profilePix) {
+
+                await cloudinary.uploader.upload(
+                    req.body.profilePix, {
+                        public_id: `staff-profile-pix/${firstName}-${lastName}`,
+                    },
+                    (error, result) => {
+
+
+                        if (error) {
+                            console.log(error)
+                            console.log("Error uploading staff profile pix to cloudinary");
+                        } else {
+                            req.body.profilePix = result.secure_url;
+
+                        }
+
+                    }
+                );
+            }
+
+
+            //upload images in  file format
+            if (req.files) {
+                if (req.files.profilePix) {
+
+                    await cloudinary.uploader.upload(
+                        req.files.profilePix[0].path, {
+                            public_id: `staff-profile-pix/${firstName}-${lastName}`,
+                        },
+                        (error, result) => {
+
+
+                            if (error) {
+                                console.log(error)
+                                console.log("Error uploading staff profile pix to cloudinary");
+                            } else {
+                                req.body.profilePix = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+
+
+            }
 
             const updatedStaff = await db.staff.update(req.body, { where: { id: staffId }, returning: true, plain: true })
 
