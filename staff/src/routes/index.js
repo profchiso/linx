@@ -244,6 +244,7 @@ staffRouter.get(
             if (staff.length > 0) {
                 for (let b of staff) {
                     b.dataValues.wallet = 0.00
+                    delete b.dataValues.password
                     myStaff.push(b.dataValues)
                 }
 
