@@ -38,12 +38,14 @@ signinRouter.post(
             //CHECK IF USER EXIST
             const existingUser = await db.User.findOne({ where: { email } });
             if (!existingUser) {
-                throw new BadRequestError('Invalid user credentials')
+                return res.status(400).send({ message: `Invalid user credentials`, statuscode: 401, errors: [{ message: `Invalid user credentials` }] });
+                //throw new BadRequestError('Invalid user credentials')
             }
 
             //COMPARE ENTERED PASSWORD WITH HASHED PASSWORD
             if (!(await decryptPassword(password, existingUser.password))) {
-                throw new BadRequestError('Invalid user credentials');
+                return res.status(400).send({ message: `Invalid user credentials`, statuscode: 401, errors: [{ message: `Invalid user credentials` }] });
+                //throw new BadRequestError('Invalid user credentials');
             }
 
             //JWT PAYLOAD FOR SIGINED IN USER

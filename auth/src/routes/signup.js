@@ -15,7 +15,7 @@ const signupRouter = express.Router();
 signupRouter.post(
     '/api/v1/auth/signup',
     signUpValidations,
-    validateRequest,
+
     async(req, res) => {
         try {
 
@@ -34,7 +34,8 @@ signupRouter.post(
             const existingUser = await db.User.findOne({ where: { email } });
 
             if (existingUser) {
-                throw new BadRequestError('Email already in use');
+                return res.status(400).send({ message: `Email already in use`, statuscode: 401, errors: [{ message: `Email already in use` }] });
+                //throw new BadRequestError('Email already in use');
             }
             let newUser = { firstName, lastName, phone, password: hashedPassword, verificationCode, email }
             const user = await db.User.create(newUser);
@@ -101,7 +102,9 @@ signupRouter.post(
             //CHECK IF VERIFICATION CODE IS CORRECT
             const existingUser = await db.User.findOne({ where: { id, verificationCode } });
             if (!existingUser) {
-                throw new BadRequestError('Incorrect Verification Code');
+                return res.status(400).send({ message: `Incorect Verification Code`, statuscode: 401, errors: [{ message: `Incorect Verification Code` }] });
+
+                // throw new BadRequestError('Incorrect Verification Code');
             }
 
             //UPDATE VERIFICATION STATUS TO TRUE
@@ -124,7 +127,7 @@ signupRouter.post(
 //RESEND VERIFICATION CODE
 signupRouter.post(
     '/api/v1/auth/verify/resend',
-    validateRequest,
+
     authenticate,
     async(req, res) => {
 
@@ -132,7 +135,8 @@ signupRouter.post(
             let id = req.user.id
             const existingUser = await db.User.findOne({ where: { id, } });
             if (!existingUser) {
-                throw new BadRequestError('Incorect Verification Code');
+                return res.status(400).send({ message: `Incorect Verification Code`, statuscode: 401, errors: [{ message: `Incorect Verification Code` }] });
+                //throw new BadRequestError('Incorect Verification Code');
             }
 
             let verificationCode = generateVerificationCode()
