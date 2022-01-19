@@ -26,7 +26,7 @@ businessRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
 
 
@@ -66,7 +66,7 @@ businessRouter.post(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
             //console.log("req", req.body)
 
@@ -83,7 +83,8 @@ businessRouter.post(
             const existingBusiness = await db.businesses.findOne({ where: { name } });
 
             if (existingBusiness) {
-                throw new BadRequestError(`Business name ${name} already in use`);
+                return res.status(400).send({ message: `Business name ${name} already in use`, statuscode: 400, errors: [{ message: `Business name ${name} already in use` }] });
+                //throw new BadRequestError(`Business name ${name} already in use`);
             }
 
             // initialize file upload fields
@@ -227,10 +228,6 @@ businessRouter.post(
                         }
                     );
                 }
-
-
-
-
                 if (req.files.registrationCertificate) {
                     await cloudinary.uploader.upload(
                         req.files.registrationCertificate[0].path, {
@@ -310,8 +307,6 @@ businessRouter.post(
 
             //create business alias
 
-
-            console.log("biz id", createdBusiness.id)
             const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
 
             //create business owners
@@ -412,9 +407,9 @@ businessRouter.post(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
-            //console.log("req", req.body)
+
             //request body validation
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -428,7 +423,8 @@ businessRouter.post(
             const existingBusiness = await db.businesses.findOne({ where: { tradingName } });
 
             if (existingBusiness) {
-                throw new BadRequestError(`Trading name ${tradingName} already in use`);
+                return res.status(400).send({ message: `Trading name ${tradingName} already in use`, statuscode: 400, data: [] });
+                //throw new BadRequestError(`Trading name ${tradingName} already in use`);
             }
 
             // initialize file upload fields
@@ -594,10 +590,6 @@ businessRouter.post(
 
             let returnData = {...createdFreelanceBusiness.dataValues }
 
-
-
-
-
             returnData.alias = businesAlias.dataValues
             returnData.owner = data.user
             returnData.businessOwners = partners
@@ -663,7 +655,8 @@ businessRouter.post(
             const existingBusiness = await db.businesses.findOne({ where: { tradingName } });
 
             if (existingBusiness) {
-                throw new BadRequestError(`Business trading name ${tradingName} already in use`);
+                return res.status(400).send({ message: `Trading name ${tradingName} already in use`, statuscode: 400, errors: [{ message: `Trading name ${tradingName} already in use` }] });
+                //throw new BadRequestError(`Business trading name ${tradingName} already in use`);
             }
 
             // initialize file upload fields
@@ -827,10 +820,6 @@ businessRouter.post(
             let returnData = {...createdUnregisteredBusiness.dataValues }
 
 
-
-
-
-
             returnData.alias = businesAlias
             returnData.owner = data.user
             returnData.partners = partners
@@ -877,7 +866,7 @@ businessRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
 
             const { userId } = req.params;
@@ -916,7 +905,7 @@ businessRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
 
             const { alias } = req.params;
@@ -924,7 +913,8 @@ businessRouter.get(
             //CHECK IF ALIAS ALREADY EXIST
             const existingAlias = await db.aliases.findOne({ where: { name: alias.toUpperCase() } });
             if (existingAlias) {
-                throw new BadRequestError(`Business alias  ${alias} already in use please choose another alias`)
+                return res.status(400).send({ message: `Business alias  ${alias} already in use please choose another alias`, statuscode: 400, errors: [{ message: `Business alias  ${alias} already in use please choose another alias` }] });
+                //throw new BadRequestError(`Business alias  ${alias} already in use please choose another alias`)
             }
             res.status(200).send({ message: `Business alias ${alias} available`, statuscode: 200, data: { alias } });
 
@@ -954,7 +944,7 @@ businessRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
 
             const { rcNumber } = req.params;
@@ -990,14 +980,15 @@ businessRouter.patch(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
 
             const { businessId } = req.params
 
             const existingBusiness = await db.businesses.findOne({ where: { businessId } });
             if (!existingBusiness) {
-                throw new BadRequestError('Invalid business id');
+                return res.status(400).send({ message: `Invalid business id  ${businessId} `, statuscode: 400, errors: [{ message: `Invalid business id  ${businessId}` }] });
+                //throw new BadRequestError('Invalid business id');
             }
             const updatedBusiness = await db.businesses.update(req.body, { where: { id: businessId }, returning: true, plain: true })
 
