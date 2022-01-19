@@ -133,8 +133,8 @@ staffRouter.post(
             }
 
             //hashpassword
-            let tempPassword = generateRandomLengthPassword(8) //generate password for staff to login
-            let hashedPassword = hashUserPassword(tempPassword) // has generated password
+            let tempPassword = await generateRandomLengthPassword(8) //generate password for staff to login
+            let hashedPassword = await hashUserPassword(tempPassword) // has generated password
 
 
             //generate staffid
