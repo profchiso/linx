@@ -51,8 +51,6 @@ const RegisteredBusinessRegistrationValidation = [
 
 ]
 
-
-
 const freelanceBusinessRegistrationValidation = [
 
     body("tradingName")

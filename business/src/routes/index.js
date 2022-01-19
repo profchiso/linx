@@ -424,7 +424,7 @@ businessRouter.post(
 
             if (existingBusiness) {
                 return res.status(400).send({ message: `Trading name ${tradingName} already in use`, statuscode: 400, data: [] });
-                //throw new BadRequestError(`Trading name ${tradingName} already in use`);
+
             }
 
             // initialize file upload fields
@@ -640,7 +640,7 @@ businessRouter.post(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
             //request body validation
             const errors = validationResult(req);
@@ -656,7 +656,7 @@ businessRouter.post(
 
             if (existingBusiness) {
                 return res.status(400).send({ message: `Trading name ${tradingName} already in use`, statuscode: 400, errors: [{ message: `Trading name ${tradingName} already in use` }] });
-                //throw new BadRequestError(`Business trading name ${tradingName} already in use`);
+
             }
 
             // initialize file upload fields
