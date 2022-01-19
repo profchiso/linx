@@ -8,6 +8,7 @@ const { sendDataToAWSQueue } = require("../utils/sendDataToQueue");
 const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing")
 const { generateRandomLengthPassword } = require("../utils/generateRandomPassword")
 const { generateEntityId } = require("../utils/generateEntityId")
+const { sendMailWithSendgrid } = require("../utils/emailing")
 const db = require("../models/index")
 const staffRouter = express.Router();
 const AUTH_URL = process.env.AUTH_URL
@@ -183,7 +184,28 @@ staffRouter.post(
             }
             console.log("queue payload", awsQueuePayload)
             let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
-            console.log("staff creation queue successfull", queueResponse);
+
+
+            //send staff login details
+            let msg = `Dear ${firstName} ${lastName}, 
+            You have been registered on linx platform by ${businessTradingName} . Please use the following
+            staffId:${staffId},
+            company Alias: ${businessAlias},
+            password: ${tempPassword}
+            login your account.
+            Please change your password after you login
+            Thank you.`
+
+            user.password = undefined;
+            const mailOptions = {
+                from: process.env.SENDER_EMAIL,
+                to: email,
+                subject: `${businessTradingName} Staff Registration`,
+                text: msg,
+            };
+
+            await sendMailWithSendgrid(mailOptions)
+
 
             res.status(201).send({ message: "Staff Created", statuscode: 201, type: "success", data: { staff: returnData } });
 
