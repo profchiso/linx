@@ -78,11 +78,9 @@ exports.isLoggedIn = async(req, res, next) => {
 };
 
 exports.authorize = (userType) => {
-    const apiError = {};
     return (req, res, next) => {
         if (!userType.includes(req.user.userType)) {
             return res.status(403).send({ message: `Sorry you are forbidden to carry out this operation`, statuscode: 403, errors: [{ message: `Sorry you are forbidden to carry out this operation` }] });
-
         }
         next();
     };
