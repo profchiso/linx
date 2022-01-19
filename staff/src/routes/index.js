@@ -196,7 +196,7 @@ staffRouter.post(
             Please change your password after you login
             Thank you.`
 
-            user.password = undefined;
+            //user.password = undefined;
             const mailOptions = {
                 from: process.env.SENDER_EMAIL,
                 to: email,
