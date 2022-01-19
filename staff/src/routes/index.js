@@ -24,7 +24,7 @@ staffRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
 
 
@@ -186,11 +186,13 @@ staffRouter.post(
     }
 );
 
+
+
+
 //GET  STAFF FOR BUSINESS
 staffRouter.get(
     '/api/v1/staff/business/:businessId',
-    //validateRequest,
-    // authenticate,
+
     async(req, res) => {
         //authenticate user
         try {
@@ -201,7 +203,7 @@ staffRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
 
             const { businessId } = req.params;
@@ -240,7 +242,7 @@ staffRouter.get(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
 
             const { staffId } = req.params;
@@ -274,7 +276,106 @@ staffRouter.patch(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            }
+
+            const { staffId } = req.params;
+
+            const updatedStaff = await db.staff.update(req.body, { where: { id: staffId }, returning: true, plain: true })
+
+            res.status(200).send({ message: `Staff info updated`, statuscode: 200, data: { staff: updatedStaff[1] } });
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+
+        }
+
+
+    }
+);
+
+//STAFF LOGIN
+staffRouter.post(
+    '/api/v1/staff/login',
+    async(req, res) => {
+
+        try {
+            //authenticate user
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            }
+
+            const { staffId } = req.params;
+
+            const updatedStaff = await db.staff.update(req.body, { where: { id: staffId }, returning: true, plain: true })
+
+            res.status(200).send({ message: `Staff info updated`, statuscode: 200, data: { staff: updatedStaff[1] } });
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+
+        }
+
+
+    }
+);
+
+//STAFF CHANGE PASSWORD
+staffRouter.post(
+    '/api/v1/staff/change-passord',
+    async(req, res) => {
+
+        try {
+            //authenticate user
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            }
+
+            const { staffId } = req.params;
+
+            const updatedStaff = await db.staff.update(req.body, { where: { id: staffId }, returning: true, plain: true })
+
+            res.status(200).send({ message: `Staff info updated`, statuscode: 200, data: { staff: updatedStaff[1] } });
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+
+        }
+
+
+    }
+);
+
+//STAFF LOGIN
+staffRouter.post(
+    '/api/v1/staff/reset-password',
+    async(req, res) => {
+
+        try {
+            //authenticate user
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
 
             const { staffId } = req.params;
@@ -307,7 +408,7 @@ staffRouter.delete(
                 })
                 //check if user is not authenticated
             if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, data: [] });
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             }
 
             const { staffId } = req.params
