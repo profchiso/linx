@@ -138,10 +138,10 @@ staffRouter.post(
 
 
             //generate staffid
+            let formattedBusinessAlias = businessAlias.toUpperCase()
             const staff = await db.staff.findAll({ where: { businessId } });
             let staffSerialNumber = generateEntityId(staff.length)
-            let staffId = `${businessAlias.toUpperCase()}${staffSerialNumber}`
-
+            let staffId = `${formattedBusinessAlias}${staffSerialNumber}`
 
 
 
@@ -164,7 +164,7 @@ staffRouter.post(
                 employmentType,
                 businessId,
                 businessTradingName,
-                businessAlias,
+                businessAlias: formattedBusinessAlias,
                 companyStaffId: companyStaffId || "",
                 password,
                 staffId

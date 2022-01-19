@@ -24,6 +24,15 @@ const staffRegistrationValidation = [
     .trim()
     .notEmpty()
     .withMessage("Business ID is required"),
+    body("businessTradingName")
+    .trim()
+    .notEmpty()
+    .withMessage("Business trading name is required"),
+    body("businessAlias")
+    .trim()
+    .notEmpty()
+    .withMessage("Business alias is required"),
+
 
 ]
 module.exports = { staffRegistrationValidation }
