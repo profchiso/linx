@@ -81,10 +81,8 @@ exports.authorize = (userType) => {
     const apiError = {};
     return (req, res, next) => {
         if (!userType.includes(req.user.userType)) {
-            apiError.message = `Sorry you are forbidden to carry out this operation`;
-            apiError.success = false;
-            console.log("apiError", apiError);
-            return res.status(403).json(apiError);
+            return res.status(403).send({ message: `Sorry you are forbidden to carry out this operation`, statuscode: 403, errors: [{ message: `Sorry you are forbidden to carry out this operation` }] });
+
         }
         next();
     };
