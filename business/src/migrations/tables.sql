@@ -72,3 +72,89 @@ CREATE TABLE IF NOT EXISTS public.businesses
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT businesses_pkey PRIMARY KEY (id)
 )
+
+
+
+CREATE TABLE IF NOT EXISTS public.directors
+(
+    id serial NOT NULL ,
+    "firstName" character varying(255) COLLATE pg_catalog."default",
+    "lastName" character varying(255) COLLATE pg_catalog."default",
+    "middleName" character varying(255) COLLATE pg_catalog."default",
+    email character varying(255) COLLATE pg_catalog."default",
+    phone character varying(255) COLLATE pg_catalog."default",
+    "dateOfBirth" character varying(255) COLLATE pg_catalog."default",
+    gender character varying(255) COLLATE pg_catalog."default",
+    nationality character varying(255) COLLATE pg_catalog."default",
+    state character varying(255) COLLATE pg_catalog."default",
+    lga character varying(255) COLLATE pg_catalog."default",
+    occupation character varying(255) COLLATE pg_catalog."default",
+    address character varying(255) COLLATE pg_catalog."default",
+    "idType" character varying(255) COLLATE pg_catalog."default",
+    "idNumber" character varying(255) COLLATE pg_catalog."default",
+    "idImage" character varying(255) COLLATE pg_catalog."default",
+    passport character varying(255) COLLATE pg_catalog."default",
+    signature character varying(255) COLLATE pg_catalog."default",
+    "businessId" integer,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT directors_pkey PRIMARY KEY (id),
+    CONSTRAINT "directors_businessId_fkey" FOREIGN KEY ("businessId")
+        REFERENCES public.businesses (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE IF NOT EXISTS public.secretaries
+(
+    id serial NOT NULL ,
+    "firstName" character varying(255) COLLATE pg_catalog."default",
+    "lastName" character varying(255) COLLATE pg_catalog."default",
+    "middleName" character varying(255) COLLATE pg_catalog."default",
+    email character varying(255) COLLATE pg_catalog."default",
+    phone character varying(255) COLLATE pg_catalog."default",
+    "dateOfBirth" character varying(255) COLLATE pg_catalog."default",
+    gender character varying(255) COLLATE pg_catalog."default",
+    nationality character varying(255) COLLATE pg_catalog."default",
+    state character varying(255) COLLATE pg_catalog."default",
+    lga character varying(255) COLLATE pg_catalog."default",
+    occupation character varying(255) COLLATE pg_catalog."default",
+    address character varying(255) COLLATE pg_catalog."default",
+    "idType" character varying(255) COLLATE pg_catalog."default",
+    "idNumber" character varying(255) COLLATE pg_catalog."default",
+    "idImage" character varying(255) COLLATE pg_catalog."default",
+    passport character varying(255) COLLATE pg_catalog."default",
+    signature character varying(255) COLLATE pg_catalog."default",
+    "businessId" integer,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT secretaries_pkey PRIMARY KEY (id),
+    CONSTRAINT "secretaries_businessId_fkey" FOREIGN KEY ("businessId")
+        REFERENCES public.businesses (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+
+CREATE TABLE IF NOT EXISTS public.witnesses
+(
+    id serial NOT NULL,
+    "firstName" character varying(255) COLLATE pg_catalog."default",
+    "lastName" character varying(255) COLLATE pg_catalog."default",
+    "middleName" character varying(255) COLLATE pg_catalog."default",
+    email character varying(255) COLLATE pg_catalog."default",
+    phone character varying(255) COLLATE pg_catalog."default",
+    "dateOfBirth" character varying(255) COLLATE pg_catalog."default",
+    gender character varying(255) COLLATE pg_catalog."default",
+    occupation character varying(255) COLLATE pg_catalog."default",
+    address character varying(255) COLLATE pg_catalog."default",
+    signature character varying(255) COLLATE pg_catalog."default",
+    "businessId" integer,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT witnesses_pkey PRIMARY KEY (id),
+    CONSTRAINT "witnesses_businessId_fkey" FOREIGN KEY ("businessId")
+        REFERENCES public.businesses (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
