@@ -1,6 +1,5 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
 const axios = require("axios")
 const { validateRequest, BadRequestError } = require('@bc_tickets/common');
 const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing")
@@ -39,13 +38,12 @@ signinRouter.post(
             const existingUser = await db.User.findOne({ where: { email } });
             if (!existingUser) {
                 return res.status(400).send({ message: `Invalid user credentials`, statuscode: 401, errors: [{ message: `Invalid user credentials` }] });
-                //throw new BadRequestError('Invalid user credentials')
             }
 
             //COMPARE ENTERED PASSWORD WITH HASHED PASSWORD
             if (!(await decryptPassword(password, existingUser.password))) {
                 return res.status(400).send({ message: `Invalid user credentials`, statuscode: 401, errors: [{ message: `Invalid user credentials` }] });
-                //throw new BadRequestError('Invalid user credentials');
+
             }
 
             //JWT PAYLOAD FOR SIGINED IN USER

@@ -1,7 +1,5 @@
 const express = require("express");
 const { body, validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
-const { validateRequest, BadRequestError } = require("@bc_tickets/common");
 const { generateVerificationCode } = require("../utils/generateVerificationCode")
 const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing")
 const { sendMailWithSendgrid, sendWithMailTrap, sendEmailWithMailgun } = require("../utils/emailing")
@@ -35,7 +33,7 @@ signupRouter.post(
 
             if (existingUser) {
                 return res.status(400).send({ message: `Email already in use`, statuscode: 401, errors: [{ message: `Email already in use` }] });
-                //throw new BadRequestError('Email already in use');
+
             }
             let newUser = { firstName, lastName, phone, password: hashedPassword, verificationCode, email }
             const user = await db.User.create(newUser);
