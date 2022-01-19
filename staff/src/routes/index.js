@@ -188,11 +188,11 @@ staffRouter.post(
 
             //send staff login details
             let msg = `Dear ${firstName} ${lastName}, 
-            You have been registered on linx platform by ${businessTradingName} . Please use the following
+            You have been registered on linx platform by ${businessTradingName} . Please use the following details
             staffId:${staffId},
             company Alias: ${businessAlias},
             password: ${tempPassword}
-            login your account.
+            to login into your account.
             Please change your password after you login
             Thank you.`
 
