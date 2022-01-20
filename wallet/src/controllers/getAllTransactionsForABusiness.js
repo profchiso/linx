@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
     const transactions = await db.transaction.findAll({
       where: { businessId },
     });
-    if (!transactions) {
+    if (transactions.length == 0) {
       throw new Error("There are no transactions found");
     }
 
