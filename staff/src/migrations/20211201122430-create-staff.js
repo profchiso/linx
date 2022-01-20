@@ -80,6 +80,10 @@ module.exports = {
                 type: Sequelize.NUMERIC,
                 defaultValue: 0
             },
+            staffSalary: {
+                type: Sequelize.NUMERIC,
+                defaultValue: 0
+            },
             deduction: {
                 type: Sequelize.NUMERIC,
                 defaultValue: 0

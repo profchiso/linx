@@ -87,6 +87,14 @@ module.exports = (sequelize, DataTypes) => {
         paymentAccount: {
             type: DataTypes.STRING
         },
+        salary: {
+            type: DataTypes.NUMERIC,
+
+        },
+        staffSalary: {
+            type: DataTypes.NUMERIC,
+
+        },
 
 
         password: {
