@@ -70,8 +70,6 @@ cronJob.schedule("*/1 * * * *", () => {
         return;
       }
 
-      console.log(data);
-
       if (data.Messages && data.Messages.length) {
         let messageBody = data.Messages;
 
@@ -91,7 +89,7 @@ cronJob.schedule("*/1 * * * *", () => {
             walletType: "Primary",
             userId: parsedData.userId,
             email: parsedData.email || "j2k4@yahoo.com",
-            category: parsedData.walletCategory || "Business",
+            category: parsedData.walletCategory.toLowerCase() || "business",
           });
 
           let createdPromoWallet = await db.wallet.create({
@@ -105,7 +103,7 @@ cronJob.schedule("*/1 * * * *", () => {
             walletType: "Promo",
             userId: parsedData.userId,
             email: parsedData.email || "j2k4@yahoo.com",
-            category: parsedData.walletCategory || "Business",
+            category: parsedData.walletCategory.toLowerCase() || "business",
           });
 
           let businessWalletPayload = {
@@ -184,7 +182,7 @@ cronJob.schedule("*/2 * * * *", () => {
             balance: 0,
             walletType: "Primary",
             email: parsedData.email || "j2k4@yahoo.com",
-            category: parsedData.walletCategory,
+            category: parsedData.walletCategory.toLowerCase() || "staff",
           });
 
           // transport object

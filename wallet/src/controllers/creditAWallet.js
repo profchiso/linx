@@ -60,7 +60,7 @@ module.exports = async (req, res) => {
     if (!recipientWallet) {
       throw new Error("recipient wallet cannot be found");
     }
-
+    console.log("=======>", wallet.dataValues.balance, amount);
     if (wallet.dataValues.balance < amount) {
       throw new Error("You don't have enough amount to make this transfer");
     }

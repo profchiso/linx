@@ -17,6 +17,9 @@ module.exports = {
       businessId: {
         type: Sequelize.INTEGER,
       },
+      staffId: {
+        type: Sequelize.INTEGER,
+      },
       userId: {
         type: Sequelize.INTEGER,
       },
