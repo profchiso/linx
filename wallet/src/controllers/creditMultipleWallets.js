@@ -59,6 +59,7 @@ module.exports = async (req, res) => {
 
     let emailTransactionDetails = [];
     let transactionDetails = [];
+    let transactionReference, transactionDescription;
 
     for (let eachWallet of walletsArray) {
       const recipientWallet = await db.wallet.findOne({
@@ -73,8 +74,8 @@ module.exports = async (req, res) => {
         throw new Error("you cannot transfer money to your wallet");
       }
 
-      let transactionReference = uuid();
-      let transactionDescription = uuid();
+      transactionReference = uuid();
+      transactionDescription = uuid();
 
       wallet.dataValues.balance -= eachWallet.amount;
       wallet.dataValues.debit = eachWallet.amount;
