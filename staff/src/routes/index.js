@@ -34,7 +34,16 @@ staffRouter.get(
             //get all registered businesses
             const staff = await db.staff.findAll({});
 
-            res.status(200).send({ message: "All staff Fetched", statuscode: 200, data: { staff } });
+            let myStaff = [];
+            if (staff.length > 0) {
+                for (let b of staff) {
+                    delete b.dataValues.password
+                    myStaff.push(b.dataValues)
+                }
+
+            }
+
+            res.status(200).send({ message: "All staff Fetched", statuscode: 200, data: { staffs: myStaff } });
 
         } catch (error) {
             console.log(error)

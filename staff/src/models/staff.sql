@@ -13,15 +13,16 @@ CREATE TABLE IF NOT EXISTS public.staffs
     lga character varying(255) COLLATE pg_catalog."default",
     "bankName" character varying(255) COLLATE pg_catalog."default",
     "accountName" character varying(255) COLLATE pg_catalog."default",
-    "accountNumber" character varying(255) COLLATE pg_catalog."default",
-    "walletId" character varying(255) COLLATE pg_catalog."default",
+    "accountNumber" integer,
+    "walletId" integer,
     "walletBalance" numeric DEFAULT 0,
-    "bankAccountBalance" integer DEFAULT 0,
+    "bankAccountBalance" numeric DEFAULT 0,
     status character varying(255) COLLATE pg_catalog."default" DEFAULT 'Active'::character varying,
     role character varying(255) COLLATE pg_catalog."default" DEFAULT 'staff'::character varying,
     "employmentType" character varying(255) COLLATE pg_catalog."default",
     "businessId" integer,
     bonus numeric DEFAULT 0,
+    salary numeric DEFAULT 0,
     deduction numeric DEFAULT 0,
     "totalPayable" numeric DEFAULT 0,
     "paymentAccount" character varying(255) COLLATE pg_catalog."default" DEFAULT 'wallet'::character varying,
@@ -34,3 +35,6 @@ CREATE TABLE IF NOT EXISTS public.staffs
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT staffs_pkey PRIMARY KEY (id)
 )
+
+alter table public.staffs
+add salary numeric default 0

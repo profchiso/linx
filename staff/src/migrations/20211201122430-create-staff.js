@@ -51,11 +51,11 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             walletBalance: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.NUMERIC,
                 defaultValue: 0
             },
             bankAccountBalance: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.NUMERIC,
                 defaultValue: 0
             },
             status: {
@@ -73,15 +73,19 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             bonus: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.NUMERIC,
+                defaultValue: 0
+            },
+            salary: {
+                type: Sequelize.NUMERIC,
                 defaultValue: 0
             },
             deduction: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.NUMERIC,
                 defaultValue: 0
             },
             totalPayable: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.NUMERIC,
                 defaultValue: 0
             },
             paymentAccount: {
