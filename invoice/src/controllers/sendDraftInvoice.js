@@ -30,6 +30,14 @@ module.exports = async (req, res) => {
       throw new Error("No Invoice found");
     }
 
+    if (invoice.status !== "draft" || "pending") {
+      throw new Error("You can only send a draft or pending invoice");
+    }
+
+    invoice.status = "sent";
+
+    await invoice.save();
+
     // transport object
     const mailOptions = {
       to: customerEmail,

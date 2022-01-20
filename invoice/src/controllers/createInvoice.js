@@ -48,6 +48,7 @@ module.exports = async (req, res) => {
       });
 
       invoice.goodsDetail = invoiceGoodsDetailArray;
+      invoice.status = "pending";
 
       await invoice.save();
 
@@ -90,6 +91,7 @@ module.exports = async (req, res) => {
       });
 
       invoice.goodsDetail = invoiceGoodsDetailArray;
+      invoice.status = "sent";
 
       await invoice.save();
 
@@ -105,7 +107,7 @@ module.exports = async (req, res) => {
       await sendMailWithSendGrid(mailOptions);
 
       res.status(201).send({
-        message: "Invoice created",
+        message: "Invoice created and sent successfully",
         statuscode: 201,
         type: "success",
         data: {
