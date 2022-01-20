@@ -1,4 +1,5 @@
 const AWS = require("aws-sdk");
+const { uuid } = require("uuidv4");
 const db = require("../models/index");
 const {
   validateMultipleWalletsCreditData,
@@ -35,12 +36,18 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
     const { walletId } = req.params;
-    const { walletsArray, totalAmount, walletOwnerEmail } = req.body;
+    const { walletsArray, totalAmount, walletOwnerEmail, businessId } =
+      req.body;
+    let staffId = req.body.staffId;
 
     const wallet = await db.wallet.findOne({ where: { walletId: walletId } });
 
     if (!wallet) {
       throw new Error("wallet cannot be found");
+    }
+
+    if (!staffId) {
+      staffId = 0;
     }
 
     if (wallet.dataValues.balance < totalAmount) {
@@ -62,6 +69,13 @@ module.exports = async (req, res) => {
         throw new Error("recipient wallet cannot be found");
       }
 
+      if (walletId === eachWallet.recipientWalletId) {
+        throw new Error("you cannot transfer money to your wallet");
+      }
+
+      let transactionReference = uuid();
+      let transactionDescription = uuid();
+
       wallet.dataValues.balance -= eachWallet.amount;
       wallet.dataValues.debit = eachWallet.amount;
       let ownersBalance = wallet.dataValues.balance;
@@ -82,11 +96,9 @@ module.exports = async (req, res) => {
         }
       );
 
-      let returnData = { ...updatedUserWallet.dataValues };
-      console.log("<><><><><><><><>>M", { ...updatedUserWallet.dataValues });
+      let returnData = { ...wallet.dataValues };
       transactionDetails.push(returnData);
-      console.log("TRANSACTION DETAILS", transactionDetails);
-      console.log("=============><><><>", returnData.entries());
+
       emailTransactionDetails.push(eachWallet.recipientId, eachWallet.amount);
 
       // transport object
@@ -99,13 +111,41 @@ module.exports = async (req, res) => {
 
       await sendMailWithSendGrid(mailOptionsForCreditAlert);
 
-      let transaction = db.transaction.create({
+      // let transaction = db.transaction.create({
+      //   creditType: "wallet",
+      //   ownersWalletId: walletId,
+      //   recipientWalletId: eachWallet.recipientWalletId,
+      //   amount: eachWallet.amount,
+      //   ownersWalletBalance: ownersBalance,
+      //   recipientWalletBalance: recipientBalance,
+      // });
+
+      let debitTransaction = db.transaction.create({
         creditType: "wallet",
         ownersWalletId: walletId,
         recipientWalletId: eachWallet.recipientWalletId,
+        businessId,
         amount: eachWallet.amount,
-        ownersWalletBalance: ownersBalance,
-        recipientWalletBalance: recipientBalance,
+        walletBalance: ownersBalance,
+        staffId,
+        transactionReference,
+        transactionType: "Debit",
+        transactionStatus: "Successful",
+        transactionDescription,
+      });
+
+      let creditTransaction = db.transaction.create({
+        creditType: "wallet",
+        ownersWalletId: eachWallet.recipientWalletId,
+        businessId: recipientWallet.dataValues.businessId,
+        senderWalletId: walletId,
+        amount: eachWallet.amount,
+        walletBalance: recipientBalance,
+        staffId: recipientWallet.dataValues.staffId || 0,
+        transactionReference,
+        transactionType: "Credit",
+        transactionStatus: "Successful",
+        transactionDescription,
       });
 
       let walletCreditPayload = {
@@ -142,7 +182,7 @@ module.exports = async (req, res) => {
     return res.status(200).send({
       statusCode: 200,
       message: "Transfer Successful",
-      data: { transactionDetails },
+      data: { transactionsData: transactionDetails },
     });
   } catch (error) {
     console.log(error);

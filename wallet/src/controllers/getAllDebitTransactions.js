@@ -16,8 +16,8 @@ module.exports = async(req, res) => {
         //     throw new NotAuthorisedError()
         // }
         const { walletId } = req.params
-        const transactions = await db.transaction.findAll({ where: { ownersWalletId: walletId } });
-        if (!transactions) {
+        const transactions = await db.transaction.findAll({ where: { ownersWalletId: walletId, transactionType: "Debit" } });
+        if (transactions.length == 0) {
             throw new Error('There are no transactions found')
         }
 

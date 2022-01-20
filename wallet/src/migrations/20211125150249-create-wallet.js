@@ -32,7 +32,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       balance: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.NUMERIC,
       },
       walletId: {
         type: Sequelize.INTEGER,

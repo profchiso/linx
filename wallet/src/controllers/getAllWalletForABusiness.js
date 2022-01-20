@@ -19,7 +19,8 @@ module.exports = async (req, res) => {
     const wallets = await db.wallet.findAll({
       where: { businessId, category: "Business" },
     });
-    if (!wallets) {
+
+    if (wallets.length == 0) {
       throw new Error("There are no wallets found");
     }
 

@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0,
       },
       balance: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.NUMERIC,
         defaultValue: 0,
       },
       alias: {

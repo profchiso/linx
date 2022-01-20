@@ -1,4 +1,5 @@
 const AWS = require("aws-sdk");
+const { uuid } = require("uuidv4");
 const db = require("../models/index");
 const { validateWalletCreditData } = require("../helper/validateWallet");
 const { sendMailWithSendGrid } = require("../helper/emailTransport");
@@ -39,12 +40,17 @@ module.exports = async (req, res) => {
       recipientType,
       walletOwnerEmail,
       recipientEmail,
-      businessId
+      businessId,
     } = req.body;
+    let staffId = req.body.staffId;
     const wallet = await db.wallet.findOne({ where: { walletId: walletId } });
 
     if (!wallet) {
       throw new Error("wallet cannot be found");
+    }
+
+    if (walletId === recipientWalletId) {
+      throw new Error("you cannot transfer money to your wallet");
     }
 
     const recipientWallet = await db.wallet.findOne({
@@ -61,6 +67,13 @@ module.exports = async (req, res) => {
     if (amount <= 0) {
       throw new Error("The amount to be transferred must be greater than 0");
     }
+
+    if (!staffId) {
+      staffId = 0;
+    }
+
+    let transactionReference = uuid();
+    let transactionDescription = uuid();
 
     wallet.dataValues.balance -= amount;
     wallet.dataValues.debit = amount;
@@ -98,40 +111,58 @@ module.exports = async (req, res) => {
 
     await sendMailWithSendGrid(mailOptionsForCreditAlert);
 
-    //Promise.all([
-    let transaction = db.transaction.create({
-      creditType: "wallet",
-      ownersWalletId: walletId,
-      recipientWalletId: recipientWalletId,
-      businessId,
-      amount,
-      ownersWalletBalance: ownersBalance,
-      recipientWalletBalance: recipientBalance,
-    });
-    //]).then(() => {
-    let walletCreditPayload = {
-      walletId: walletId,
-      recipientId: recipientWalletId,
-      amount: amount,
-      ownersBalance: ownersBalance,
-      recipientBalance: recipientBalance,
-    };
+    Promise.all([
+      db.transaction.create({
+        creditType: "wallet",
+        ownersWalletId: walletId,
+        recipientWalletId: recipientWalletId,
+        businessId,
+        amount,
+        walletBalance: ownersBalance,
+        staffId,
+        transactionReference,
+        transactionType: "Debit",
+        transactionStatus: "Successful",
+        transactionDescription,
+      }),
 
-    let wallletCreditSqs = {
-      MessageBody: JSON.stringify(walletCreditPayload),
-      QueueUrl:
-        recipientType == "business"
-          ? businessWalletCreditQueue
-          : staffWalletCreditQueue,
-    };
-    let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
+      db.transaction.create({
+        creditType: "wallet",
+        ownersWalletId: recipientWalletId,
+        businessId: recipientWallet.dataValues.businessId,
+        senderWalletId: walletId,
+        amount,
+        walletBalance: recipientBalance,
+        staffId: recipientWallet.dataValues.staffId || 0,
+        transactionReference,
+        transactionType: "Credit",
+        transactionStatus: "Successful",
+        transactionDescription,
+      }),
+    ]).then(() => {
+      let walletCreditPayload = {
+        walletId: walletId,
+        recipientId: recipientWalletId,
+        amount: amount,
+        ownersBalance: ownersBalance,
+        recipientBalance: recipientBalance,
+      };
 
-    return res.status(200).send({
-      statusCode: 200,
-      message: "Recipient wallet successfully credited",
-      data: { updatedUserWallet },
+      let wallletCreditSqs = {
+        MessageBody: JSON.stringify(walletCreditPayload),
+        QueueUrl:
+          recipientType == "business"
+            ? businessWalletCreditQueue
+            : staffWalletCreditQueue,
+      };
+      let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
+
+      return res.status(200).send({
+        statusCode: 200,
+        message: "Recipient wallet successfully credited",
+        data: { updatedUserWallet },
+      });
     });
-    //});
   } catch (error) {
     console.log(error);
     res.status(500).json({

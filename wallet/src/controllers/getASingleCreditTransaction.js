@@ -17,7 +17,11 @@ module.exports = async (req, res) => {
     // }
     const { walletId } = req.params;
     const transaction = await db.transaction.findOne({
-      where: { recipientWalletId: walletId, id: req.params.id },
+      where: {
+        ownersWalletId: walletId,
+        transactionType: "Credit",
+        id: req.params.id,
+      },
     });
 
     if (!transaction) {

@@ -33,18 +33,38 @@ module.exports = (sequelize, DataTypes) => {
       },
       recipientWalletId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
+      },
+      senderWalletId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
       },
       amount: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      ownersWalletBalance: {
+      walletBalance: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      recipientWalletBalance: {
+      staffId: {
         type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      transactionReference: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      transactionType: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      transactionStatus: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      transactionDescription: {
+        type: DataTypes.STRING,
         allowNull: false,
       },
     },
