@@ -15,7 +15,10 @@ invoiceRouter.post(
   sendDraftInvoice
 );
 invoiceRouter.patch("/api/v1/invoice/:id", editInvoice);
-invoiceRouter.patch("/api/v1/invoice/deactivate/:id", deactivateInvoice);
+invoiceRouter.patch(
+  "/api/v1/:businessId/:customerId/invoice/:id/deactivate",
+  deactivateInvoice
+);
 invoiceRouter.get(
   "/api/v1/:businessId/:customerId/invoice/preview/:id",
   previewInvoice

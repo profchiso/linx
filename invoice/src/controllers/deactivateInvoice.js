@@ -19,7 +19,11 @@ module.exports = async (req, res) => {
 
     const { id } = req.params.id;
 
-    const invoice = await Invoice.findOne({ id });
+    const invoice = await Invoice.findOne({
+      id: req.params.id,
+      businessId: req.params.businessId,
+      customerId: req.params.customerId,
+    });
 
     if (!invoice) {
       res.status(404);
