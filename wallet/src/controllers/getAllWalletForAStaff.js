@@ -15,9 +15,9 @@ module.exports = async (req, res) => {
     // if (!data.user) {
     //     throw new NotAuthorisedError()
     // }
-    const { businessId } = req.params;
+    const { staffId } = req.params;
     const wallets = await db.wallet.findAll({
-      where: { businessId, category: "business" },
+      where: { staffId, category: "staff" },
     });
 
     if (wallets.length == 0) {

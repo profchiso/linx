@@ -5,6 +5,7 @@ const creditAWallet = require("../controllers/creditAWallet");
 const creditMultipleWallets = require("../controllers/creditMultipleWallets");
 const getWallet = require("../controllers/getWallet");
 const getAllWalletForABusiness = require("../controllers/getAllWalletForABusiness");
+const getAllWalletForAStaff = require("../controllers/getAllWalletForAStaff");
 const saveBeneficiaryForAWallet = require("../controllers/saveBeneficiaryForAWallet");
 const saveMultipleBeneficiariesForAWallet = require("../controllers/saveMultipleBeneficiariesForAWallet");
 const getAllCreditTransactions = require("../controllers/getAllCreditTransactions");
@@ -14,6 +15,8 @@ const getASingleCreditTransaction = require("../controllers/getASingleCreditTran
 const getASingleDebitTransaction = require("../controllers/getASingleDebitTransaction");
 const getASingleBeneficiary = require("../controllers/getASingleBeneficiary");
 const getAllBeneficiariesForAWallet = require("../controllers/getAllBeneficiariesForAWallet");
+const createWalletPin = require("../controllers/createWalletPin");
+const validateWalletPin = require("../controllers/validateWalletPin");
 
 const walletRouter = express.Router();
 
@@ -22,6 +25,7 @@ walletRouter.get(
   "/api/v1/wallet/business/:businessId",
   getAllWalletForABusiness
 );
+walletRouter.get("/api/v1/wallet/staff/:staffId", getAllWalletForAStaff);
 walletRouter.get("/api/v1/wallet/credit/:walletId", getAllCreditTransactions);
 walletRouter.get("/api/v1/wallet/debit/:walletId", getAllDebitTransactions);
 walletRouter.get(
@@ -58,5 +62,7 @@ walletRouter.post(
   "/api/v1/wallet/:walletId/beneficiary/multiple",
   saveMultipleBeneficiariesForAWallet
 );
+walletRouter.post("/api/v1/wallet/:ownerId/pin", createWalletPin);
+walletRouter.post("/api/v1/wallet/:ownerId/pin/validate", validateWalletPin);
 
 module.exports = walletRouter;

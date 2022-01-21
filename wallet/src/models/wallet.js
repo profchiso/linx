@@ -41,10 +41,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      // staffId: {
-      //   type: DataTypes.INTEGER,
-      //   allowNull: false,
-      // },
+      staffId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -55,11 +55,11 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "Primary",
       },
       credit: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.NUMERIC,
         defaultValue: 0,
       },
       debit: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.NUMERIC,
         defaultValue: 0,
       },
       balance: {

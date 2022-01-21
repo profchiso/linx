@@ -29,10 +29,10 @@ module.exports = {
         defaultValue: "Primary",
       },
       credit: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.NUMERIC,
       },
       debit: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.NUMERIC,
       },
       balance: {
         type: Sequelize.NUMERIC,

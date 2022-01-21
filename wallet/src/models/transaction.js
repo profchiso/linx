@@ -40,11 +40,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       amount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.NUMERIC,
         allowNull: false,
       },
       walletBalance: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.NUMERIC,
         allowNull: false,
       },
       staffId: {

@@ -1,3 +1,17 @@
+CREATE TABLE IF NOT EXISTS public.pins
+(
+    id serial NOT NULL , 
+    "walletId" integer NOT NULL,
+    "ownerId" integer NOT NULL,
+    "userId" integer NOT NULL,
+    "userType" character varying(255),
+    "alias" character varying(255),
+    "walletPin" character varying(255),
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT pins_pkey PRIMARY KEY (id)
+)
+
 CREATE TABLE IF NOT EXISTS public.beneficiaries
 (
     id serial NOT NULL ,

@@ -50,6 +50,8 @@ module.exports = async (req, res) => {
       staffId = 0;
     }
 
+    wallet.dataValues.balance = Number(wallet.dataValues.balance);
+
     if (wallet.dataValues.balance < totalAmount) {
       throw new Error("You don't have enough amount to make this transfer");
     }
@@ -70,12 +72,16 @@ module.exports = async (req, res) => {
         throw new Error("recipient wallet cannot be found");
       }
 
-      if (walletId === eachWallet.recipientWalletId) {
+      if (walletId == eachWallet.recipientWalletId) {
         throw new Error("you cannot transfer money to your wallet");
       }
 
       transactionReference = uuid();
       transactionDescription = uuid();
+
+      recipientWallet.dataValues.balance = Number(
+        recipientWallet.dataValues.balance
+      );
 
       wallet.dataValues.balance -= eachWallet.amount;
       wallet.dataValues.debit = eachWallet.amount;

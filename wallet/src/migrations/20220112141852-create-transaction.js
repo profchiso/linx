@@ -33,11 +33,11 @@ module.exports = {
         allowNull: true,
       },
       amount: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.NUMERIC,
         allowNull: false,
       },
       walletBalance: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.NUMERIC,
         allowNull: false,
       },
       staffId: {
