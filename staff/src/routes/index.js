@@ -189,7 +189,7 @@ staffRouter.post(
                 phoneNumber,
                 name: `${firstName} ${lastName}`,
                 email: email,
-                walletType: "Staff"
+                walletCategory: "staff"
             }
             console.log("queue payload", awsQueuePayload)
             let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
