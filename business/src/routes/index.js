@@ -368,7 +368,7 @@ businessRouter.post(
                 tradingName,
                 name: tradingName || "",
                 email: req.body.businessEmail || data.user.email,
-                walletCategory: "Business"
+                walletCategory: "business"
             }
             console.log("queue payload", awsQueuePayload)
             let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
@@ -601,11 +601,11 @@ businessRouter.post(
                 tradingName,
                 name: tradingName || "",
                 email: req.body.businessEmail || data.user.email,
-                walletCategory: "Business"
+                walletCategory: "business"
             }
             console.log("queue payload", awsQueuePayload)
             let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
-            console.log("Business creation queue successfull", queueResponse);
+
 
             res.status(201).send({ message: " Freelance Business Created", statuscode: 201, type: "success", data: { business: returnData } });
 
@@ -831,7 +831,7 @@ businessRouter.post(
                 tradingName,
                 name: tradingName || "",
                 email: req.body.businessEmail || data.user.email,
-                walletCategory: "Business"
+                walletCategory: "business"
             }
             console.log("queue payload", awsQueuePayload)
             let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
