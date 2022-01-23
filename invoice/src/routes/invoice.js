@@ -14,7 +14,7 @@ invoiceRouter.post(
   "/api/v1/:businessId/:customerId/draft/invoice/:id",
   sendDraftInvoice
 );
-invoiceRouter.patch("/api/v1/invoice/:id", editInvoice);
+invoiceRouter.patch("/api/v1/:businessId/:customerId/invoice/:id", editInvoice);
 invoiceRouter.patch(
   "/api/v1/:businessId/:customerId/invoice/:id/deactivate",
   deactivateInvoice

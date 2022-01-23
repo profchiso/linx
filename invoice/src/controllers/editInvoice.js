@@ -25,20 +25,43 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
 
-    const { id } = req.params.id;
+    const { id, businessId, customerId } = req.params;
 
     let { customerEmail } = req.body;
 
-    const invoice = await Invoice.findOneAndUpdate(id, req.body, {
-      new: true,
-    });
+    // const findInvoice = await Invoice.findOne({
+    //   id: req.params.id,
+    //   businessId: req.params.businessId,
+    //   customerId: req.params.customerId,
+    // });
+
+    // if (!findInvoice) {
+    //   throw new Error("No invoice found");
+    // }
+
+    const invoice = await Invoice.findOneAndUpdate(
+      {
+        id: req.params.id,
+        businessId: req.params.businessId,
+        customerId: req.params.customerId,
+      },
+      req.body,
+      {
+        new: true,
+      }
+    );
 
     if (!invoice) {
-      res.status(404);
-      throw new Error("Invoice not found");
+      throw new Error("No invoice found");
     }
 
     let invoiceGoodsDetailArray = [];
+
+    const generateURL = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/${businessId}/${customerId}/invoice/preview/${id}`;
+
+    invoice.urlLink = generateURL;
 
     invoice.goodsDetail.forEach((element) => {
       element.totalAmount = element.cost * element.quantity;
@@ -46,6 +69,8 @@ module.exports = async (req, res) => {
     });
 
     invoice.goodsDetail = invoiceGoodsDetailArray;
+
+    invoice.status = "sent";
 
     await invoice.save();
 
