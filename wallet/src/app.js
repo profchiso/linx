@@ -88,6 +88,7 @@ cronJob.schedule("*/1 * * * *", () => {
             balance: 100000,
             walletType: "Primary",
             userId: parsedData.userId,
+            staffId: parsedData.staffId || null,
             email: parsedData.email || "j2k4@yahoo.com",
             category: parsedData.walletCategory || "business",
           });
@@ -102,6 +103,7 @@ cronJob.schedule("*/1 * * * *", () => {
             balance: 20000,
             walletType: "Promo",
             userId: parsedData.userId,
+            staffId: parsedData.staffId || null,
             email: parsedData.email || "j2k4@yahoo.com",
             category: parsedData.walletCategory || "business",
           });
@@ -176,6 +178,7 @@ cronJob.schedule("*/2 * * * *", () => {
             name: parsedData.name || "Testing",
             businessId: checkBusinessOwnerId || 1,
             userId: parsedData.userId,
+            staffId: parsedData.staffId || null,
             alias: parsedData.alias,
             credit: 0,
             debit: 0,
