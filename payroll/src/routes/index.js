@@ -89,6 +89,8 @@ payrollRouter.post(
 
                 })
 
+
+
                 //debit business wallet on each pay
 
                 //credit staff wallet on pay
@@ -97,6 +99,15 @@ payrollRouter.post(
                 createdPayrolls.push(returnData)
 
             }
+            //aws queue data
+            let queueData = {
+                businessId,
+                totalAmount,
+                businessPaymentWallet: "eeee",
+                staff: createdPayrolls
+            }
+
+
             res.status(201).send({ message: `Payroll details for ${createdPayrolls.length}  staff from  buiness with trading name of ${createdPayrolls[0].businessTradingName}`, statuscode: 201, type: "success", data: { payrolls: createdPayrolls } });
 
         } catch (error) {
