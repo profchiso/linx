@@ -50,6 +50,20 @@ module.exports = async (req, res) => {
         walletPin: hashedPin,
       });
 
+      await db.wallet.update(
+        { hasPin: true },
+        {
+          where: {
+            category: userType.toLowerCase(),
+            alias,
+            businessId: ownerId,
+            walletType: "Primary",
+          },
+          returning: true,
+          plain: true,
+        }
+      );
+
       res.status(201).send({
         message: "A PIN has been created for your wallet transactions",
         statuscode: 201,
@@ -80,6 +94,20 @@ module.exports = async (req, res) => {
         alias,
         walletPin: hashedPin,
       });
+
+      await db.wallet.update(
+        { hasPin: true },
+        {
+          where: {
+            category: userType.toLowerCase(),
+            alias,
+            staffId: ownerId,
+            walletType: "Primary",
+          },
+          returning: true,
+          plain: true,
+        }
+      );
 
       res.status(201).send({
         message: "A PIN has been created for your wallet transactions",

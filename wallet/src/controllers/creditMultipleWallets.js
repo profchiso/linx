@@ -77,7 +77,7 @@ module.exports = async (req, res) => {
       }
 
       transactionReference = uuid();
-      transactionDescription = uuid();
+      //transactionDescription = uuid();
 
       recipientWallet.dataValues.balance = Number(
         recipientWallet.dataValues.balance
@@ -138,7 +138,7 @@ module.exports = async (req, res) => {
         transactionReference,
         transactionType: "Debit",
         transactionStatus: "Successful",
-        transactionDescription,
+        transactionDescription: eachWallet.description,
       });
 
       let creditTransaction = db.transaction.create({
@@ -152,7 +152,7 @@ module.exports = async (req, res) => {
         transactionReference,
         transactionType: "Credit",
         transactionStatus: "Successful",
-        transactionDescription,
+        transactionDescription: eachWallet.description,
       });
 
       let walletCreditPayload = {

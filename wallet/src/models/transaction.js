@@ -65,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       transactionDescription: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
     },
     {

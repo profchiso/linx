@@ -17,6 +17,8 @@ const getASingleBeneficiary = require("../controllers/getASingleBeneficiary");
 const getAllBeneficiariesForAWallet = require("../controllers/getAllBeneficiariesForAWallet");
 const createWalletPin = require("../controllers/createWalletPin");
 const validateWalletPin = require("../controllers/validateWalletPin");
+const getTransactionByReference = require("../controllers/getTransactionByReference");
+const getASingleTransaction = require("../controllers/getASingleTransaction");
 
 const walletRouter = express.Router();
 
@@ -36,6 +38,8 @@ walletRouter.get(
   "/api/v1/wallet/debit/:walletId/:id",
   getASingleDebitTransaction
 );
+walletRouter.get("/api/v1/wallet/transaction/:id", getASingleTransaction);
+walletRouter.get("/api/v1/wallet/transaction/:ref", getTransactionByReference);
 walletRouter.get(
   "/api/v1/wallet/transactions/:businessId",
   getAllTransactionsForABusiness

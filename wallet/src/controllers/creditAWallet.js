@@ -41,6 +41,7 @@ module.exports = async (req, res) => {
       walletOwnerEmail,
       recipientEmail,
       businessId,
+      description,
     } = req.body;
     let staffId = req.body.staffId;
     const wallet = await db.wallet.findOne({ where: { walletId: walletId } });
@@ -67,17 +68,6 @@ module.exports = async (req, res) => {
       recipientWallet.dataValues.balance
     );
 
-    console.log(
-      "=======>",
-      typeof wallet.dataValues.balance,
-      " = ",
-      Number(wallet.dataValues.balance),
-      " | ",
-      typeof amount,
-      " = ",
-      amount
-    );
-
     if (wallet.dataValues.balance < amount) {
       throw new Error("You don't have enough amount to make this transfer");
     }
@@ -90,7 +80,7 @@ module.exports = async (req, res) => {
     }
 
     let transactionReference = uuid();
-    let transactionDescription = uuid();
+    //let transactionDescription = description;
 
     wallet.dataValues.balance -= amount;
     wallet.dataValues.debit = amount;
@@ -140,7 +130,7 @@ module.exports = async (req, res) => {
         transactionReference,
         transactionType: "Debit",
         transactionStatus: "Successful",
-        transactionDescription,
+        transactionDescription: description,
       }),
 
       db.transaction.create({
@@ -154,7 +144,7 @@ module.exports = async (req, res) => {
         transactionReference,
         transactionType: "Credit",
         transactionStatus: "Successful",
-        transactionDescription,
+        transactionDescription: description,
       }),
     ]).then(() => {
       let walletCreditPayload = {
