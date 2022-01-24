@@ -454,7 +454,7 @@ staffRouter.post(
     }
 );
 
-//STAFF LOGIN
+//STAFF RESET PASSWORD
 staffRouter.post(
     '/api/v1/staff/reset-password',
     async(req, res) => {
