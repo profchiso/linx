@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'us-east-1' });
 AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-const QUEUE_URL = process.env.STAFF_QUEUE_URL
+const QUEUE_URL = process.env.STAFF_WALLETID_QUEUE_URL
 const db = require("../models/index")
 exports.getStaffWalletFromQueueAndUpdate = () => {
     let params = {

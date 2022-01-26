@@ -1,11 +1,13 @@
 require("dotenv").config();
 const express = require("express")
+const cronJob = require("node-cron")
 const path = require("path");
 const cors = require("cors")
 require('express-async-errors');
 const cookieSession = require('cookie-session');
 const { errorHandler, NotFoundError } = require('@bc_tickets/common');
 const { staffRouter } = require('./routes/index');
+const { getStaffWalletFromQueueAndUpdate } = require("./utils/updateStaffWallet")
 
 
 const app = express();
@@ -31,5 +33,9 @@ app.all('*', async() => {
 });
 
 app.use(errorHandler);
+cronJob.schedule("*/1 * * * *", async() => {
+    await getStaffWalletFromQueueAndUpdate()
+
+})
 
 module.exports = { app };
