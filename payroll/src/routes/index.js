@@ -14,6 +14,7 @@ AWS.config.update({ region: 'us-east-1' });
 AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/payroll-wallet-creation-queue";
+const { sendDataToAWSQueue } = require("../utils/sendDataToQueue")
 
 
 
@@ -84,29 +85,27 @@ payrollRouter.post(
                     businessPaymentWallet: pay.businessPaymentWallet,
                     staffWallet: pay.staffWallet,
                     transactionType: pay.transactionType,
+                    phone: pay.phone,
+                    email: pay.email,
                     batchId,
                     totalAmount
 
                 })
-
-
-
-                //debit business wallet on each pay
-
-                //credit staff wallet on pay
 
                 let returnData = {...createdPayroll.dataValues }
                 createdPayrolls.push(returnData)
 
             }
             //aws queue data
-            // let queueData = {
-            //     businessId:createdPayrolls[0].businessId,
-            //     totalAmount,
-            //     businessEmail
-            //     businessPaymentWallet: createdPayrolls[0].businessPaymentWallet,
-            //     staff: createdPayrolls
-            // }
+            let queueData = {
+                businessId: createdPayrolls[0].businessId,
+                totalAmount,
+                businessEmail,
+                businessPaymentWallet: createdPayrolls[0].businessPaymentWallet,
+                staff: createdPayrolls
+            }
+            let queueResponse = await sendDataToAWSQueue(queueData, queueUrl)
+            console.log("queue response", queueResponse)
 
 
             res.status(201).send({ message: `Payroll details for ${createdPayrolls.length}  staff from  buiness with trading name of ${createdPayrolls[0].businessTradingName}`, statuscode: 201, type: "success", data: { payrolls: createdPayrolls } });
