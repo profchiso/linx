@@ -15,6 +15,7 @@ exports.getStaffWalletFromQueueAndUpdate = () => {
             if (err) throw new Error(err.message);
 
             if (!data.Messages) {
+                console.log("no data in the queue")
                 return;
             }
 
