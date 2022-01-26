@@ -1,5 +1,4 @@
 const express = require("express");
-const AWS = require('aws-sdk');
 const { uuid } = require('uuidv4')
 const { body } = require('express-validator');
 const axios = require("axios")
@@ -9,11 +8,8 @@ const { validateRequest, BadRequestError, NotFoundError, NotAuthorisedError } = 
 const db = require("../models/index")
 const payrollRouter = express.Router();
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate"
-    // Configure the region 
-AWS.config.update({ region: 'us-east-1' });
-AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
-const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-const queueUrl = "https://sqs.us-east-1.amazonaws.com/322544062396/payroll-wallet-creation-queue";
+
+const queueUrl = process.env.PAYROLL_QUEUE_URL
 const { sendDataToAWSQueue } = require("../utils/sendDataToQueue")
 
 
