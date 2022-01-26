@@ -26,6 +26,10 @@ const businessPrimaryWalletQueueUrl =
   "https://sqs.us-east-1.amazonaws.com/322544062396/business-primary-wallet-creation-queue";
 const staffPrimaryWalletQueueUrl =
   "https://sqs.us-east-1.amazonaws.com/322544062396/staff-primary-wallet-creation-queue";
+const payrollWalletCreationQueueUrl =
+  "https://sqs.us-east-1.amazonaws.com/322544062396/payroll-wallet-creation-queue";
+const staffWalletCreditQueue =
+  "https://sqs.us-east-1.amazonaws.com/322544062396/staff-wallet-credit-queue";
 
 let businessParams = {
   QueueUrl: businessCreationQueueUrl,
@@ -33,6 +37,10 @@ let businessParams = {
 
 let staffParams = {
   QueueUrl: staffCreationQueueUrl,
+};
+
+let payrollParams = {
+  QueueUrl: payrollWalletCreationQueueUrl,
 };
 
 const walletRouter = require("./routes/wallet");
@@ -202,6 +210,8 @@ cronJob.schedule("*/2 * * * *", () => {
             businessId: `${createdPrimaryWallet.dataValues.businessOwnerId}`,
             userId: `${createdPrimaryWallet.dataValues.userId}`,
             alias: `${createdPrimaryWallet.dataValues.alias}`,
+            staffId: `${createdPrimaryWallet.dataValues.staffId}`,
+            primaryWalletId: `${createdPrimaryWallet.dataValues.walletId}`,
             walletBalance: `${createdPrimaryWallet.dataValues.balance}`,
           };
 
@@ -229,6 +239,200 @@ cronJob.schedule("*/2 * * * *", () => {
             } else {
               console.log("Staff Message Deleted", data);
             }
+          });
+        }
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Something went wrong",
+      statuscode: 500,
+      errors: [{ message: error.message || "internal server error" }],
+    });
+  }
+});
+
+// Payroll
+
+cronJob.schedule("*/3 * * * *", () => {
+  try {
+    // Pay into staff wallet
+    sqs.receiveMessage(payrollParams, async function (err, data) {
+      if (err) throw new Error(err.message);
+
+      if (!data.Messages) {
+        return;
+      }
+
+      if (data.Messages && data.Messages.length) {
+        let messageBody = data.Messages;
+
+        for (let message of messageBody) {
+          let parsedData = JSON.parse(message.Body);
+
+          let walletId = parsedData.businessPaymentWallet;
+
+          let staffWalletsArray = parsedData.staff;
+          let totalAmount = parsedData.totalAmount;
+          let walletOwnerEmail = parsedData.businessEmail || "j2k4@yahoo.com";
+          let businessId = parsedData.businessId;
+
+          const wallet = await db.wallet.findOne({
+            where: { walletId: walletId },
+          });
+
+          if (!wallet) {
+            throw new Error("wallet cannot be found");
+          }
+
+          wallet.dataValues.balance = Number(wallet.dataValues.balance);
+
+          if (wallet.dataValues.balance < totalAmount) {
+            throw new Error(
+              "You don't have enough amount to make this transfer"
+            );
+          }
+          if (totalAmount <= 0) {
+            throw new Error(
+              "The amount to be transferred must be greater than 0"
+            );
+          }
+
+          let emailTransactionDetails = [];
+          let transactionDetails = [];
+          let transactionReference, transactionDescription;
+
+          // Loop through each staff wallet array ===========================================================>
+
+          for (let eachWallet of staffWalletsArray) {
+            const recipientWallet = await db.wallet.findOne({
+              where: { walletId: eachWallet.staffWallet },
+            });
+
+            if (!recipientWallet) {
+              throw new Error("recipient wallet cannot be found");
+            }
+
+            if (walletId == eachWallet.staffWallet) {
+              throw new Error("you cannot transfer money to your wallet");
+            }
+
+            transactionReference = uuid();
+
+            recipientWallet.dataValues.balance = Number(
+              recipientWallet.dataValues.balance
+            );
+
+            wallet.dataValues.balance -= eachWallet.totalPayable;
+            wallet.dataValues.debit = eachWallet.totalPayable;
+            let ownersBalance = wallet.dataValues.balance;
+            recipientWallet.dataValues.balance += eachWallet.totalPayable;
+            recipientWallet.dataValues.credit = eachWallet.totalPayable;
+            let recipientBalance = recipientWallet.dataValues.balance;
+
+            const updatedUserWallet = await db.wallet.update(
+              { balance: ownersBalance },
+              { where: { walletId }, returning: true, plain: true }
+            );
+            const updatedRecipientWallet = await db.wallet.update(
+              { balance: recipientBalance },
+              {
+                where: { walletId: eachWallet.staffWallet },
+                returning: true,
+                plain: true,
+              }
+            );
+
+            let returnData = { ...wallet.dataValues };
+            transactionDetails.push(returnData);
+
+            emailTransactionDetails.push(
+              eachWallet.staffId,
+              eachWallet.totalPayable
+            );
+
+            // transport object
+            const mailOptionsForCreditAlert = {
+              to: eachWallet.email,
+              from: process.env.SENDER_EMAIL,
+              subject: "Credit Alert",
+              html: `<p>The amount of ${eachWallet.totalPayable} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
+            };
+
+            await sendMailWithSendGrid(mailOptionsForCreditAlert);
+
+            let debitTransaction = db.transaction.create({
+              creditType: "wallet",
+              ownersWalletId: walletId,
+              recipientWalletId: eachWallet.staffWallet,
+              businessId,
+              amount: eachWallet.totalPayable,
+              walletBalance: ownersBalance,
+              staffId: null,
+              transactionReference,
+              transactionType: "Debit",
+              transactionStatus: "Successful",
+              transactionDescription: "Payroll to staff",
+            });
+
+            let creditTransaction = db.transaction.create({
+              creditType: "wallet",
+              ownersWalletId: eachWallet.staffWallet,
+              businessId: recipientWallet.dataValues.businessId,
+              senderWalletId: walletId,
+              amount: eachWallet.totalPayable,
+              walletBalance: recipientBalance,
+              staffId: recipientWallet.dataValues.staffId,
+              transactionReference,
+              transactionType: "Credit",
+              transactionStatus: "Successful",
+              transactionDescription: "Payroll from business",
+            });
+
+            let walletCreditPayload = {
+              walletId: walletId,
+              recipientId: eachWallet.staffWallet,
+              amount: eachWallet.totalPayable,
+              ownersBalance: ownersBalance,
+              recipientBalance: recipientBalance,
+            };
+
+            let wallletCreditSqs = {
+              MessageBody: JSON.stringify(walletCreditPayload),
+              QueueUrl: staffWalletCreditQueue,
+            };
+            let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
+
+            //===========================================================================>
+            let deleteParams = {
+              QueueUrl: payrollWalletCreationQueueUrl,
+              ReceiptHandle: data.Messages[0].ReceiptHandle,
+            };
+
+            sqs.deleteMessage(deleteParams, function (err, data) {
+              if (err) {
+                console.log("Delete Error", err);
+              } else {
+                console.log("Payroll Message Deleted", data);
+              }
+            });
+          }
+
+          // transport object
+          const mailOptionsForDebitAlert = {
+            to: walletOwnerEmail,
+            from: process.env.SENDER_EMAIL,
+            subject: "Debit Alert",
+            html: `<p>The amount of ${totalAmount} has been deducted from your account for payroll transaction</p>`,
+          };
+
+          await sendMailWithSendGrid(mailOptionsForDebitAlert);
+
+          return res.status(200).send({
+            statusCode: 200,
+            message: "Transfer Successful",
+            data: { transactionsData: transactionDetails },
           });
         }
       }
