@@ -62,6 +62,8 @@ payrollRouter.post(
             //     throw new NotAuthorisedError()
             // }
 
+            console.log("reqbody", req.body)
+
             let batchId = uuid()
 
             let createdPayrolls = []
