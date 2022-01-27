@@ -1,8 +1,11 @@
 CREATE TABLE IF NOT EXISTS public.payrolls
 (
-    id integer NOT NULL,
+    id serial NOT NULL ,
     "businessId" integer,
     "businessTradingName" character varying(255) COLLATE pg_catalog."default",
+    "businessEmail" character varying(255) COLLATE pg_catalog."default",
+    phone character varying(255) COLLATE pg_catalog."default",
+    email character varying(255) COLLATE pg_catalog."default",
     "fullName" character varying(255) COLLATE pg_catalog."default",
     salary numeric,
     bonus numeric,
@@ -19,4 +22,3 @@ CREATE TABLE IF NOT EXISTS public.payrolls
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT payrolls_pkey PRIMARY KEY (id)
 )
-
