@@ -62,13 +62,14 @@ payrollRouter.post(
             //     throw new NotAuthorisedError()
             // }
 
-            console.log("reqbody", req.body)
+
 
             let batchId = uuid()
 
             let createdPayrolls = []
             const { payroll, totalAmount, businessEmail, businessTradingName } = req.body
             for (let pay of payroll) {
+                console.log("pay", pay)
 
                 let createdPayroll = await db.payroll.create({
                     businessId: pay.businessId,
