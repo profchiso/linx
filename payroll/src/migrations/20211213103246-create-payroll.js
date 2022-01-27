@@ -14,6 +14,15 @@ module.exports = {
             businessTradingName: {
                 type: Sequelize.STRING
             },
+            businessEmail: {
+                type: Sequelize.STRING
+            },
+            phone: {
+                type: Sequelize.STRING
+            },
+            email: {
+                type: Sequelize.STRING
+            },
             fullName: {
                 type: Sequelize.STRING
             },
