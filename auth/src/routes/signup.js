@@ -2,7 +2,8 @@ const express = require("express");
 const { body, validationResult } = require('express-validator');
 const { generateVerificationCode } = require("../utils/generateVerificationCode")
 const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing")
-const { sendMailWithSendgrid, sendWithMailTrap, sendEmailWithMailgun } = require("../utils/emailing")
+const { sendMailWithSendgrid } = require("../utils/emailing")
+const { upload, cloudinary } = require("../utils/imageProcessing")
 const { generateAccessToken } = require("../utils/generateAccessToken");
 const { authenticate } = require("../utils/authService")
 const { signUpValidations } = require("../utils/signUpValidation")
@@ -259,11 +260,11 @@ signupRouter.patch(
             }
 
             delete req.body.password
-            let obj = {
-                p: "t"
+            if (req.body.profilePix) {
+                //upload pix
+
             }
-            delete obj.t
-            console.log(obj)
+
 
 
             res.status(200).send({ message: "User Fetched", statuscode: 200, data: { user } });
