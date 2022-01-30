@@ -103,8 +103,9 @@ payrollRouter.post(
                 businessPaymentWallet: createdPayrolls[0].businessPaymentWallet,
                 staff: createdPayrolls
             }
+            console.log("queue data", queueData)
             let queueResponse = await sendDataToAWSQueue(queueData, queueUrl)
-            console.log("queue response", queueResponse)
+
 
 
             res.status(201).send({ message: `Payroll details for ${createdPayrolls.length}  staff from  buiness with trading name of ${createdPayrolls[0].businessTradingName}`, statuscode: 201, type: "success", data: { payrolls: createdPayrolls } });

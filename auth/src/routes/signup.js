@@ -174,4 +174,9 @@ signupRouter.get(
     }
 );
 
+//UPDATE USER PROFILE
+signupRouter.patch("/api/v1/auth/:id", async(req, res) => {
+
+})
+
 module.exports = { signupRouter };
