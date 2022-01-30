@@ -244,5 +244,38 @@ signupRouter.get(
     }
 );
 
+//GET A USER
+signupRouter.patch(
+    '/api/v1/auth/users/:id',
+
+    async(req, res) => {
+        try {
+
+            const { id } = req.params;
+            const user = await db.User.findOne({ where: { id } });
+            if (!user) {
+                return res.status(404).json({ message: "User not found", statuscode: 500, errors: [{ message: "User not found" }] })
+
+            }
+
+            delete req.body.password
+            let obj = {
+                p: "t"
+            }
+            delete obj.t
+            console.log(obj)
+
+
+            res.status(200).send({ message: "User Fetched", statuscode: 200, data: { user } });
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+
+        }
+
+
+    }
+);
+
 
 module.exports = { signupRouter };
