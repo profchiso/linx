@@ -399,10 +399,7 @@ signupRouter.patch("/api/v1/auth/users/update-password", authenticate, async(req
         });
     } catch (err) {
         console.log(err);
-        return res.status(500).json({
-            success: false,
-            message: err.message,
-        });
+        return res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: "Password do not match" }] })
     }
 })
 
