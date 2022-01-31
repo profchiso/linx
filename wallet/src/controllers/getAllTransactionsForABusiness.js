@@ -25,13 +25,14 @@ module.exports = async (req, res) => {
         statuscode: 200,
         data: "",
       });
-    }
+    } else {
 
     res.status(200).send({
       message: "Transactions found successfully",
       statuscode: 200,
       data: { transactions },
     });
+  }
   } catch (error) {
     console.log(error);
     res.status(500).json({
