@@ -37,6 +37,19 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
 
         },
+
+        idType: {
+            type: DataTypes.STRING,
+
+        },
+        idImage: {
+            type: DataTypes.STRING,
+
+        },
+        profilePix: {
+            type: DataTypes.STRING,
+
+        },
         verificationCode: {
             type: DataTypes.INTEGER,
 

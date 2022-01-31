@@ -29,6 +29,18 @@ module.exports = {
                 type: Sequelize.STRING,
 
             },
+            idType: {
+                type: Sequelize.STRING,
+
+            },
+            idImage: {
+                type: Sequelize.STRING,
+
+            },
+            profilePix: {
+                type: Sequelize.STRING,
+
+            },
             isVerified: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false
