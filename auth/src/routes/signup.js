@@ -302,9 +302,8 @@ signupRouter.patch(
 
             }
 
-
-
-            res.status(200).send({ message: "User Fetched", statuscode: 200, data: { user } });
+            const updatedUser = await db.User.update(req.body, { where: { id }, returning: true, plain: true })
+            res.status(200).send({ message: `User info updated`, statuscode: 200, data: { user: updatedUser[1] } });
         } catch (error) {
             console.log(error)
             res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
