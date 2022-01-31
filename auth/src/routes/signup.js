@@ -248,6 +248,7 @@ signupRouter.get(
 //GET A USER
 signupRouter.patch(
     '/api/v1/auth/users/:id',
+    authenticate,
     upload.fields([
         { name: "profilePix", maxCount: 1 },
         { name: "idImage", maxCount: 1 },
