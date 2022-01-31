@@ -20,7 +20,11 @@ module.exports = async (req, res) => {
       where: { businessId },
     });
     if (transactions.length == 0) {
-      throw new Error("There are no transactions found");
+      res.status(200).send({
+        message: "There are no transactions",
+        statuscode: 200,
+        data: "",
+      });
     }
 
     res.status(200).send({
