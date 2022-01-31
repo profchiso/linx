@@ -248,6 +248,10 @@ signupRouter.get(
 //GET A USER
 signupRouter.patch(
     '/api/v1/auth/users/:id',
+    upload.fields([
+        { name: "profilePix", maxCount: 1 },
+        { name: "idImage", maxCount: 1 },
+    ]),
 
     async(req, res) => {
         try {
@@ -261,11 +265,40 @@ signupRouter.patch(
 
             delete req.body.password
             if (req.body.profilePix) {
+
+                await cloudinary.uploader.upload(
+                    req.body.profilePix, {
+                        public_id: `users/profile-pix/${user.lastName}-${user.firstName}-profile-Pix`,
+                    },
+                    (error, result) => {
+                        if (error) {
+                            console.log("Error uploading utilityBill to cloudinary");
+                        } else {
+                            req.body.profilePix = result.secure_url;
+
+                        }
+
+                    }
+                );
                 //upload profile pix
 
             }
             if (req.body.idImage) {
                 //upload id pix
+                await cloudinary.uploader.upload(
+                    req.body.idImage, {
+                        public_id: `users/idImage/${user.lastName}-${user.firstName}-idImage`,
+                    },
+                    (error, result) => {
+                        if (error) {
+                            console.log("Error uploading utilityBill to cloudinary");
+                        } else {
+                            req.body.idImage = result.secure_url;
+
+                        }
+
+                    }
+                );
 
             }
 
