@@ -209,7 +209,7 @@ signupRouter.get(
 //GET ALL USERS
 signupRouter.get(
     '/api/v1/auth/users',
-    authenticate,
+
     async(req, res) => {
         try {
             const users = await db.User.findAll({});
