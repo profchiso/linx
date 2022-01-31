@@ -209,7 +209,7 @@ signupRouter.get(
 //GET ALL USERS
 signupRouter.get(
     '/api/v1/auth/users',
-
+    authenticate,
     async(req, res) => {
         try {
             const users = await db.User.findAll({});
@@ -227,7 +227,7 @@ signupRouter.get(
 //GET A USER
 signupRouter.get(
     '/api/v1/auth/users/:id',
-
+    authenticate,
     async(req, res) => {
         try {
 
@@ -353,43 +353,45 @@ signupRouter.patch(
     }
 );
 
-signupRouter.patch("/api/v1/auth/users/update-password", authenticate, async(req, res) => {
-    try {
-        const { oldPassword, newPassword, newConfirmPassword } = req.body;
-        //get the user from the user collection
-        const user = await db.User.findOne({ where: { id: req.user.id } });
-        if (!user) {
-            return res.status(404).json({ message: "User not found", statuscode: 404, errors: [{ message: "User not found" }] })
+signupRouter.patch("/api/v1/auth/users/update-password",
+    authenticate,
+    async(req, res) => {
+        try {
+            const { oldPassword, newPassword, newConfirmPassword } = req.body;
+            //get the user from the user collection
+            const user = await db.User.findOne({ where: { id: req.user.id } });
+            if (!user) {
+                return res.status(404).json({ message: "User not found", statuscode: 404, errors: [{ message: "User not found" }] })
 
+            }
+
+            // check if passwaord matches the one in the database
+
+            let passwordIsMatch = await decryptPassword(oldPassword, user.password);
+            if (!passwordIsMatch) {
+                return res.status(401).json({ message: "The password you entered is incorrect", statuscode: 401, errors: [{ message: "The password you entered is incorrect" }] })
+            }
+            if (newPassword !== newConfirmPassword) {
+
+                return res.status(401).json({ message: "Password do not match", statuscode: 401, errors: [{ message: "Password do not match" }] })
+            }
+            hashedNewPassword = await hashUserPassword(newPassword);
+
+            const updatedUser = await db.User.update({ password: hashedNewPassword }, { where: { id: req.user.id }, returning: true, plain: true })
+
+            //log user in by assigning him a token
+            const payLoad = {
+                user: {
+                    id: updatedUser[1].id,
+                },
+            };
+            let accessToken = await generateAccessToken(payLoad);
+            return res.status(200).json({ message: "Password updated successsfully", statuscode: 200, data: { user: updatedUser[1], accessToken } });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: err.message || "Something went wrong" }] })
         }
-
-        // check if passwaord matches the one in the database
-
-        let passwordIsMatch = await decryptPassword(oldPassword, user.password);
-        if (!passwordIsMatch) {
-            return res.status(401).json({ message: "The password you entered is incorrect", statuscode: 401, errors: [{ message: "The password you entered is incorrect" }] })
-        }
-        if (newPassword !== newConfirmPassword) {
-
-            return res.status(401).json({ message: "Password do not match", statuscode: 401, errors: [{ message: "Password do not match" }] })
-        }
-        hashedNewPassword = await hashUserPassword(newPassword);
-
-        const updatedUser = await db.User.update({ password: hashedNewPassword }, { where: { id: req.user.id }, returning: true, plain: true })
-
-        //log user in by assigning him a token
-        const payLoad = {
-            user: {
-                id: updatedUser[1].id,
-            },
-        };
-        let accessToken = await generateAccessToken(payLoad);
-        return res.status(200).json({ message: "Password updated successsfully", statuscode: 200, data: { user: updatedUser[1], accessToken } });
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: err.message || "Something went wrong" }] })
-    }
-})
+    })
 
 
 module.exports = { signupRouter };
