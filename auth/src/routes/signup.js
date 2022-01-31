@@ -353,5 +353,58 @@ signupRouter.patch(
     }
 );
 
+signupRouter.patch("/api/v1/auth/users/update-password", authenticate, async(req, res) => {
+    try {
+
+
+
+        const { oldPassword, newPassword, newConfirmPassword } = req.body;
+        //get the user from the user collection
+        const user = await db.User.findOne({ where: { id } });
+        if (!user) {
+            return res.status(404).json({ message: "User not found", statuscode: 500, errors: [{ message: "User not found" }] })
+
+        }
+
+        // check if passwaord matches the one in the database
+
+        let passwordIsMatch = await decryptPassword(oldPassword, user.password);
+        if (!passwordIsMatch) {
+            return res.status(401).json({ message: "The password you entered is incorrect", statuscode: 500, errors: [{ message: "The password you entered is incorrect" }] })
+        }
+        if (newPassword !== newConfirmPassword) {
+
+            return res.status(401).json({ message: "Password do not match", statuscode: 500, errors: [{ message: "Password do not match" }] })
+        }
+        user.password = await hashUserPassword(newPassword);
+
+        await user.save();
+
+        //log user in by assigning him a token
+        const payLoad = {
+            user: {
+                id: user.id,
+            },
+        };
+        let accessToken = await generateAccessToken(payLoad);
+
+        user.password = undefined;
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                accessToken,
+                user,
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+})
+
 
 module.exports = { signupRouter };
