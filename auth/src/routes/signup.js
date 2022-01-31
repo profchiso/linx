@@ -302,6 +302,45 @@ signupRouter.patch(
 
             }
 
+            if (req.files) {
+                if (req.files.profilePix) {
+
+                    await cloudinary.uploader.upload(
+                        req.files.profilePix[0].path, {
+                            public_id: `users/profile-pix/${user.lastName}-${user.firstName}-profile-Pix`,
+                        },
+                        (error, result) => {
+                            if (error) {
+                                console.log("Error uploading utilityBill to cloudinary");
+                            } else {
+                                req.body.profilePix = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+
+                if (req.files.idImage) {
+
+                    await cloudinary.uploader.upload(
+                        req.files.idImage[0].path, {
+                            public_id: `users/idImage/${user.lastName}-${user.firstName}-idImage`,
+                        },
+                        (error, result) => {
+                            if (error) {
+                                console.log("Error uploading utilityBill to cloudinary");
+                            } else {
+                                req.body.idImage = result.secure_url;
+
+                            }
+
+                        }
+                    );
+                }
+
+            }
+
             const updatedUser = await db.User.update(req.body, { where: { id }, returning: true, plain: true })
             res.status(200).send({ message: `User info updated`, statuscode: 200, data: { user: updatedUser[1] } });
         } catch (error) {
