@@ -261,7 +261,11 @@ signupRouter.patch(
 
             delete req.body.password
             if (req.body.profilePix) {
-                //upload pix
+                //upload profile pix
+
+            }
+            if (req.body.idImage) {
+                //upload id pix
 
             }
 
