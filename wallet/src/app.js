@@ -380,7 +380,7 @@ cronJob.schedule("*/1 * * * *", () => {
               transactionType: "Debit",
               transactionStatus: "Successful",
               transactionDescription: "Payroll to staff",
-              transactionMonth,
+              transactionMonth: transactionMonth,
             });
 
             let creditTransaction = db.transaction.create({
@@ -395,7 +395,7 @@ cronJob.schedule("*/1 * * * *", () => {
               transactionType: "Credit",
               transactionStatus: "Successful",
               transactionDescription: "Payroll from business",
-              transactionMonth,
+              transactionMonth: transactionMonth,
             });
 
             let walletCreditPayload = {

@@ -145,7 +145,7 @@ module.exports = async (req, res) => {
         transactionType: "Debit",
         transactionStatus: "Successful",
         transactionDescription: eachWallet.description,
-        transactionMonth,
+        transactionMonth: transactionMonth,
       });
 
       let creditTransaction = db.transaction.create({
@@ -160,7 +160,7 @@ module.exports = async (req, res) => {
         transactionType: "Credit",
         transactionStatus: "Successful",
         transactionDescription: eachWallet.description,
-        transactionMonth,
+        transactionMonth: transactionMonth,
       });
 
       let walletCreditPayload = {
