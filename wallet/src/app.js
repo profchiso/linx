@@ -163,7 +163,7 @@ cronJob.schedule("*/1 * * * *", () => {
   }
 });
 
-cronJob.schedule("*/2 * * * *", () => {
+cronJob.schedule("*/1 * * * *", () => {
   try {
     // Staff wallet creation
     sqs.receiveMessage(staffParams, async function (err, data) {
@@ -255,7 +255,7 @@ cronJob.schedule("*/2 * * * *", () => {
 
 // Payroll
 
-cronJob.schedule("*/3 * * * *", () => {
+cronJob.schedule("*/1 * * * *", () => {
   try {
     // Pay into staff wallet
     sqs.receiveMessage(payrollParams, async function (err, data) {
@@ -302,6 +302,12 @@ cronJob.schedule("*/3 * * * *", () => {
           let emailTransactionDetails = [];
           let transactionDetails = [];
           let transactionReference, transactionDescription;
+
+          //get day and month
+          const today = new Date();
+          const transactionMonth = today.toLocaleString("default", {
+            month: "short",
+          });
 
           // Loop through each staff wallet array ===========================================================>
 
@@ -374,6 +380,7 @@ cronJob.schedule("*/3 * * * *", () => {
               transactionType: "Debit",
               transactionStatus: "Successful",
               transactionDescription: "Payroll to staff",
+              transactionMonth,
             });
 
             let creditTransaction = db.transaction.create({
@@ -388,6 +395,7 @@ cronJob.schedule("*/3 * * * *", () => {
               transactionType: "Credit",
               transactionStatus: "Successful",
               transactionDescription: "Payroll from business",
+              transactionMonth,
             });
 
             let walletCreditPayload = {

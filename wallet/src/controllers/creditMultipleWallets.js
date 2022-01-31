@@ -52,6 +52,12 @@ module.exports = async (req, res) => {
 
     wallet.dataValues.balance = Number(wallet.dataValues.balance);
 
+    //get day and month
+    const today = new Date();
+    const transactionMonth = today.toLocaleString("default", {
+      month: "short",
+    });
+
     if (wallet.dataValues.balance < totalAmount) {
       throw new Error("You don't have enough amount to make this transfer");
     }
@@ -139,6 +145,7 @@ module.exports = async (req, res) => {
         transactionType: "Debit",
         transactionStatus: "Successful",
         transactionDescription: eachWallet.description,
+        transactionMonth,
       });
 
       let creditTransaction = db.transaction.create({
@@ -153,6 +160,7 @@ module.exports = async (req, res) => {
         transactionType: "Credit",
         transactionStatus: "Successful",
         transactionDescription: eachWallet.description,
+        transactionMonth,
       });
 
       let walletCreditPayload = {

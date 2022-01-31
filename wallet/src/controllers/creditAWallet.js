@@ -79,6 +79,12 @@ module.exports = async (req, res) => {
       staffId = 0;
     }
 
+    //get day and month
+    const today = new Date();
+    const transactionMonth = today.toLocaleString("default", {
+      month: "short",
+    });
+
     let transactionReference = uuid();
     //let transactionDescription = description;
 
@@ -131,6 +137,7 @@ module.exports = async (req, res) => {
         transactionType: "Debit",
         transactionStatus: "Successful",
         transactionDescription: description,
+        transactionMonth,
       }),
 
       db.transaction.create({
@@ -145,6 +152,7 @@ module.exports = async (req, res) => {
         transactionType: "Credit",
         transactionStatus: "Successful",
         transactionDescription: description,
+        transactionMonth,
       }),
     ]).then(() => {
       let walletCreditPayload = {
