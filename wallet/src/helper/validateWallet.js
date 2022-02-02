@@ -4,12 +4,17 @@ const Joi = require("@hapi/joi");
 module.exports.validate = function validate(req) {
   const schema = Joi.object({
     name: Joi.string().required(),
-    ownerId: Joi.number().required(),
+    email: Joi.string().required(),
+    businessId: Joi.number().required(),
+    staffId: Joi.number(),
+    userId: Joi.number().required(),
+    walletType: Joi.string(),
     credit: Joi.number(),
     debit: Joi.number(),
     balance: Joi.string(),
-    alias: Joi.string(),
-    walletType: Joi.string(),
+    alias: Joi.string().required(),
+    category: Joi.string().required(),
+    country: Joi.string(),
   });
 
   return schema.validate(req);
