@@ -27,7 +27,7 @@ exports.getStaffWalletFromQueueAndUpdate = () => {
                     console.log("passed data", parsedData)
 
 
-                    const updatedStaffWallet = await db.staff.update({ walletId: parsedData.walletId }, { where: { id: parsedData.staffId }, returning: true, plain: true })
+                    const updatedStaffWallet = await db.staff.update({ walletId: parsedData.primaryWalletId }, { where: { id: parsedData.staffId }, returning: true, plain: true })
                     console.log("updated staff", updatedStaffWallet)
 
                     let deleteParams = {
