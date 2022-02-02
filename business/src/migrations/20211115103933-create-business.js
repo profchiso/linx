@@ -126,6 +126,14 @@ module.exports = {
             businessLogo: {
                 type: Sequelize.STRING
             },
+            isVerified: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false
+            },
+            isCompleted: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false
+            },
 
             createdAt: {
                 allowNull: false,
