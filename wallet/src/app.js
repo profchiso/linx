@@ -257,6 +257,8 @@ cronJob.schedule("*/1 * * * *", () => {
       }
 
       if (data.Messages && data.Messages.length) {
+        console.log(data.Messages);
+
         let messageBody = data.Messages;
 
         for (let message of messageBody) {
@@ -348,6 +350,8 @@ cronJob.schedule("*/1 * * * *", () => {
               eachWallet.staffId,
               eachWallet.totalPayable
             );
+
+            console.log("====||||||======>", eachWallet.email);
 
             // transport object
             const mailOptionsForCreditAlert = {
