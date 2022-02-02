@@ -28,7 +28,7 @@ exports.getStaffWalletFromQueueAndUpdate = () => {
 
 
                     const updatedStaffWallet = await db.staff.update({ walletId: parsedData.primaryWalletId }, { where: { id: parsedData.staffId }, returning: true, plain: true })
-                    console.log("updated staff", updatedStaffWallet)
+                    console.log("updated staff", updatedStaffWallet[1])
 
                     let deleteParams = {
                         QueueUrl: QUEUE_URL,
