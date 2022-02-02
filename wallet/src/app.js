@@ -258,6 +258,7 @@ cronJob.schedule("*/1 * * * *", () => {
 
       if (data.Messages && data.Messages.length) {
         console.log(data.Messages);
+        console.log("===>FIND STAFF EMAIL", data.Messages.Body.staff.email);
 
         let messageBody = data.Messages;
 
