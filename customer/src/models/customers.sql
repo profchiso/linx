@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS public.customers
     "businessEmail" character varying(255) COLLATE pg_catalog."default",
     "businessPhoneNumber" character varying(255) COLLATE pg_catalog."default",
     website character varying(255) COLLATE pg_catalog."default",
-    "companyLogo" character varying(255) COLLATE pg_catalog."default",
+    "companyLogo" character varying(1000) COLLATE pg_catalog."default",
     address character varying(255) COLLATE pg_catalog."default",
     country character varying(255) COLLATE pg_catalog."default",
     state character varying(255) COLLATE pg_catalog."default",
@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS public.customers
     "phoneNumber" character varying(255) COLLATE pg_catalog."default",
     alias character varying(255) COLLATE pg_catalog."default",
     "businessId" integer,
-    status enum_customers_status DEFAULT 'active'::enum_customers_status,
+    status character varying(255) COLLATE pg_catalog."default",
+    "isBlacklisted" character varying(255) COLLATE pg_catalog."default"
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT customers_pkey PRIMARY KEY (id)
