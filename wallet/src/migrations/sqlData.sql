@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS public.transactions
     "transactionType" character varying(255) COLLATE pg_catalog."default",
     "transactionStatus" character varying(255) COLLATE pg_catalog."default",
     "transactionDescription" character varying(255) COLLATE pg_catalog."default",
+    "transactionMonth" character varying(255) COLLATE pg_catalog."default",
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT transactions_pkey PRIMARY KEY (id)

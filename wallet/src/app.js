@@ -18,29 +18,16 @@ AWS.config.update({ region: "us-east-1" });
 // Create an SQS service object
 const sqs = new AWS.SQS({ apiVersion: "2012-11-05" });
 
-const businessCreationQueueUrl =
-  "https://sqs.us-east-1.amazonaws.com/322544062396/business-creation-queue";
-const staffCreationQueueUrl =
-  "https://sqs.us-east-1.amazonaws.com/322544062396/staff-creation-queue";
-const businessPrimaryWalletQueueUrl =
-  "https://sqs.us-east-1.amazonaws.com/322544062396/business-primary-wallet-creation-queue";
-const staffPrimaryWalletQueueUrl =
-  "https://sqs.us-east-1.amazonaws.com/322544062396/staff-primary-wallet-creation-queue";
-const payrollWalletCreationQueueUrl =
-  "https://sqs.us-east-1.amazonaws.com/322544062396/payroll-wallet-creation-queue";
-const staffWalletCreditQueue =
-  "https://sqs.us-east-1.amazonaws.com/322544062396/staff-wallet-credit-queue";
-
 let businessParams = {
-  QueueUrl: businessCreationQueueUrl,
+  QueueUrl: process.env.BUSINESSCREATIONQUEUEURL,
 };
 
 let staffParams = {
-  QueueUrl: staffCreationQueueUrl,
+  QueueUrl: process.env.STAFFCREATIONQUEUEURL,
 };
 
 let payrollParams = {
-  QueueUrl: payrollWalletCreationQueueUrl,
+  QueueUrl: process.env.PAYROLLWALLETCREATIONQUEUEURL,
 };
 
 const walletRouter = require("./routes/wallet");
@@ -127,7 +114,7 @@ cronJob.schedule("*/1 * * * *", () => {
           };
 
           let businessSqsWalletData = {
-            QueueUrl: businessPrimaryWalletQueueUrl,
+            QueueUrl: process.env.BUSINESSPRIMARYWALLETQUEUEURL,
             MessageBody: JSON.stringify(businessWalletPayload),
           };
           let businessSqsWallet = await sqs
@@ -139,7 +126,7 @@ cronJob.schedule("*/1 * * * *", () => {
           );
 
           let deleteParams = {
-            QueueUrl: businessCreationQueueUrl,
+            QueueUrl: process.env.BUSINESSCREATIONQUEUEURL,
             ReceiptHandle: data.Messages[0].ReceiptHandle,
           };
 
@@ -216,7 +203,7 @@ cronJob.schedule("*/1 * * * *", () => {
           };
 
           let staffSqsWalletData = {
-            QueueUrl: staffPrimaryWalletQueueUrl,
+            QueueUrl: process.env.STAFFPRIMARYWALLETQUEUEURL,
             MessageBody: JSON.stringify(staffWalletPayload),
           };
           let staffSqsWallet = await sqs
@@ -229,7 +216,7 @@ cronJob.schedule("*/1 * * * *", () => {
           );
 
           let deleteParams = {
-            QueueUrl: staffCreationQueueUrl,
+            QueueUrl: process.env.STAFFCREATIONQUEUEURL,
             ReceiptHandle: data.Messages[0].ReceiptHandle,
           };
 
@@ -301,7 +288,7 @@ cronJob.schedule("*/1 * * * *", () => {
 
           let emailTransactionDetails = [];
           let transactionDetails = [];
-          let transactionReference, transactionDescription;
+          let transactionReference;
 
           //get day and month
           const today = new Date();
@@ -408,13 +395,13 @@ cronJob.schedule("*/1 * * * *", () => {
 
             let wallletCreditSqs = {
               MessageBody: JSON.stringify(walletCreditPayload),
-              QueueUrl: staffWalletCreditQueue,
+              QueueUrl: process.env.STAFFWALLETCREDITQUEUE,
             };
             let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
 
             //===========================================================================>
             let deleteParams = {
-              QueueUrl: payrollWalletCreationQueueUrl,
+              QueueUrl: process.env.PAYROLLWALLETCREATIONQUEUEURL,
               ReceiptHandle: data.Messages[0].ReceiptHandle,
             };
 
