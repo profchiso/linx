@@ -86,6 +86,7 @@ cronJob.schedule("*/1 * * * *", () => {
             staffId: parsedData.staffId || null,
             email: parsedData.email || "j2k4@yahoo.com",
             category: parsedData.walletCategory || "business",
+            country: parsedData.country || "Nigeria",
           });
 
           let createdPromoWallet = await db.wallet.create({
@@ -101,6 +102,7 @@ cronJob.schedule("*/1 * * * *", () => {
             staffId: parsedData.staffId || null,
             email: parsedData.email || "j2k4@yahoo.com",
             category: parsedData.walletCategory || "business",
+            country: parsedData.country || "Nigeria",
           });
 
           let businessWalletPayload = {
@@ -181,6 +183,7 @@ cronJob.schedule("*/1 * * * *", () => {
             walletType: "Primary",
             email: parsedData.email || "j2k4@yahoo.com",
             category: parsedData.walletCategory || "staff",
+            country: parsedData.country || "Nigeria",
           });
 
           // transport object
