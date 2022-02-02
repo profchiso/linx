@@ -10,6 +10,7 @@ const cookieSession = require("cookie-session");
 const { errorHandler, NotFoundError } = require("@bc_tickets/common");
 const db = require("./models/index");
 const AWS = require("aws-sdk");
+const { uuid } = require("uuidv4");
 const { sendMailWithSendGrid } = require("./helper/emailTransport");
 // Configure the region
 AWS.config.update({ region: "us-east-1" });
@@ -197,7 +198,7 @@ cronJob.schedule("*/1 * * * *", () => {
           await sendMailWithSendGrid(mailOptions);
 
           let staffWalletPayload = {
-            businessId: `${createdPrimaryWallet.dataValues.businessOwnerId}`,
+            businessId: `${createdPrimaryWallet.dataValues.businessId}`,
             userId: `${createdPrimaryWallet.dataValues.userId}`,
             alias: `${createdPrimaryWallet.dataValues.alias}`,
             staffId: `${createdPrimaryWallet.dataValues.staffId}`,
