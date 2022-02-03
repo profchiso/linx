@@ -433,12 +433,7 @@ cronJob.schedule("*/1 * * * *", () => {
           };
 
           await sendMailWithSendGrid(mailOptionsForDebitAlert);
-
-          return res.status(200).send({
-            statusCode: 200,
-            message: "Transfer Successful",
-            data: { transactionsData: transactionDetails },
-          });
+          console.log("END OF TRANSACTION!");
         }
       }
     });
