@@ -233,7 +233,7 @@ signupRouter.get(
 
             const { id } = req.params;
             const user = await db.User.findOne({ where: { id } });
-            console.log(user)
+
             res.status(200).send({ message: "User Fetched", statuscode: 200, data: { user } });
         } catch (error) {
             console.log(error)
@@ -359,6 +359,7 @@ signupRouter.patch("/api/v1/auth/users/update-password",
     async(req, res) => {
         try {
             const { oldPassword, newPassword, newConfirmPassword } = req.body;
+            console.log("request body", req.body)
             console.log("req.user.id", req.user.id)
                 //get the user from the user collection
             const user = await db.User.findOne({ where: { id: req.user.id } });
