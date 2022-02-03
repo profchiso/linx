@@ -23,26 +23,27 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
 
-    console.log(req.body.companyLogo);
-
     let createdCustomer = await db.customer.create({
-      businessName: req.body.businessName,
-      businessEmail: req.body.businessEmail,
-      businessPhoneNumber: req.body.businessPhoneNumber,
-      website: req.body.website,
-      companyLogo: req.body.companyLogo,
-      address: req.body.address,
-      country: req.body.country,
-      state: req.body.state,
-      lga: req.body.lga,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      phoneNumber: req.body.phoneNumber,
-      alias: req.body.alias,
-      businessId: req.body.businessId,
+      ...req.body,
       status: "active",
     });
+    //   businessName: req.body.businessName,
+    //   businessEmail: req.body.businessEmail,
+    //   businessPhoneNumber: req.body.businessPhoneNumber,
+    //   website: req.body.website,
+    //   companyLogo: req.body.companyLogo,
+    //   address: req.body.address,
+    //   country: req.body.country,
+    //   state: req.body.state,
+    //   lga: req.body.lga,
+    //   firstName: req.body.firstName,
+    //   lastName: req.body.lastName,
+    //   email: req.body.email,
+    //   phoneNumber: req.body.phoneNumber,
+    //   alias: req.body.alias,
+    //   businessId: req.body.businessId,
+    //   status: "active",
+    // });
 
     res.status(201).send({
       message: "Customer Created",
