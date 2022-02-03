@@ -169,23 +169,23 @@ signupRouter.post(
     }
 );
 
-//AUTHENTICATE REQUESTS
-signupRouter.get(
-    '/api/v1/auth/authenticate',
-    authenticate,
-    async(req, res) => {
-        try {
-            res.status(200).send({ user: req.user });
+// //AUTHENTICATE REQUESTS
+// signupRouter.get(
+//     '/api/v1/auth/authenticate',
+//     authenticate,
+//     async(req, res) => {
+//         try {
+//             res.status(200).send({ user: req.user });
 
-        } catch (error) {
-            console.log(error)
-            res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+//         } catch (error) {
+//             console.log(error)
+//             res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
 
-        }
+//         }
 
 
-    }
-);
+//     }
+// );
 
 
 //AUTHENTICATE REQUESTS
@@ -354,7 +354,7 @@ signupRouter.patch(
     }
 );
 
-signupRouter.patch("/api/v1/auth/users/update-password",
+signupRouter.patch("/api/v1/auth/update-password",
     authenticate,
     async(req, res) => {
         try {
