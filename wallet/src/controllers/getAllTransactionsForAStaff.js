@@ -15,9 +15,9 @@ module.exports = async (req, res) => {
     // if (!data.user) {
     //     throw new NotAuthorisedError()
     // }
-    const { businessId } = req.params;
+    const { staffId, businessId } = req.params;
     const transactions = await db.transaction.findAll({
-      where: { businessId, staffId: 0 },
+      where: { staffId, businessId },
     });
     if (transactions.length == 0) {
       res.status(200).send({

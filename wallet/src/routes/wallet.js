@@ -11,6 +11,7 @@ const saveMultipleBeneficiariesForAWallet = require("../controllers/saveMultiple
 const getAllCreditTransactions = require("../controllers/getAllCreditTransactions");
 const getAllDebitTransactions = require("../controllers/getAllDebitTransactions");
 const getAllTransactionsForABusiness = require("../controllers/getAllTransactionsForABusiness");
+const getAllTransactionsForAStaff = require("../controllers/getAllTransactionsForAStaff");
 const getASingleCreditTransaction = require("../controllers/getASingleCreditTransaction");
 const getASingleDebitTransaction = require("../controllers/getASingleDebitTransaction");
 const getASingleBeneficiary = require("../controllers/getASingleBeneficiary");
@@ -43,6 +44,10 @@ walletRouter.get("/api/v1/wallet/transaction/:ref", getTransactionByReference);
 walletRouter.get(
   "/api/v1/wallet/transactions/:businessId",
   getAllTransactionsForABusiness
+);
+walletRouter.get(
+  "/api/v1/wallet/transactions/:businessId/:staffId",
+  getAllTransactionsForAStaff
 );
 walletRouter.get(
   "/api/v1/wallet/:walletId/beneficiary/:id",

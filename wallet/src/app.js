@@ -383,11 +383,12 @@ cronJob.schedule("*/1 * * * *", () => {
             let creditTransaction = db.transaction.create({
               creditType: "wallet",
               ownersWalletId: eachWallet.staffWallet,
-              businessId: recipientWallet.dataValues.businessId,
+              businessId:
+                recipientWallet.dataValues.businessId || eachWallet.businessId,
               senderWalletId: walletId,
               amount: eachWallet.totalPayable,
               walletBalance: recipientBalance,
-              staffId: recipientWallet.dataValues.staffId,
+              staffId: recipientWallet.dataValues.staffId || eachWallet.staffId,
               transactionReference,
               transactionType: "Credit",
               transactionStatus: "Successful",
