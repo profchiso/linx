@@ -372,7 +372,7 @@ cronJob.schedule("*/1 * * * *", () => {
               businessId,
               amount: eachWallet.totalPayable,
               walletBalance: ownersBalance,
-              staffId: wallet.dataValues.balance || 0,
+              staffId: wallet.dataValues.staffId || 0,
               transactionReference,
               transactionType: "Debit",
               transactionStatus: "Successful",
