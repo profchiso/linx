@@ -27,7 +27,9 @@ module.exports = (sequelize, DataTypes) => {
         staffWallet: DataTypes.STRING,
         transactionType: DataTypes.STRING,
         batchId: DataTypes.STRING,
-        totalAmount: DataTypes.DECIMAL
+        totalAmount: DataTypes.DECIMAL,
+        phone: DataTypes.STRING,
+        email: DataTypes.STRING,
     }, {
         sequelize,
         modelName: 'payroll',
