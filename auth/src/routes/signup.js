@@ -360,7 +360,7 @@ signupRouter.patch("/api/v1/auth/users/update-password",
         try {
             const { oldPassword, newPassword, newConfirmPassword } = req.body;
             console.log("request body", req.body)
-            return
+
             console.log("req.user.id", req.user.id)
                 //get the user from the user collection
             const user = await db.User.findOne({ where: { id: req.user.id } });
