@@ -323,11 +323,13 @@ cronJob.schedule("*/1 * * * *", () => {
               recipientWallet.dataValues.balance
             );
 
-            wallet.dataValues.balance -= eachWallet.totalPayable;
-            wallet.dataValues.debit = eachWallet.totalPayable;
+            wallet.dataValues.balance -= Number(eachWallet.totalPayable);
+            wallet.dataValues.debit = Number(eachWallet.totalPayable);
             let ownersBalance = wallet.dataValues.balance;
-            recipientWallet.dataValues.balance += eachWallet.totalPayable;
-            recipientWallet.dataValues.credit = eachWallet.totalPayable;
+            recipientWallet.dataValues.balance += Number(
+              eachWallet.totalPayable
+            );
+            recipientWallet.dataValues.credit = Number(eachWallet.totalPayable);
             let recipientBalance = recipientWallet.dataValues.balance;
 
             const updatedUserWallet = await db.wallet.update(
