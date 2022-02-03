@@ -355,7 +355,7 @@ signupRouter.patch(
 );
 
 signupRouter.patch("/api/v1/auth/users/update-password",
-    //authenticate,
+    authenticate,
     async(req, res) => {
         try {
             const { oldPassword, newPassword, newConfirmPassword } = req.body;
