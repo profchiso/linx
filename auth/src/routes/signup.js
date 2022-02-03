@@ -359,8 +359,10 @@ signupRouter.patch("/api/v1/auth/users/update-password",
     async(req, res) => {
         try {
             const { oldPassword, newPassword, newConfirmPassword } = req.body;
-            //get the user from the user collection
+            console.log("req.user.id", req.user.id)
+                //get the user from the user collection
             const user = await db.User.findOne({ where: { id: req.user.id } });
+            console.log("user", user)
             if (!user) {
                 return res.status(404).json({ message: "User not found", statuscode: 404, errors: [{ message: "User not found" }] })
 
