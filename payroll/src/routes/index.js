@@ -69,8 +69,6 @@ payrollRouter.post(
             let createdPayrolls = []
             const { payroll, totalAmount, businessEmail, businessTradingName } = req.body
             for (let pay of payroll) {
-                console.log("pay", pay)
-
                 let createdPayroll = await db.payroll.create({
                     businessId: pay.businessId,
                     businessTradingName: pay.businessTradingName,
@@ -96,6 +94,7 @@ payrollRouter.post(
 
             }
             //aws queue data
+            console.log("created payroll", createdPayrolls)
             let queueData = {
                 businessId: createdPayrolls[0].businessId,
                 totalAmount,
@@ -105,9 +104,6 @@ payrollRouter.post(
             }
             console.log("queue data", queueData)
             let queueResponse = await sendDataToAWSQueue(queueData, queueUrl)
-
-
-
             res.status(201).send({ message: `Payroll details for ${createdPayrolls.length}  staff from  buiness with trading name of ${createdPayrolls[0].businessTradingName}`, statuscode: 201, type: "success", data: { payrolls: createdPayrolls } });
 
         } catch (error) {
