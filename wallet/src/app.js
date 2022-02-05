@@ -323,7 +323,9 @@ cronJob.schedule("*/1 * * * *", () => {
                   console.log("Payroll Message Deleted", data);
                 }
               });
+              console.log("BEFORE=====>");
               throw new Error("recipient wallet cannot be found");
+              console.log("AFTER");
             }
 
             if (walletId == eachWallet.staffWallet) {
