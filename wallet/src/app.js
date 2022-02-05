@@ -310,22 +310,7 @@ cronJob.schedule("*/1 * * * *", () => {
             });
 
             if (!recipientWallet) {
-              //===========================================================================>
-              let deleteParams = {
-                QueueUrl: process.env.PAYROLLWALLETCREATIONQUEUEURL,
-                ReceiptHandle: data.Messages[0].ReceiptHandle,
-              };
-
-              sqs.deleteMessage(deleteParams, function (err, data) {
-                if (err) {
-                  console.log("Delete Error", err);
-                } else {
-                  console.log("Payroll Message Deleted", data);
-                }
-              });
-              console.log("BEFORE=====>");
               throw new Error("recipient wallet cannot be found");
-              console.log("AFTER");
             }
 
             if (walletId == eachWallet.staffWallet) {
