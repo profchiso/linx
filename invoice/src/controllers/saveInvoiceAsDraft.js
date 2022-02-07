@@ -3,8 +3,6 @@ const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
 const { validateDraftUpdate } = require("../helper/validateInvoice");
-const { sendMailWithSendGrid } = require("../helper/emailTransport");
-const { formatInvoiceMail } = require("../helper/emailFormat");
 
 module.exports = async (req, res) => {
   try {
