@@ -23,6 +23,17 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
 
+    const beneficiary = await db.beneficiary.findOne({
+      where: {
+        beneficiaryWalletId: req.body.beneficiaryWalletId,
+        accountNumber: req.body.accountNumber,
+      },
+    });
+
+    if (beneficiary) {
+      throw new Error("You already have this beneficiary saved in your list");
+    }
+
     let createdBeneficiary = await db.beneficiary.create({
       bankName: req.body.bankName,
       accountNumber: req.body.accountNumber,
