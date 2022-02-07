@@ -55,7 +55,7 @@ module.exports = async (req, res) => {
     await invoice.save();
 
     res.status(201).send({
-      message: "Invoice saved as draft",
+      message: "Invoice created",
       statuscode: 201,
       type: "success",
       data: {
