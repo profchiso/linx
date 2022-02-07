@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
         modelName: 'businesses',
     });
     businesses.associate = function(models) {
-        businesses.hasOne(models.aliases, { as: 'alias' })
+        businesses.hasOne(models.aliases, { as: 'businessAlias' })
         businesses.hasMany(models.businessOwners, { as: 'businessOwners' })
         businesses.hasMany(models.directors, { as: 'directors' })
         businesses.hasMany(models.secretaries, { as: 'secretaries' })
