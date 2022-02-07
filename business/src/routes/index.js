@@ -31,7 +31,7 @@ businessRouter.get(
 
 
             //get all registered businesses
-            const businesses = await db.businesses.findAll({});
+            const businesses = await db.businesses.findAll({ include: ["alias", "businessOwners", "directors", "secretaries", "witnesses"] });
 
             res.status(200).send({ message: "Businesses Fetched", statuscode: 200, data: { businesses } });
 
@@ -870,7 +870,7 @@ businessRouter.get(
             }
 
             const { userId } = req.params;
-            const business = await db.businesses.findAll({ where: { userId } });
+            const business = await db.businesses.findAll({ where: { userId }, include: ["alias", "businessOwners", "directors", "secretaries", "witnesses"] });
             let myBusinesses = [];
             if (business.length > 0) {
                 for (let b of business) {
