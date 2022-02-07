@@ -26,17 +26,23 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
 
-    const invoice = await Invoice.findOneAndUpdate(
-      {
-        id: req.params.id,
-        businessId: req.params.businessId,
-        customerId: req.params.customerId,
-      },
-      req.body,
-      {
-        new: true,
-      }
-    );
+    const invoice = await Invoice.findOne({
+      id: req.params.id,
+      businessId: req.params.businessId,
+      customerId: req.params.customerId,
+    });
+
+    if (!invoice) {
+      throw new Error("Invoice cannot be found");
+    }
+
+    if (invoice.status == "sent") {
+      throw new Error("You cannot save an already sent invoice as draft");
+    }
+
+    invoice.status = "draft";
+
+    await invoice.save();
 
     // Send response
     res.status(200).send({

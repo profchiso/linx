@@ -17,7 +17,7 @@ invoiceRouter.post(
 );
 invoiceRouter.patch("/api/v1/:businessId/:customerId/invoice/:id", editInvoice);
 invoiceRouter.patch(
-  "/api/v1/:businessId/:customerId/invoice/:id",
+  "/api/v1/:businessId/:customerId/invoice/:id/draft",
   saveInvoiceAsDraft
 );
 invoiceRouter.patch(
