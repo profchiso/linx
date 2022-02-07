@@ -2,6 +2,7 @@ const { Invoice } = require("../models/invoice");
 const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
+const { validateDraftUpdate } = require("../helper/validateInvoice");
 const { sendMailWithSendGrid } = require("../helper/emailTransport");
 const { formatInvoiceMail } = require("../helper/emailFormat");
 
@@ -18,38 +19,28 @@ module.exports = async (req, res) => {
     //     throw new NotAuthorisedError()
     // }
 
-    const { customerEmail } = req.body;
-
-    const invoice = await Invoice.findOne({
-      id: req.params.id,
-      businessId: req.params.businessId,
-      customerId: req.params.customerId,
-    });
-
-    if (!invoice) {
-      throw new Error("No Invoice found");
+    // invoice validation
+    const { error } = validateDraftUpdate(req.body);
+    if (error) {
+      res.status(400);
+      throw new Error(error.message);
     }
 
-    if (invoice.status !== "draft" || "pending") {
-      throw new Error("You can only send a draft or pending invoice");
-    }
+    const invoice = await Invoice.findOneAndUpdate(
+      {
+        id: req.params.id,
+        businessId: req.params.businessId,
+        customerId: req.params.customerId,
+      },
+      req.body,
+      {
+        new: true,
+      }
+    );
 
-    invoice.status = "sent";
-
-    await invoice.save();
-
-    // transport object
-    const mailOptions = {
-      to: customerEmail,
-      from: process.env.SENDER_EMAIL,
-      subject: "Your Invoice",
-      html: formatInvoiceMail(invoice),
-    };
-
-    await sendMailWithSendGrid(mailOptions);
-
+    // Send response
     res.status(200).send({
-      message: `Invoice sent successfully to ${customerEmail}`,
+      message: "Invoice saved as draft",
       statuscode: 200,
       type: "success",
       data: {

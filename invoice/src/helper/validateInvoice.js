@@ -63,3 +63,12 @@ module.exports.validateUpdate = function validate(req) {
 
   return schema.validate(req);
 };
+
+// validate invoice data to save as draft
+module.exports.validateDraftUpdate = function validate(req) {
+  const schema = Joi.object({
+    status: Joi.string().required(),
+  });
+
+  return schema.validate(req);
+};
