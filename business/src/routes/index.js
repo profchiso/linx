@@ -301,6 +301,7 @@ businessRouter.post(
                 utilityBillType,
                 email: req.body.businessEmail || data.user.email,
                 businessEmail: req.body.businessEmail || data.user.email,
+                businessPhoneNumber: req.body.businessPhoneNumber || "",
                 businessCategory: "Registered",
                 businessLogo: imageData.businessLogo
             })
