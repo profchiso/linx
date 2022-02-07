@@ -26,6 +26,9 @@ module.exports = {
             dateOfBirth: {
                 type: Sequelize.STRING
             },
+            gender: {
+                type: Sequelize.STRING
+            },
             nationality: {
                 type: Sequelize.STRING
             },
@@ -40,6 +43,9 @@ module.exports = {
             },
             address: {
                 type: Sequelize.STRING
+            },
+            share: {
+                type: Sequelize.NUMERIC
             },
             idType: {
                 type: Sequelize.STRING

@@ -712,10 +712,6 @@ businessRouter.post(
             }
 
 
-
-
-
-
             //upload images in  file format
             if (req.files) {
                 if (req.files.utilityBillImage) {
@@ -787,9 +783,21 @@ businessRouter.post(
                     let busnessOwnerDetails = {
                         firstName: businessOwner.firstName,
                         lastName: businessOwner.lastName,
+                        middleName: businessOwner.middleName || "",
                         email: businessOwner.email,
+                        phone: businessOwner.phone || "",
+                        dateOfBirth: businessOwner.dateOfBirth || "",
+                        gender: businessOwner.gender || "",
+                        nationality: businessOwner.nationality || "",
+                        state: businessOwner.state || "",
+                        lga: businessOwner.lga || "",
+                        address: businessOwner.address || "",
+                        occupation: businessOwner.occupation || "",
+                        share: businessOwner.share || 0,
                         idType: businessOwner.idType,
+                        idNumber: businessOwner.idNumber || "",
                         idTypeImage: "",
+                        signature: "",
                         businessId: createdUnregisteredBusiness.id
                     }
 
@@ -812,8 +820,24 @@ businessRouter.post(
                         );
                     }
 
+                    if (businessOwner.signature) {
+                        await cloudinary.uploader.upload(
+                            businessOwner.signature, {
+                                public_id: `partnerid-signature/${businessOwner.firstName}-${businessOwner.lastName}-signature`,
+                            },
+                            (error, result) => {
 
 
+                                if (error) {
+                                    console.log("Error uploading partner id image to cloudinary");
+                                } else {
+                                    busnessOwnerDetails.signature = result.secure_url;
+
+                                }
+
+                            }
+                        );
+                    }
 
                     let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
                     partners.push(createdBusinessOwner)
@@ -822,21 +846,33 @@ businessRouter.post(
             }
 
 
-            if (req.body.businessOwners && req.body.businessOwners.length) {
-                for (let businessOwner of req.body.businessOwners) {
-                    let busnessOwnerDetails = {
-                        firstName: businessOwner.firstName,
-                        lastName: businessOwner.lastName,
-                        email: businessOwner.email,
-                        idType: businessOwner.idType,
+            if (req.body.directors && req.body.directors.length) {
+                for (let director of req.body.directors) {
+                    let directorDetails = {
+                        firstName: director.firstName,
+                        lastName: director.lastName,
+                        middleName: director.middleName || "",
+                        email: director.email,
+                        phone: director.phone || "",
+                        dateOfBirth: director.dateOfBirth || "",
+                        gender: director.gender || "",
+                        nationality: director.nationality || "",
+                        state: director.state || "",
+                        lga: director.lga || "",
+                        address: director.address || "",
+                        occupation: director.occupation || "",
+                        share: director.share || 0,
+                        idType: director.idType,
+                        idNumber: director.idNumber || "",
                         idTypeImage: "",
+                        signature: "",
                         businessId: createdUnregisteredBusiness.id
                     }
 
-                    if (businessOwner.idTypeImage) {
+                    if (director.idTypeImage) {
                         await cloudinary.uploader.upload(
-                            businessOwner.idTypeImage, {
-                                public_id: `partnerid-image/${businessOwner.firstName}-${businessOwner.lastName}-idTypeImage`,
+                            director.idTypeImage, {
+                                public_id: `directors/${director.firstName}-${director.lastName}-idTypeImage`,
                             },
                             (error, result) => {
 
@@ -844,7 +880,7 @@ businessRouter.post(
                                 if (error) {
                                     console.log("Error uploading partner id image to cloudinary");
                                 } else {
-                                    busnessOwnerDetails.idTypeImage = result.secure_url;
+                                    directorDetails.idTypeImage = result.secure_url;
 
                                 }
 
@@ -855,8 +891,107 @@ businessRouter.post(
 
 
 
-                    let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
-                    partners.push(createdBusinessOwner)
+                    let createdDirectors = await db.directors.create(directorDetails)
+
+                }
+
+            }
+
+            if (req.body.secretaries && req.body.secretaries.length) {
+                for (let secretary of req.body.secretaries) {
+                    let secretaryDetails = {
+                        firstName: secretary.firstName,
+                        lastName: secretary.lastName,
+                        middleName: secretary.middleName || "",
+                        email: secretary.email,
+                        phone: secretary.phone || "",
+                        dateOfBirth: secretary.dateOfBirth || "",
+                        gender: secretary.gender || "",
+                        nationality: secretary.nationality || "",
+                        state: secretary.state || "",
+                        lga: secretary.lga || "",
+                        address: secretary.address || "",
+                        occupation: secretary.occupation || "",
+                        share: secretary.share || 0,
+                        idType: secretary.idType,
+                        idNumber: secretary.idNumber || "",
+                        idTypeImage: "",
+                        signature: "",
+                        businessId: createdUnregisteredBusiness.id
+                    }
+
+                    if (director.idTypeImage) {
+                        await cloudinary.uploader.upload(
+                            director.idTypeImage, {
+                                public_id: `secretary/${director.firstName}-${director.lastName}-idTypeImage`,
+                            },
+                            (error, result) => {
+
+
+                                if (error) {
+                                    console.log("Error uploading partner id image to cloudinary");
+                                } else {
+                                    secretaryDetails.idTypeImage = result.secure_url;
+
+                                }
+
+                            }
+                        );
+                    }
+
+
+
+
+                    let createdSecretary = await db.secretaries.create(secretaryDetails)
+
+                }
+
+            }
+
+            if (req.body.witnesses && req.body.witnesses.length) {
+                for (let witness of req.body.witnesses) {
+                    let witnessDetails = {
+                        firstName: witness.firstName,
+                        lastName: witness.lastName,
+                        middleName: witness.middleName || "",
+                        email: witness.email,
+                        phone: witness.phone || "",
+                        dateOfBirth: witness.dateOfBirth || "",
+                        gender: witness.gender || "",
+                        nationality: witness.nationality || "",
+                        state: witness.state || "",
+                        lga: witness.lga || "",
+                        address: witness.address || "",
+                        occupation: witness.occupation || "",
+                        share: witness.share || 0,
+                        idType: witness.idType,
+                        idNumber: witness.idNumber || "",
+                        idTypeImage: "",
+                        signature: "",
+                        businessId: createdUnregisteredBusiness.id
+                    }
+
+                    if (witness.idTypeImage) {
+                        await cloudinary.uploader.upload(
+                            witness.idTypeImage, {
+                                public_id: `witness/${director.firstName}-${director.lastName}-idTypeImage`,
+                            },
+                            (error, result) => {
+
+
+                                if (error) {
+                                    console.log("Error uploading partner id image to cloudinary");
+                                } else {
+                                    witnessDetails.idTypeImage = result.secure_url;
+
+                                }
+
+                            }
+                        );
+                    }
+
+                    let createdwitness = await db.witnesses.create(witnessDetails)
+
                 }
 
             }
