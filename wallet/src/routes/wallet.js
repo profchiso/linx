@@ -12,6 +12,7 @@ const getAllCreditTransactions = require("../controllers/getAllCreditTransaction
 const getAllDebitTransactions = require("../controllers/getAllDebitTransactions");
 const getAllTransactionsForABusiness = require("../controllers/getAllTransactionsForABusiness");
 const getAllTransactionsForAStaff = require("../controllers/getAllTransactionsForAStaff");
+const getAllTransactionsForAdmin = require("../controllers/getAllTransactionsForAdmin");
 const getASingleCreditTransaction = require("../controllers/getASingleCreditTransaction");
 const getASingleDebitTransaction = require("../controllers/getASingleDebitTransaction");
 const getASingleBeneficiary = require("../controllers/getASingleBeneficiary");
@@ -48,6 +49,10 @@ walletRouter.get(
 walletRouter.get(
   "/api/v1/wallet/transactions/:businessId/:staffId",
   getAllTransactionsForAStaff
+);
+walletRouter.get(
+  "/api/v1/wallet/admin/transactions",
+  getAllTransactionsForAdmin
 );
 walletRouter.get(
   "/api/v1/wallet/:walletId/beneficiary/:id",
