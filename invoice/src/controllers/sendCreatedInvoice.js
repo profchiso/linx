@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
 
     console.log("======>", invoice.status);
 
-    if (invoice.status !== "draft" || "pending") {
+    if (invoice.status != "draft" || "pending") {
       throw new Error("You can only send a draft or pending invoice");
     }
 
