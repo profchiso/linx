@@ -19,20 +19,20 @@ businessRouter.get(
     async(req, res) => {
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            }
 
 
             //get all registered businesses
             const businesses = await db.businesses.findAll({ include: ["businessOwners", "directors", "secretaries", "witnesses"] });
-            console.log(businesses)
+
             res.status(200).send({ message: "Businesses Fetched", statuscode: 200, data: { businesses } });
 
         } catch (error) {
@@ -314,7 +314,10 @@ businessRouter.post(
             let partners = [];
 
             if (req.body.businessOwners && req.body.businessOwners.length) {
+
                 for (let businessOwner of req.body.businessOwners) {
+
+
                     let busnessOwnerDetails = {
                         firstName: businessOwner.firstName,
                         lastName: businessOwner.lastName,
@@ -778,6 +781,46 @@ businessRouter.post(
 
             //create business owners
             let partners = [];
+
+            if (req.body.businessOwners && req.body.businessOwners.length) {
+                for (let businessOwner of req.body.businessOwners) {
+                    let busnessOwnerDetails = {
+                        firstName: businessOwner.firstName,
+                        lastName: businessOwner.lastName,
+                        email: businessOwner.email,
+                        idType: businessOwner.idType,
+                        idTypeImage: "",
+                        businessId: createdUnregisteredBusiness.id
+                    }
+
+                    if (businessOwner.idTypeImage) {
+                        await cloudinary.uploader.upload(
+                            businessOwner.idTypeImage, {
+                                public_id: `partnerid-image/${businessOwner.firstName}-${businessOwner.lastName}-idTypeImage`,
+                            },
+                            (error, result) => {
+
+
+                                if (error) {
+                                    console.log("Error uploading partner id image to cloudinary");
+                                } else {
+                                    busnessOwnerDetails.idTypeImage = result.secure_url;
+
+                                }
+
+                            }
+                        );
+                    }
+
+
+
+
+                    let createdBusinessOwner = await db.businessOwners.create(busnessOwnerDetails)
+                    partners.push(createdBusinessOwner)
+                }
+
+            }
+
 
             if (req.body.businessOwners && req.body.businessOwners.length) {
                 for (let businessOwner of req.body.businessOwners) {

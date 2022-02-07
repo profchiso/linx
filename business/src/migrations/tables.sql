@@ -68,6 +68,8 @@ CREATE TABLE IF NOT EXISTS public.businesses
     "companyObjectives" character varying(255) COLLATE pg_catalog."default",
     "companyShareCapital" character varying(255) COLLATE pg_catalog."default",
     "businessLogo" character varying(255) COLLATE pg_catalog."default",
+    "isVerified" boolean DEFAULT false,
+    "isCompleted" boolean DEFAULT false,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT businesses_pkey PRIMARY KEY (id)

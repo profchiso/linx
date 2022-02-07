@@ -52,6 +52,7 @@ module.exports = (sequelize, DataTypes) => {
         secondaryWallet: DataTypes.INTEGER,
         promoWallet: DataTypes.INTEGER,
 
+
     }, {
         sequelize,
         modelName: 'businesses',
