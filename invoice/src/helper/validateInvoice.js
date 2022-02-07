@@ -5,7 +5,7 @@ module.exports.validate = function validate(req) {
   const schema = Joi.object({
     id: Joi.number(),
     name: Joi.string().required(),
-    status: Joi.string().required(),
+    status: Joi.string().valid("draft", "pending").required(),
     client: Joi.string().required(),
     date: Joi.number(),
     amount: Joi.number(),
@@ -67,7 +67,7 @@ module.exports.validateUpdate = function validate(req) {
 // validate invoice data to save as draft
 module.exports.validateDraftUpdate = function validate(req) {
   const schema = Joi.object({
-    status: Joi.string().required(),
+    status: Joi.string().valid("draft").required(),
   });
 
   return schema.validate(req);

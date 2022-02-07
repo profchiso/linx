@@ -6,6 +6,7 @@ const previewInvoice = require("../controllers/previewInvoice");
 const getAllInvoiceForABusiness = require("../controllers/getAllInvoiceForABusiness");
 const editInvoice = require("../controllers/editInvoice");
 const deactivateInvoice = require("../controllers/deactivateInvoice");
+const saveInvoiceAsDraft = require("../controllers/saveInvoiceAsDraft");
 
 const invoiceRouter = express.Router();
 
@@ -15,6 +16,10 @@ invoiceRouter.post(
   sendDraftInvoice
 );
 invoiceRouter.patch("/api/v1/:businessId/:customerId/invoice/:id", editInvoice);
+invoiceRouter.patch(
+  "/api/v1/:businessId/:customerId/invoice/:id",
+  saveInvoiceAsDraft
+);
 invoiceRouter.patch(
   "/api/v1/:businessId/:customerId/invoice/:id/deactivate",
   deactivateInvoice
