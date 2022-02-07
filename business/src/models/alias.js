@@ -22,5 +22,8 @@ module.exports = (sequelize, DataTypes) => {
         sequelize,
         modelName: 'aliases',
     });
+    aliases.associate = function(models) {
+        aliases.belongsTo(models.businesses, { foreignKey: 'id', as: 'alias' })
+    }
     return aliases;
 };

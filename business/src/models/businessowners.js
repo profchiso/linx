@@ -36,5 +36,8 @@ module.exports = (sequelize, DataTypes) => {
         sequelize,
         modelName: 'businessOwners',
     });
+    businessOwners.associate = function(models) {
+        businessOwners.hasMany(models.businesses, { foreignKey: 'id', as: 'businessOwners' })
+    }
     return businessOwners;
 };
