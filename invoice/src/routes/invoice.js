@@ -1,7 +1,7 @@
 const express = require("express");
 
 const createInvoice = require("../controllers/createInvoice");
-const sendDraftInvoice = require("../controllers/sendDraftInvoice");
+const sendCreatedInvoice = require("../controllers/sendCreatedInvoice");
 const previewInvoice = require("../controllers/previewInvoice");
 const getAllInvoiceForABusiness = require("../controllers/getAllInvoiceForABusiness");
 const editInvoice = require("../controllers/editInvoice");
@@ -12,8 +12,8 @@ const invoiceRouter = express.Router();
 
 invoiceRouter.post("/api/v1/:businessId/:customerId/invoice", createInvoice);
 invoiceRouter.post(
-  "/api/v1/:businessId/:customerId/draft/invoice/:id",
-  sendDraftInvoice
+  "/api/v1/:businessId/:customerId/send/invoice/:id",
+  sendCreatedInvoice
 );
 invoiceRouter.patch("/api/v1/:businessId/:customerId/invoice/:id", editInvoice);
 invoiceRouter.patch(
