@@ -923,7 +923,7 @@ businessRouter.post(
                     if (director.idTypeImage) {
                         await cloudinary.uploader.upload(
                             director.idTypeImage, {
-                                public_id: `secretary/${director.firstName}-${director.lastName}-idTypeImage`,
+                                public_id: `secretary/${secretary.firstName}-${secretary.lastName}-idTypeImage`,
                             },
                             (error, result) => {
 
@@ -974,7 +974,7 @@ businessRouter.post(
                     if (witness.idTypeImage) {
                         await cloudinary.uploader.upload(
                             witness.idTypeImage, {
-                                public_id: `witness/${director.firstName}-${director.lastName}-idTypeImage`,
+                                public_id: `witness/${ witness.firstName}-${ witness.lastName}-idTypeImage`,
                             },
                             (error, result) => {
 
