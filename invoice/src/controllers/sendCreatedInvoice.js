@@ -30,32 +30,32 @@ module.exports = async (req, res) => {
       throw new Error("No Invoice found");
     }
 
-    if (invoice.status == "pending" || invoice.status == "draft") {
-      console.log(true);
-      invoice.status = "sent";
+    // if (invoice.status == "pending" || invoice.status == "draft" || invoice.status == "sent") {
 
-      await invoice.save();
+    invoice.status = "sent";
 
-      // transport object
-      const mailOptions = {
-        to: customerEmail,
-        from: process.env.SENDER_EMAIL,
-        subject: "Your Invoice",
-        html: formatInvoiceMail(invoice),
-      };
+    await invoice.save();
 
-      await sendMailWithSendGrid(mailOptions);
+    // transport object
+    const mailOptions = {
+      to: customerEmail,
+      from: process.env.SENDER_EMAIL,
+      subject: "Your Invoice",
+      html: formatInvoiceMail(invoice),
+    };
 
-      return res.status(200).send({
-        message: `Invoice sent successfully to ${customerEmail}`,
-        statuscode: 200,
-        type: "success",
-        data: {
-          invoice,
-        },
-      });
-    }
-    throw new Error("You can only send a draft or pending invoice");
+    await sendMailWithSendGrid(mailOptions);
+
+    return res.status(200).send({
+      message: `Invoice sent successfully to ${customerEmail}`,
+      statuscode: 200,
+      type: "success",
+      data: {
+        invoice,
+      },
+    });
+    //}
+    //throw new Error("You can only send a draft or pending invoice");
   } catch (error) {
     console.log(error);
     res.status(500).json({
