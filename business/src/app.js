@@ -8,6 +8,13 @@ const { errorHandler, NotFoundError } = require('@bc_tickets/common');
 const { businessRouter } = require('./routes/index');
 
 
+let locations = {
+    countries: [{ id: 1, name: "Nigeria" }],
+    states: [{ id: 1, countryName: "Nigeria", state: "Abia" }],
+    LGA: [{ id: 1, countryName: "Nigeria", state: "Abia", lga: "aba north" }]
+}
+
+
 const app = express();
 app.set('trust proxy', true);
 app.use(express.json({ limit: '50mb' }));
