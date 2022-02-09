@@ -19,6 +19,8 @@ module.exports = (sequelize, DataTypes) => {
       userType: DataTypes.STRING,
       alias: DataTypes.STRING,
       walletPin: DataTypes.STRING,
+      emailOtp: DataTypes.STRING,
+      smsOtp: DataTypes.STRING,
     },
     {
       sequelize,

@@ -44,7 +44,7 @@ module.exports = async (req, res) => {
       });
 
       if (!pin) {
-        throw new Error("You don't have a pin yet");
+        throw new Error("You don't have a PIN yet");
       }
 
       //COMPARE ENTERED PIN WITH HASHED PIN
@@ -78,7 +78,7 @@ module.exports = async (req, res) => {
       });
 
       if (!pin) {
-        throw new Error("You don't have a pin yet");
+        throw new Error("You don't have a PIN yet");
       }
 
       //COMPARE ENTERED PIN WITH HASHED PIN
