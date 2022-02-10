@@ -26,6 +26,12 @@ module.exports = {
       walletPin: {
         type: Sequelize.STRING,
       },
+      emailOtp: {
+        type: Sequelize.INTEGER,
+      },
+      smsOtp: {
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

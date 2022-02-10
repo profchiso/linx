@@ -3,8 +3,7 @@ const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
 const { hashWalletPin } = require("../helper/pinHash");
-const { decryptWalletPin } = require("../helper/pinHash");
-const { validatePinChange } = require("../helper/validatePin");
+const { validatePinReset } = require("../helper/validatePin");
 
 module.exports = async (req, res) => {
   try {
@@ -18,14 +17,14 @@ module.exports = async (req, res) => {
     // if (!data.user) {
     //     throw new NotAuthorisedError()
     // }
-    // PIN Validation
-    const { error } = validatePinChange(req.body);
+    // PIN reset Validation
+    const { error } = validatePinReset(req.body);
     if (error) {
       res.status(400);
       throw new Error(error.message);
     }
 
-    const { newWalletPin, walletId, userType, alias, walletPin } = req.body;
+    const { newWalletPin, walletId, userType, alias, emailOtp } = req.body;
 
     const { ownerId } = req.params;
 
@@ -44,21 +43,11 @@ module.exports = async (req, res) => {
         throw new Error("Wallet(s) cannot be found");
       }
 
-      //CHECK IF PIN EXIST
-      const pin = await db.pin.findOne({
-        where: { userType, alias, ownerId },
-      });
-
-      if (!pin) {
-        throw new Error("You don't have a PIN yet");
+      if (wallet.dataValues.emailOtp !== Number(emailOtp)) {
+        throw new Error("Incorrect OTP");
       }
 
-      //COMPARE ENTERED PIN WITH HASHED PIN
-      if (!(await decryptWalletPin(walletPin, pin.dataValues.walletPin))) {
-        throw new Error("Incorrect PIN entered!");
-      }
-
-      //Hash new Wallet PIN
+      //Hash Wallet Pin
       let hashedPin = await hashWalletPin(newWalletPin);
 
       await db.wallet.update(
@@ -78,8 +67,7 @@ module.exports = async (req, res) => {
       );
 
       res.status(200).send({
-        message:
-          "Your PIN for wallet transactions has been changed successfully",
+        message: "PIN reset successful",
         statuscode: 200,
         type: "success",
         data: {
@@ -98,21 +86,11 @@ module.exports = async (req, res) => {
         throw new Error("Wallet(s) cannot be found");
       }
 
-      //CHECK IF PIN EXIST
-      const pin = await db.pin.findOne({
-        where: { userType, alias, ownerId },
-      });
-
-      if (!pin) {
-        throw new Error("You don't have a PIN yet");
+      if (wallet.dataValues.emailOtp !== Number(emailOtp)) {
+        throw new Error("Incorrect OTP");
       }
 
-      //COMPARE ENTERED PIN WITH HASHED PIN
-      if (!(await decryptWalletPin(walletPin, pin.dataValues.walletPin))) {
-        throw new Error("Incorrect PIN entered!");
-      }
-
-      //Hash new Wallet PIN
+      //Hash Wallet Pin
       let hashedPin = await hashWalletPin(newWalletPin);
 
       await db.wallet.update(
@@ -132,8 +110,7 @@ module.exports = async (req, res) => {
       );
 
       res.status(200).send({
-        message:
-          "Your PIN for wallet transactions has been changed successfully",
+        message: "PIN reset successful",
         statuscode: 200,
         type: "success",
         data: {

@@ -37,3 +37,12 @@ module.exports.validatePinChange = function validate(req) {
 
   return schema.validate(req);
 };
+
+// validate reset pin data
+module.exports.validatePinReset = function validate(req) {
+  const schema = Joi.object({
+    emailOtp: Joi.string().required(),
+  });
+
+  return schema.validate(req);
+};
