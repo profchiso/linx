@@ -7,32 +7,33 @@ require('express-async-errors');
 const cookieSession = require('cookie-session');
 const { errorHandler, NotFoundError } = require('@bc_tickets/common');
 const { businessRouter } = require('./routes/index');
-const { Nigeria, Ghana, Kenya } = require("./utils/convertExcelToJson");
+const { Nigeria, Ghana, Kenya, businessCategory } = require("./utils/convertExcelToJson");
 
 
 
 let filePath = "business/public/states_and_lga.xlsx";
-let filePath1 = "business/public/LinX_State_LGA.xlsx";
+let filePath1 = "business/public/biz.xlsx";
 async function convertScript() {
     try {
-        let ghana = await Ghana(filePath);
-        let kenya = await Kenya(filePath);
-        let nigeria = await Nigeria(filePath1)
-            // console.log(res)
+        // let ghana = await Ghana(filePath);
+        // let kenya = await Kenya(filePath);
+        // let nigeria = await Nigeria(filePath1)
+        //     // console.log(res)
 
 
-        let all = {
-            counties: [...nigeria.countries, ...ghana.countries, ...kenya.countries],
-            states: [...nigeria.states, ...ghana.states, ...kenya.states],
-            lgas: [...nigeria.lgas, ...ghana.lgas, ...kenya.lgas]
+        // let all = {
+        //     counties: [...nigeria.countries, ...ghana.countries, ...kenya.countries],
+        //     states: [...nigeria.states, ...ghana.states, ...kenya.states],
+        //     lgas: [...nigeria.lgas, ...ghana.lgas, ...kenya.lgas]
 
-        }
-        fs.writeFile('business/public/Nigeria_Kenya_Ghana_state_lga.json', JSON.stringify(all), 'utf8', (err) => {
+        // }
+        let bizCat = await businessCategory(filePath1)
+        fs.writeFile('business/public/business_category_and_sub.json', JSON.stringify(bizCat), 'utf8', (err) => {
             if (err) {
                 console.log(err)
             }
         });
-        return all
+        return bizCat
 
     } catch (error) {
         console.log(error)

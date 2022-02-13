@@ -177,3 +177,60 @@ exports.Kenya = (filePath) => {
 
     }
 }
+
+exports.businessCategory = (filePath) => {
+
+    try {
+        let businessCategory = []
+        let subBusinessCategory = [];
+
+        const result = excelToJson({
+            sourceFile: filePath,
+            header: {
+                // Is the number of rows that will be skipped and will not be present at our result object. Counting from top to bottom
+                rows: 1, // 2, 3, 4, etc.
+            },
+            sheets: ["cac_category"],
+            columnToKey: {
+                A: "nature",
+                B: "business",
+                C: "id",
+                D: "sub",
+                E: "isActive",
+            },
+        });
+        console.log(result);
+
+        for (let datum of result.cac_category) {
+
+            let businessCategoryTemplate = { isActive: datum.isActive, businessCategory: datum.business }
+            let subBusinessCategoryTemplate = { isActive: datum.isActive, businessCategory: datum.business, subBusinessCategory: datum.sub }
+
+
+            businessCategory.push(businessCategoryTemplate);
+            subBusinessCategory.push(subBusinessCategoryTemplate)
+        }
+
+
+        const key = 'businessCategory';
+
+        const arrayUniqueByKey = [...new Map(businessCategory.map(item => [item[key], item])).values()];
+
+
+        let converted = {
+
+            businessCategory: arrayUniqueByKey,
+            subBusinessCategory
+        };
+        // fs.writeFile('business/public/nigeria.json', JSON.stringify(converted), 'utf8', (err) => {
+        //     if (err) {
+        //         console.log(err)
+        //     }
+        // });
+
+        return converted
+    } catch (error) {
+        console.log(error);
+    }
+
+}
