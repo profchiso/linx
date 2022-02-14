@@ -9,6 +9,7 @@ const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing"
 const { generateRandomLengthPassword } = require("../utils/generateRandomPassword")
 const { generateEntityId } = require("../utils/generateEntityId")
 const { sendMailWithSendgrid } = require("../utils/emailing")
+const { staffCreationMail } = require("../utils/staffCreationMailTamplate")
 const db = require("../models/index")
 const staffRouter = express.Router();
 const AUTH_URL = process.env.AUTH_URL
@@ -205,12 +206,24 @@ staffRouter.post(
             Please change your password after you login
             Thank you.`
 
+            let mailTemplateOptions = {
+                firstName,
+                lastName,
+                employmentType,
+                role,
+                businessTradingName,
+                businessAlias,
+                password: tempPassword
+            }
+            let html = await staffCreationMail(mailTemplateOptions)
+
             //user.password = undefined;
             const mailOptions = {
                 from: process.env.SENDER_EMAIL,
                 to: email,
                 subject: `${businessTradingName} Staff Registration`,
                 text: msg,
+                html
             };
 
             await sendMailWithSendgrid(mailOptions)
