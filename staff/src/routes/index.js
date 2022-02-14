@@ -182,6 +182,7 @@ staffRouter.post(
 
 
             let returnData = {...createdStaff.dataValues }
+            delete returnData.password
 
             let awsQueuePayload = {
                 staffId: createdStaff.id,
