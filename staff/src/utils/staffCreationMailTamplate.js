@@ -5,20 +5,20 @@ exports.staffCreationMail = async(options) => {
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Linx Mail Template</title>
+        <title>Linx Staff Creation</title>
       </head>
       <style>
         @font-face {
           font-family: SteradianBlack;
-          src: url(./fonts/steradian/Steradian\ Black.otf);
+          src: url(${process.env.BASE_URL}fonts/steradian/Steradian\ Black.otf);
         }
         @font-face {
           font-family: SteradianBold;
-          src: url(fonts/steradian/Steradian\ Bold.otf);
+          src: url(${process.env.BASE_URL}fonts/steradian/Steradian\ Bold.otf);
         }
         @font-face {
           font-family: Steradian;
-          src: url(fonts/steradian/Steradian\ Regular.otf);
+          src: url(${process.env.BASE_URL}fonts/steradian/Steradian\ Regular.otf);
         }
       </style>
       <body style="padding-left: 30px; padding-top: 20px; padding-right: 30px">
@@ -45,7 +45,7 @@ exports.staffCreationMail = async(options) => {
           >
             05-Feb-2022
           </div>
-          <div><img src="./images/Group.svg" /></div>
+          <div><img src="${process.env.BASE_URL}images/Group.svg" /></div>
         </div>
         <div
           style="
@@ -198,7 +198,7 @@ exports.staffCreationMail = async(options) => {
               "
               >Powered by
             </span>
-            <img src="images/Group.svg" alt="" />
+            <img src="${process.env.BASE_URL}images/Group.svg" alt="" />
           </div>
           <div
             style="
