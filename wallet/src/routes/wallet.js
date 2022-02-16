@@ -24,6 +24,7 @@ const getASingleTransaction = require("../controllers/getASingleTransaction");
 const changePin = require("../controllers/changePin");
 const resetPin = require("../controllers/resetPin");
 const sendOtp = require("../controllers/sendOtp");
+const getAllWalletsForAdmin = require("../controllers/getAllWalletsForAdmin");
 
 const walletRouter = express.Router();
 
@@ -57,6 +58,7 @@ walletRouter.get(
   "/api/v1/wallet/admin/transactions",
   getAllTransactionsForAdmin
 );
+walletRouter.get("/api/v1/wallet/admin/wallets", getAllWalletsForAdmin);
 walletRouter.get(
   "/api/v1/wallet/:walletId/beneficiary/:id",
   getASingleBeneficiary
