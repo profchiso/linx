@@ -965,17 +965,17 @@ businessRouter.post(
                         address: witness.address || "",
                         occupation: witness.occupation || "",
                         // share: witness.share || 0,
-                        idType: witness.idType,
-                        idNumber: witness.idNumber || "",
-                        idTypeImage: "",
+                        // idType: witness.idType,
+                        // idNumber: witness.idNumber || "",
+                        // idTypeImage: "",
                         signature: "",
                         businessId: createdUnregisteredBusiness.id
                     }
 
-                    if (witness.idTypeImage) {
+                    if (witness.signature) {
                         await cloudinary.uploader.upload(
-                            witness.idTypeImage, {
-                                public_id: `witness/${ witness.firstName}-${ witness.lastName}-idTypeImage`,
+                            witness.signature, {
+                                public_id: `witness/${ witness.firstName}-${ witness.lastName}-signature`,
                             },
                             (error, result) => {
 
