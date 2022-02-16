@@ -25,6 +25,9 @@ app.use(
 );
 
 app.get("/", (req, res) => {
+    console.log("host", req.hostname, )
+    console.log("base url", req.baseUrl)
+    console.log("req protocol", req.protocol)
     res.send("testing staff endpoint")
 })
 app.use(staffRouter);
