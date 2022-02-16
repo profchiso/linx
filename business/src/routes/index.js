@@ -637,15 +637,15 @@ businessRouter.post(
 
         try {
             //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            // }
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            }
             //request body validation
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -764,17 +764,17 @@ businessRouter.post(
             const createdUnregisteredBusiness = db.businesses.create({
                 ...req.body,
                 ...req.imageData,
-                userId: req.body.userId, //data.user.id || req.body.userId,
+                userId: data.user.id,
                 businessCategory: "Unregistered",
                 businessLogo: imageData.businessLogo,
                 alias: alias.toUpperCase(),
-                email: req.body.businessEmail, //,|| data.user.email,
-                businessEmail: req.body.businessEmail //,|| data.user.email,
+                email: req.body.businessEmail || data.user.email,
+                businessEmail: req.body.businessEmail || data.user.email,
             })
 
 
             //create business alias
-            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdUnregisteredBusiness.id, userId: req.body.userId, }) // data.user.id || userId
+            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdUnregisteredBusiness.id, userId: data.user.id, }) // data.user.id || userId
 
             //create business owners
             let partners = [];
@@ -1007,7 +1007,7 @@ businessRouter.post(
 
             let awsQueuePayload = {
                 businessId: createdUnregisteredBusiness.id,
-                userId: req.body.userId, //data.user.id || userId,
+                userId: data.user.id,
                 alias: alias.toUpperCase(),
                 tradingName,
                 name: tradingName || "",
