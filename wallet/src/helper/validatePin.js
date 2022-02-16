@@ -47,6 +47,12 @@ module.exports.validatePinChange = function validate(req) {
 module.exports.validatePinReset = function validate(req) {
   const schema = Joi.object({
     emailOtp: Joi.string().required(),
+    walletId: Joi.number(),
+    ownerId: Joi.number(),
+    userId: Joi.number(),
+    userType: Joi.string().required(),
+    alias: Joi.string().required(),
+    newWalletPin: Joi.string().required(),
   });
 
   return schema.validate(req);

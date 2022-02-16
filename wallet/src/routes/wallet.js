@@ -23,6 +23,7 @@ const getTransactionByReference = require("../controllers/getTransactionByRefere
 const getASingleTransaction = require("../controllers/getASingleTransaction");
 const changePin = require("../controllers/changePin");
 const resetPin = require("../controllers/resetPin");
+const sendOtp = require("../controllers/sendOtp");
 
 const walletRouter = express.Router();
 
@@ -81,6 +82,7 @@ walletRouter.post(
 walletRouter.post("/api/v1/wallet/:ownerId/pin", createWalletPin);
 walletRouter.post("/api/v1/wallet/:ownerId/pin/validate", validateWalletPin);
 walletRouter.patch("/api/v1/wallet/:ownerId/pin/change", changePin);
+walletRouter.post("/api/v1/wallet/:ownerId/otp/send", sendOtp);
 walletRouter.post("/api/v1/wallet/:ownerId/pin/reset", resetPin);
 
 module.exports = walletRouter;

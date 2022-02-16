@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
 
-    const { newWalletPin, walletId, userType, alias, emailOtp } = req.body;
+    const { newWalletPin, userType, alias, emailOtp } = req.body;
 
     const { ownerId } = req.params;
 
@@ -52,15 +52,15 @@ module.exports = async (req, res) => {
         throw new Error("You don't have a PIN yet");
       }
 
-      if (wallet.dataValues.emailOtp !== Number(emailOtp)) {
-        throw new Error("Incorrect OTP");
-      }
-
       //Hash new Wallet PIN
       let hashedPin = await hashWalletPin(newWalletPin);
 
       // Reset wallet pin
       for (let eachPin of pin) {
+        if (eachPin.dataValues.emailOtp !== Number(emailOtp)) {
+          throw new Error("Incorrect OTP");
+        }
+
         let resetPin = await db.pin.update(
           {
             walletPin: hashedPin,
@@ -110,15 +110,15 @@ module.exports = async (req, res) => {
         throw new Error("You don't have a PIN yet");
       }
 
-      if (wallet.dataValues.emailOtp !== Number(emailOtp)) {
-        throw new Error("Incorrect OTP");
-      }
-
       //Hash new Wallet PIN
       let hashedPin = await hashWalletPin(newWalletPin);
 
       // Reset wallet pin
       for (let eachPin of pin) {
+        if (eachPin.dataValues.emailOtp !== Number(emailOtp)) {
+          throw new Error("Incorrect OTP");
+        }
+
         let resetPin = await db.pin.update(
           {
             walletPin: hashedPin,
