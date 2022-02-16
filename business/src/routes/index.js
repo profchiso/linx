@@ -764,7 +764,7 @@ businessRouter.post(
             const createdUnregisteredBusiness = db.businesses.create({
                 ...req.body,
                 ...req.imageData,
-                userId: data.user.id,
+                userId: data.user.id || req.body.userId,
                 businessCategory: "Unregistered",
                 businessLogo: imageData.businessLogo,
                 alias: alias.toUpperCase(),
@@ -774,7 +774,7 @@ businessRouter.post(
 
 
             //create business alias
-            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdUnregisteredBusiness.id, userId: data.user.id })
+            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdUnregisteredBusiness.id, userId: data.user.id || userId })
 
             //create business owners
             let partners = [];
