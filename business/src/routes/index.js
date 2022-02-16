@@ -768,8 +768,8 @@ businessRouter.post(
                 businessCategory: "Unregistered",
                 businessLogo: imageData.businessLogo,
                 alias: alias.toUpperCase(),
-                email: req.body.businessEmail || data.user.email,
-                businessEmail: req.body.businessEmail || data.user.email,
+                email: req.body.businessEmail, //,|| data.user.email,
+                businessEmail: req.body.businessEmail //,|| data.user.email,
             })
 
 
