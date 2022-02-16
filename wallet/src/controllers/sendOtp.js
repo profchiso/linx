@@ -38,8 +38,8 @@ module.exports = async (req, res) => {
           category: userType.toLowerCase(),
           alias,
           businessId: ownerId,
-          walletType: "Primary",
           walletId,
+          walletType: "Primary",
         },
       });
 
@@ -47,23 +47,33 @@ module.exports = async (req, res) => {
         throw new Error("Wallet(s) cannot be found");
       }
 
+      //CHECK IF PIN EXIST
+      const pin = await db.pin.findAll({
+        where: { userType, alias, ownerId },
+      });
+
+      if (pin.length == 0) {
+        throw new Error("You don't have a PIN yet");
+      }
+
       let generatePhoneOtp = generateOtp();
 
-      await db.wallet.update(
-        { hasPin: true },
-        {
-          where: {
-            category: userType.toLowerCase(),
-            alias,
-            businessId: ownerId,
-            walletType: "Primary",
-            walletId,
+      // Update OTP field in PIN table
+      for (let eachPin of pin) {
+        let setOtp = await db.pin.update(
+          {
             emailOtp: generatePhoneOtp,
           },
-          returning: true,
-          plain: true,
-        }
-      );
+          {
+            where: {
+              alias,
+              ownerId,
+            },
+            returning: true,
+            plain: true,
+          }
+        );
+      }
 
       // transport object
       const mailOptions = {
@@ -100,23 +110,33 @@ module.exports = async (req, res) => {
         throw new Error("Wallet(s) cannot be found");
       }
 
+      //CHECK IF PIN EXIST
+      const pin = await db.pin.findAll({
+        where: { userType, alias, ownerId },
+      });
+
+      if (pin.length == 0) {
+        throw new Error("You don't have a PIN yet");
+      }
+
       let generatePhoneOtp = generateOtp();
 
-      await db.wallet.update(
-        { hasPin: true },
-        {
-          where: {
-            category: userType.toLowerCase(),
-            alias,
-            staffId: ownerId,
-            walletType: "Primary",
-            walletId,
+      // Update OTP field in PIN table
+      for (let eachPin of pin) {
+        let setOtp = await db.pin.update(
+          {
             emailOtp: generatePhoneOtp,
           },
-          returning: true,
-          plain: true,
-        }
-      );
+          {
+            where: {
+              alias,
+              ownerId,
+            },
+            returning: true,
+            plain: true,
+          }
+        );
+      }
 
       // transport object
       const mailOptions = {

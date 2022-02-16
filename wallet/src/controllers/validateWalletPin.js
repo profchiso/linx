@@ -40,7 +40,7 @@ module.exports = async (req, res) => {
 
       //CHECK IF PIN EXIST
       const pin = await db.pin.findOne({
-        where: { userType, alias, ownerId },
+        where: { userType, alias, ownerId, walletId },
       });
 
       if (!pin) {
@@ -74,7 +74,7 @@ module.exports = async (req, res) => {
 
       //CHECK IF PIN EXIST
       const pin = await db.pin.findOne({
-        where: { userType, alias, ownerId },
+        where: { userType, alias, ownerId, walletId },
       });
 
       if (!pin) {

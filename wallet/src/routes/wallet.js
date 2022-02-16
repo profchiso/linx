@@ -80,7 +80,7 @@ walletRouter.post(
 );
 walletRouter.post("/api/v1/wallet/:ownerId/pin", createWalletPin);
 walletRouter.post("/api/v1/wallet/:ownerId/pin/validate", validateWalletPin);
-walletRouter.post("/api/v1/wallet/:ownerId/pin/change", changePin);
+walletRouter.patch("/api/v1/wallet/:ownerId/pin/change", changePin);
 walletRouter.post("/api/v1/wallet/:ownerId/pin/reset", resetPin);
 
 module.exports = walletRouter;

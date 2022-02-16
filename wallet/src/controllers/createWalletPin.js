@@ -24,46 +24,51 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
 
-    const { walletId, userType, alias, walletPin } = req.body;
+    const { walletId, userType, alias, walletPin, walletType } = req.body;
 
     const { ownerId } = req.params;
 
+    //check if usertype is business
     if (userType.toLowerCase() == "business") {
       //CHECK IF WALLET EXIST
       const wallet = await db.wallet.findAll({
         where: { category: userType.toLowerCase(), alias, businessId: ownerId },
       });
 
-      if (!wallet) {
+      if (wallet.length == 0) {
         throw new Error("Wallet(s) cannot be found");
       }
 
       //Hash Wallet Pin
       let hashedPin = await hashWalletPin(walletPin);
 
-      let createdPin = await db.pin.create({
-        walletId,
-        ownerId,
-        userId: req.body.userId || 0,
-        userType,
-        alias,
-        walletPin: hashedPin,
-      });
+      //create same pin for each walllet of the business
+      for (let eachWallet of wallet) {
+        let createdPin = await db.pin.create({
+          walletId: eachWallet.dataValues.walletId,
+          ownerId,
+          userId: req.body.userId || 0,
+          userType,
+          alias,
+          walletPin: hashedPin,
+          walletType: eachWallet.dataValues.walletType,
+        });
 
-      await db.wallet.update(
-        { hasPin: true },
-        {
-          where: {
-            category: userType.toLowerCase(),
-            alias,
-            businessId: ownerId,
-            walletType: "Primary",
-          },
-          returning: true,
-          plain: true,
-        }
-      );
-
+        await db.wallet.update(
+          { hasPin: true },
+          {
+            where: {
+              category: userType.toLowerCase(),
+              alias,
+              businessId: ownerId,
+              walletType: eachWallet.dataValues.walletType,
+              walletId: eachWallet.dataValues.walletId,
+            },
+            returning: true,
+            plain: true,
+          }
+        );
+      }
       res.status(201).send({
         message: "A PIN has been created for your wallet transactions",
         statuscode: 201,
@@ -73,42 +78,47 @@ module.exports = async (req, res) => {
         },
       });
     }
+
+    // check if the usertype is staff
     if (userType.toLowerCase() == "staff") {
       //CHECK IF WALLET EXIST
       const wallet = await db.wallet.findAll({
         where: { category: userType.toLowerCase(), alias, staffId: ownerId },
       });
 
-      if (!wallet) {
+      if (wallet.length == 0) {
         throw new Error("Wallet(s) cannot be found");
       }
 
       //Hash Wallet Pin
       let hashedPin = await hashWalletPin(walletPin);
 
-      let createdPin = await db.pin.create({
-        walletId,
-        ownerId,
-        userId: req.body.userId || 0,
-        userType,
-        alias,
-        walletPin: hashedPin,
-      });
+      for (let eachWallet of wallet) {
+        let createdPin = await db.pin.create({
+          walletId: eachWallet.dataValues.walletId,
+          ownerId,
+          userId: req.body.userId || 0,
+          userType,
+          alias,
+          walletPin: hashedPin,
+          walletType: eachWallet.dataValues.walletType,
+        });
 
-      await db.wallet.update(
-        { hasPin: true },
-        {
-          where: {
-            category: userType.toLowerCase(),
-            alias,
-            staffId: ownerId,
-            walletType: "Primary",
-          },
-          returning: true,
-          plain: true,
-        }
-      );
-
+        await db.wallet.update(
+          { hasPin: true },
+          {
+            where: {
+              category: userType.toLowerCase(),
+              alias: alias || null,
+              staffId: ownerId,
+              walletType: eachWallet.dataValues.walletType,
+              walletId: eachWallet.dataValues.walletId,
+            },
+            returning: true,
+            plain: true,
+          }
+        );
+      }
       res.status(201).send({
         message: "A PIN has been created for your wallet transactions",
         statuscode: 201,

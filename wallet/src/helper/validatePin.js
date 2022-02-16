@@ -31,6 +31,11 @@ module.exports.validatePin = function validate(req) {
 // validate change pin data
 module.exports.validatePinChange = function validate(req) {
   const schema = Joi.object({
+    walletId: Joi.number().required(),
+    ownerId: Joi.number().required(),
+    userId: Joi.number(),
+    userType: Joi.string().required(),
+    alias: Joi.string().required(),
     walletPin: Joi.string().required(),
     newWalletPin: Joi.string().required(),
   });

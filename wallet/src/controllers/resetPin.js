@@ -43,28 +43,38 @@ module.exports = async (req, res) => {
         throw new Error("Wallet(s) cannot be found");
       }
 
+      //CHECK IF PIN EXIST
+      const pin = await db.pin.findAll({
+        where: { userType, alias, ownerId },
+      });
+
+      if (pin.length == 0) {
+        throw new Error("You don't have a PIN yet");
+      }
+
       if (wallet.dataValues.emailOtp !== Number(emailOtp)) {
         throw new Error("Incorrect OTP");
       }
 
-      //Hash Wallet Pin
+      //Hash new Wallet PIN
       let hashedPin = await hashWalletPin(newWalletPin);
 
-      await db.wallet.update(
-        { hasPin: true },
-        {
-          where: {
-            category: userType.toLowerCase(),
-            alias,
-            businessId: ownerId,
-            walletType: "Primary",
+      // Reset wallet pin
+      for (let eachPin of pin) {
+        let resetPin = await db.pin.update(
+          {
             walletPin: hashedPin,
-            walletId,
           },
-          returning: true,
-          plain: true,
-        }
-      );
+          {
+            where: {
+              alias,
+              ownerId,
+            },
+            returning: true,
+            plain: true,
+          }
+        );
+      }
 
       res.status(200).send({
         message: "PIN reset successful",
@@ -78,36 +88,51 @@ module.exports = async (req, res) => {
 
     if (userType.toLowerCase() == "staff") {
       //CHECK IF WALLET EXIST
-      const wallet = await db.wallet.findAll({
-        where: { category: userType.toLowerCase(), alias, staffId: ownerId },
+      const wallet = await db.wallet.findOne({
+        where: {
+          category: userType.toLowerCase(),
+          alias,
+          staffId: ownerId,
+          walletType: "Primary",
+        },
       });
 
       if (!wallet) {
         throw new Error("Wallet(s) cannot be found");
       }
 
+      //CHECK IF PIN EXIST
+      const pin = await db.pin.findAll({
+        where: { userType, alias, ownerId },
+      });
+
+      if (pin.length == 0) {
+        throw new Error("You don't have a PIN yet");
+      }
+
       if (wallet.dataValues.emailOtp !== Number(emailOtp)) {
         throw new Error("Incorrect OTP");
       }
 
-      //Hash Wallet Pin
+      //Hash new Wallet PIN
       let hashedPin = await hashWalletPin(newWalletPin);
 
-      await db.wallet.update(
-        { hasPin: true },
-        {
-          where: {
-            category: userType.toLowerCase(),
-            alias,
-            staffId: ownerId,
-            walletType: "Primary",
+      // Reset wallet pin
+      for (let eachPin of pin) {
+        let resetPin = await db.pin.update(
+          {
             walletPin: hashedPin,
-            walletId,
           },
-          returning: true,
-          plain: true,
-        }
-      );
+          {
+            where: {
+              alias,
+              ownerId,
+            },
+            returning: true,
+            plain: true,
+          }
+        );
+      }
 
       res.status(200).send({
         message: "PIN reset successful",

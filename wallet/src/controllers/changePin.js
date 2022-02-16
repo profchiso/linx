@@ -31,51 +31,53 @@ module.exports = async (req, res) => {
 
     if (userType.toLowerCase() == "business") {
       //CHECK IF WALLET EXIST
-      const wallet = await db.wallet.findOne({
+      const wallet = await db.wallet.findAll({
         where: {
           category: userType.toLowerCase(),
           alias,
           businessId: ownerId,
-          walletType: "Primary",
         },
       });
 
-      if (!wallet) {
+      if (wallet.length == 0) {
         throw new Error("Wallet(s) cannot be found");
       }
 
       //CHECK IF PIN EXIST
-      const pin = await db.pin.findOne({
+      const pin = await db.pin.findAll({
         where: { userType, alias, ownerId },
       });
 
-      if (!pin) {
+      if (pin.length == 0) {
         throw new Error("You don't have a PIN yet");
-      }
-
-      //COMPARE ENTERED PIN WITH HASHED PIN
-      if (!(await decryptWalletPin(walletPin, pin.dataValues.walletPin))) {
-        throw new Error("Incorrect PIN entered!");
       }
 
       //Hash new Wallet PIN
       let hashedPin = await hashWalletPin(newWalletPin);
 
-      await db.wallet.update(
-        { hasPin: true },
-        {
-          where: {
-            category: userType.toLowerCase(),
-            alias,
-            businessId: ownerId,
-            walletType: "Primary",
-            walletPin: hashedPin,
-            walletId,
-          },
-          returning: true,
-          plain: true,
+      // Update wallet pin
+      for (let eachPin of pin) {
+        //COMPARE ENTERED PIN WITH HASHED PIN
+        if (
+          !(await decryptWalletPin(walletPin, eachPin.dataValues.walletPin))
+        ) {
+          throw new Error("Incorrect PIN entered!");
         }
-      );
+
+        let updatedPin = await db.pin.update(
+          {
+            walletPin: hashedPin,
+          },
+          {
+            where: {
+              alias,
+              ownerId,
+            },
+            returning: true,
+            plain: true,
+          }
+        );
+      }
 
       res.status(200).send({
         message:
@@ -94,42 +96,45 @@ module.exports = async (req, res) => {
         where: { category: userType.toLowerCase(), alias, staffId: ownerId },
       });
 
-      if (!wallet) {
+      if (wallet.length == 0) {
         throw new Error("Wallet(s) cannot be found");
       }
 
       //CHECK IF PIN EXIST
-      const pin = await db.pin.findOne({
+      const pin = await db.pin.findAll({
         where: { userType, alias, ownerId },
       });
 
-      if (!pin) {
+      if (pin.length == 0) {
         throw new Error("You don't have a PIN yet");
-      }
-
-      //COMPARE ENTERED PIN WITH HASHED PIN
-      if (!(await decryptWalletPin(walletPin, pin.dataValues.walletPin))) {
-        throw new Error("Incorrect PIN entered!");
       }
 
       //Hash new Wallet PIN
       let hashedPin = await hashWalletPin(newWalletPin);
 
-      await db.wallet.update(
-        { hasPin: true },
-        {
-          where: {
-            category: userType.toLowerCase(),
-            alias,
-            staffId: ownerId,
-            walletType: "Primary",
-            walletPin: hashedPin,
-            walletId,
-          },
-          returning: true,
-          plain: true,
+      // Update wallet pin
+      for (let eachPin of pin) {
+        //COMPARE ENTERED PIN WITH HASHED PIN
+        if (
+          !(await decryptWalletPin(walletPin, eachPin.dataValues.walletPin))
+        ) {
+          throw new Error("Incorrect PIN entered!");
         }
-      );
+
+        let updatedPin = await db.pin.update(
+          {
+            walletPin: hashedPin,
+          },
+          {
+            where: {
+              alias,
+              ownerId,
+            },
+            returning: true,
+            plain: true,
+          }
+        );
+      }
 
       res.status(200).send({
         message:
