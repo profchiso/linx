@@ -637,15 +637,15 @@ businessRouter.post(
 
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            }
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            // }
             //request body validation
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -662,6 +662,7 @@ businessRouter.post(
                 return res.status(400).send({ message: `Trading name ${tradingName} already in use`, statuscode: 400, errors: [{ message: `Trading name ${tradingName} already in use` }] });
 
             }
+            console.log("req body", req.body)
 
             // initialize file upload fields
             let imageData = {
@@ -997,10 +998,11 @@ businessRouter.post(
             }
 
             let returnData = {...createdUnregisteredBusiness.dataValues }
+            console.log("created", returnData)
 
 
             returnData.alias = businesAlias
-            returnData.owner = data.user
+                // returnData.owner = data.user
             returnData.partners = partners
 
             let awsQueuePayload = {
