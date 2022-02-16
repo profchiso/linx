@@ -921,9 +921,9 @@ businessRouter.post(
                         businessId: createdUnregisteredBusiness.id
                     }
 
-                    if (director.idTypeImage) {
+                    if (secretary.idTypeImage) {
                         await cloudinary.uploader.upload(
-                            director.idTypeImage, {
+                            secretary.idTypeImage, {
                                 public_id: `secretary/${secretary.firstName}-${secretary.lastName}-idTypeImage`,
                             },
                             (error, result) => {
