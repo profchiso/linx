@@ -2,6 +2,8 @@ const express = require("express");
 //require("dotenv").config();
 const cronJob = require("node-cron");
 
+const path = require("path");
+
 const cors = require("cors");
 
 require("express-async-errors");
@@ -39,6 +41,7 @@ app.set("trust proxy", true);
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(
   cookieSession({
     signed: false,

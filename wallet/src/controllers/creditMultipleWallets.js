@@ -5,6 +5,10 @@ const {
   validateMultipleWalletsCreditData,
 } = require("../helper/validateWallet");
 const { sendMailWithSendGrid } = require("../helper/emailTransport");
+const {
+  formatWalletDebitTransactionMail,
+  formatWalletCreditTransactionMail,
+} = require("../helper/emailFormat");
 
 AWS.config.update({ region: "us-east-1" });
 //AWS.config.update({accessKeyId: process.env.AWS_ACCESS_KEY_ID,secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,});
@@ -57,6 +61,7 @@ module.exports = async (req, res) => {
     const transactionMonth = today.toLocaleString("default", {
       month: "short",
     });
+    const transactionDay = today.toLocaleString().substring(0, 10);
 
     if (wallet.dataValues.balance < totalAmount) {
       throw new Error("You don't have enough amount to make this transfer");
@@ -118,7 +123,13 @@ module.exports = async (req, res) => {
         to: eachWallet.recipientEmail,
         from: process.env.SENDER_EMAIL,
         subject: "Credit Alert",
-        html: `<p>The amount of ${eachWallet.amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
+        //html: `<p>The amount of ${eachWallet.amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
+        html: formatWalletCreditTransactionMail(
+          recipientWallet,
+          eachWallet.amount,
+          eachWallet.description,
+          transactionDay
+        ),
       };
 
       await sendMailWithSendGrid(mailOptionsForCreditAlert);
@@ -188,7 +199,13 @@ module.exports = async (req, res) => {
       to: walletOwnerEmail,
       from: process.env.SENDER_EMAIL,
       subject: "Debit Alert",
-      html: `<p>The amount of ${totalAmount} has been transferred from your wallet to multiple wallets with the details below</p>`,
+      //html: `<p>The amount of ${totalAmount} has been transferred from your wallet to multiple wallets with the details below</p>`,
+      html: formatWalletDebitTransactionMail(
+        wallet,
+        totalAmount,
+        (description = "Multiple Wallet Transfer"),
+        transactionDay
+      ),
     };
 
     await sendMailWithSendGrid(mailOptionsForDebitAlert);
