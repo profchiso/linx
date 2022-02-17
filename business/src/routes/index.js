@@ -579,7 +579,8 @@ businessRouter.post(
                 email: businessEmail || data.user.email,
                 businessEmail: businessEmail || data.user.email,
                 businessCategory: "Freelance",
-                businessLogo: imageData.businessLogo
+                businessLogo: imageData.businessLogo,
+                businessPhoneNumber: req.body.businessPhoneNumber || ""
             })
 
             //create business alias
@@ -805,6 +806,7 @@ businessRouter.post(
                 alias: alias.toUpperCase(),
                 email: req.body.businessEmail || data.user.email,
                 businessEmail: req.body.businessEmail || data.user.email,
+                businessPhoneNumber: req.body.businessPhoneNumber || ""
             })
 
 
