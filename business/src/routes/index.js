@@ -698,9 +698,8 @@ businessRouter.post(
                 return res.status(400).send({ message: `Trading name ${tradingName} already in use`, statuscode: 400, errors: [{ message: `Trading name ${tradingName} already in use` }] });
 
             }
-            console.log("business owner", req.body.businessOwners)
-            console.log("business directors", req.body.directors)
-            console.log("business directors", req.body.directors)
+            console.log("business owner", req.body)
+
 
             // initialize file upload fields
             let imageData = {
@@ -799,6 +798,9 @@ businessRouter.post(
 
             //let userId = req.user.id
             //create business
+            delete req.body.utilityBillImage
+            delete req.body.businessLogo
+            console.log(req.body)
             const createdUnregisteredBusiness = db.businesses.create({
                 ...req.body,
                 ...req.imageData,
