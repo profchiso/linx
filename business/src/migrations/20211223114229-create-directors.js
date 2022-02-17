@@ -60,6 +60,10 @@ module.exports = {
             signature: {
                 type: Sequelize.STRING
             },
+            share: {
+                type: Sequelize.NUMERIC,
+                defaultValue: 0,
+            },
 
             businessId: {
                 type: Sequelize.INTEGER,

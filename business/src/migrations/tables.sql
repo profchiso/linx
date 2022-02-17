@@ -4,27 +4,50 @@
 
 CREATE TABLE IF NOT EXISTS public.aliases
 (
-    id serial NOT NULL ,
+    id serial NOT NULL,
     name character varying(255) COLLATE pg_catalog."default",
     "businessId" integer,
     "userId" integer,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
-    CONSTRAINT aliases_pkey PRIMARY KEY (id)
+    CONSTRAINT aliases_pkey PRIMARY KEY (id),
+    CONSTRAINT "aliases_businessId_fkey" FOREIGN KEY ("businessId")
+        REFERENCES public.businesses (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 )
 
 
 CREATE TABLE IF NOT EXISTS public."businessOwners"
 (
-    id serial NOT NULL ,
+    id serial NOT NULL,
     "firstName" character varying(255) COLLATE pg_catalog."default",
+    "middleName" character varying(255) COLLATE pg_catalog."default",
     "lastName" character varying(255) COLLATE pg_catalog."default",
     email character varying(255) COLLATE pg_catalog."default",
+    phone character varying(255) COLLATE pg_catalog."default",
+    "dateOfBirth" character varying(255) COLLATE pg_catalog."default",
+    gender character varying(255) COLLATE pg_catalog."default",
+    nationality character varying(255) COLLATE pg_catalog."default",
+    state character varying(255) COLLATE pg_catalog."default",
+    lga character varying(255) COLLATE pg_catalog."default",
+    occupation character varying(255) COLLATE pg_catalog."default",
+    address character varying(255) COLLATE pg_catalog."default",
+    share numeric,
     "idType" character varying(255) COLLATE pg_catalog."default",
     "idImage" character varying(255) COLLATE pg_catalog."default",
+    "idNumber" character varying(255) COLLATE pg_catalog."default",
+    passport character varying(255) COLLATE pg_catalog."default",
+    "shareAlloted" numeric DEFAULT 0,
+    signature character varying(255) COLLATE pg_catalog."default",
+    "businessId" integer,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
-    CONSTRAINT "businessOwners_pkey" PRIMARY KEY (id)
+    CONSTRAINT "businessOwners_pkey" PRIMARY KEY (id),
+    CONSTRAINT "businessOwners_businessId_fkey" FOREIGN KEY ("businessId")
+        REFERENCES public.businesses (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 )
 
 CREATE TABLE IF NOT EXISTS public.businesses
@@ -70,6 +93,10 @@ CREATE TABLE IF NOT EXISTS public.businesses
     "businessLogo" character varying(255) COLLATE pg_catalog."default",
     "isVerified" boolean DEFAULT false,
     "isCompleted" boolean DEFAULT false,
+    "isRejected" boolean DEFAULT false,
+    "isBlacklisted" boolean DEFAULT false,
+    "verificationStatus" character varying(255) COLLATE pg_catalog."default" DEFAULT 'PENDING'::character varying,
+
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT businesses_pkey PRIMARY KEY (id)
@@ -97,6 +124,7 @@ CREATE TABLE IF NOT EXISTS public.directors
     "idImage" character varying(255) COLLATE pg_catalog."default",
     passport character varying(255) COLLATE pg_catalog."default",
     signature character varying(255) COLLATE pg_catalog."default",
+    share numeric DEFAULT 0,
     "businessId" integer,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
@@ -107,9 +135,10 @@ CREATE TABLE IF NOT EXISTS public.directors
         ON DELETE NO ACTION
 )
 
+
 CREATE TABLE IF NOT EXISTS public.secretaries
 (
-    id serial NOT NULL ,
+    id serial NOT NULL,
     "firstName" character varying(255) COLLATE pg_catalog."default",
     "lastName" character varying(255) COLLATE pg_catalog."default",
     "middleName" character varying(255) COLLATE pg_catalog."default",

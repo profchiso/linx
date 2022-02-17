@@ -60,7 +60,7 @@ module.exports = {
                 type: Sequelize.STRING
             },
             shareAlloted: {
-                type: Sequelize.Numeric,
+                type: Sequelize.NUMERIC,
                 defaultValue: 0,
             },
             signature: {
