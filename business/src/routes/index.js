@@ -45,6 +45,39 @@ businessRouter.get(
     }
 );
 
+//GET A  business
+businessRouter.get(
+    '/api/v1/business/:id',
+    async(req, res) => {
+
+        try {
+            //authenticate user
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                //check if user is not authenticated
+            if (!data.user) {
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            }
+
+            const { id } = req.params;
+
+
+            const foundBusiness = await db.businesses.findOne({ where: { id } });
+
+            res.status(200).send({ message: `business fetched`, statuscode: 200, data: { business: foundBusiness } });
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+
+        }
+
+    }
+);
+
 //REGISTER BUSINESSES(REGISTERED)
 
 businessRouter.post(
