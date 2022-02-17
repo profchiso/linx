@@ -58,8 +58,6 @@ module.exports = async (req, res) => {
 
       let generatePhoneOtp = generateOtp();
 
-      console.log("====>", generatePhoneOtp);
-
       // Update OTP field in PIN table
       for (let eachPin of pin) {
         let setOtp = await db.pin.update(

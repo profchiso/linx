@@ -17,7 +17,7 @@ module.exports = {
         defaultValue: "wallet",
       },
       ownersWalletId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
         allowNull: false,
       },
       businessId: {
@@ -25,11 +25,11 @@ module.exports = {
         allowNull: false,
       },
       recipientWalletId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
         allowNull: true,
       },
       senderWalletId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
         allowNull: true,
       },
       amount: {

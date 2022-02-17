@@ -83,7 +83,6 @@ module.exports = async (req, res) => {
       }
 
       transactionReference = uuid();
-      //transactionDescription = uuid();
 
       recipientWallet.dataValues.balance = Number(
         recipientWallet.dataValues.balance
