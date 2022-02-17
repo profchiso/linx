@@ -698,7 +698,9 @@ businessRouter.post(
                 return res.status(400).send({ message: `Trading name ${tradingName} already in use`, statuscode: 400, errors: [{ message: `Trading name ${tradingName} already in use` }] });
 
             }
-            console.log("req body", req.body)
+            console.log("business owner", req.body.businessOwners)
+            console.log("business directors", req.body.directors)
+            console.log("business directors", req.body.directors)
 
             // initialize file upload fields
             let imageData = {
@@ -812,8 +814,8 @@ businessRouter.post(
 
             //create business alias
             const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdUnregisteredBusiness.id, userId: data.user.id, }) // data.user.id || userId
-
-            //create business owners
+            console.log("business", businesAlias)
+                //create business owners
             let partners = [];
 
             if (req.body.businessOwners && req.body.businessOwners.length) {
@@ -835,14 +837,14 @@ businessRouter.post(
                         shareAlloted: businessOwner.shareAlloted || 0,
                         idType: businessOwner.idType,
                         idNumber: businessOwner.idNumber || "",
-                        idTypeImage: "",
+                        idImage: "",
                         signature: "",
                         businessId: createdUnregisteredBusiness.id
                     }
 
-                    if (businessOwner.idTypeImage) {
+                    if (businessOwner.idImage) {
                         await cloudinary.uploader.upload(
-                            businessOwner.idTypeImage, {
+                            businessOwner.idImage, {
                                 public_id: `partnerid-image/${businessOwner.firstName}-${businessOwner.lastName}-idTypeImage`,
                             },
                             (error, result) => {
@@ -851,7 +853,7 @@ businessRouter.post(
                                 if (error) {
                                     console.log("Error uploading partner id image to cloudinary");
                                 } else {
-                                    busnessOwnerDetails.idTypeImage = result.secure_url;
+                                    busnessOwnerDetails.idImage = result.secure_url;
 
                                 }
 
@@ -903,14 +905,14 @@ businessRouter.post(
                         share: director.share || 0,
                         idType: director.idType,
                         idNumber: director.idNumber || "",
-                        idTypeImage: "",
+                        idImage: "",
                         signature: "",
                         businessId: createdUnregisteredBusiness.id
                     }
 
-                    if (director.idTypeImage) {
+                    if (director.idImage) {
                         await cloudinary.uploader.upload(
-                            director.idTypeImage, {
+                            director.idImage, {
                                 public_id: `directors/${director.firstName}-${director.lastName}-idTypeImage`,
                             },
                             (error, result) => {
@@ -919,7 +921,7 @@ businessRouter.post(
                                 if (error) {
                                     console.log("Error uploading partner id image to cloudinary");
                                 } else {
-                                    directorDetails.idTypeImage = result.secure_url;
+                                    directorDetails.idImage = result.secure_url;
 
                                 }
 
@@ -954,15 +956,15 @@ businessRouter.post(
                         // share: secretary.share || 0,
                         idType: secretary.idType,
                         idNumber: secretary.idNumber || "",
-                        idTypeImage: "",
+                        idImage: "",
                         signature: "",
                         businessId: createdUnregisteredBusiness.id
                     }
 
-                    if (secretary.idTypeImage) {
+                    if (secretary.idImage) {
                         await cloudinary.uploader.upload(
-                            secretary.idTypeImage, {
-                                public_id: `secretary/${secretary.firstName}-${secretary.lastName}-idTypeImage`,
+                            secretary.idImage, {
+                                public_id: `secretary/${secretary.firstName}-${secretary.lastName}-idImage`,
                             },
                             (error, result) => {
 
@@ -970,7 +972,7 @@ businessRouter.post(
                                 if (error) {
                                     console.log("Error uploading partner id image to cloudinary");
                                 } else {
-                                    secretaryDetails.idTypeImage = result.secure_url;
+                                    secretaryDetails.idImage = result.secure_url;
 
                                 }
 
@@ -1021,7 +1023,7 @@ businessRouter.post(
                                 if (error) {
                                     console.log("Error uploading partner id image to cloudinary");
                                 } else {
-                                    witnessDetails.idTypeImage = result.secure_url;
+                                    witnessDetails.signature = result.secure_url;
 
                                 }
 
