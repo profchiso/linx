@@ -12,6 +12,7 @@ const db = require("./models/index");
 const AWS = require("aws-sdk");
 const { uuid } = require("uuidv4");
 const { sendMailWithSendGrid } = require("./helper/emailTransport");
+const { formatStaffWalletCreationMail } = require("./helper/emailFormat");
 // Configure the region
 AWS.config.update({ region: "us-east-1" });
 //AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
@@ -192,7 +193,8 @@ cronJob.schedule("*/1 * * * *", () => {
             to: createdPrimaryWallet.email || "j2k4@yahoo.com",
             from: process.env.SENDER_EMAIL,
             subject: "Wallet Creation",
-            html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
+            //html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
+            html: formatStaffWalletCreationMail(createdPrimaryWallet),
           };
 
           await sendMailWithSendGrid(mailOptions);
