@@ -65,7 +65,7 @@ businessRouter.get(
             const { id } = req.params;
 
 
-            const foundBusiness = await db.businesses.findOne({ where: { id } });
+            const foundBusiness = await db.businesses.findOne({ where: { id }, include: ["businessOwners", "directors", "secretaries", "witnesses"] });
 
             res.status(200).send({ message: `business fetched`, statuscode: 200, data: { business: foundBusiness } });
 
