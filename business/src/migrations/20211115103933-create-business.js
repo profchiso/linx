@@ -137,7 +137,12 @@ module.exports = {
             },
             isRejected: {
                 type: Sequelize.BOOLEAN,
-                defaultValue: true
+                defaultValue: false
+
+            },
+            isBlacklisted: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false
 
             },
             verificationStatus: {
