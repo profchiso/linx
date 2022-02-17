@@ -212,7 +212,7 @@ signupRouter.get(
 
     async(req, res) => {
         try {
-            const users = await db.User.findAll({});
+            const users = await db.User.findAll({ where: req.query, });
             res.status(200).send({ message: "Users Fetched", statuscode: 200, data: { users } });
         } catch (error) {
             console.log(error)
