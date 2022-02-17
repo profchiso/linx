@@ -20,6 +20,7 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 defaultValue: 20000,
             },
+
             name: {
                 type: Sequelize.STRING
             },
@@ -133,6 +134,16 @@ module.exports = {
             isCompleted: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false
+            },
+            isRejected: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: true
+
+            },
+            verificationStatus: {
+                type: Sequelize.STRING,
+                defaultValue: "PENDING"
+
             },
 
             createdAt: {

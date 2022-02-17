@@ -59,6 +59,10 @@ module.exports = {
             passport: {
                 type: Sequelize.STRING
             },
+            shareAlloted: {
+                type: Sequelize.Numeric,
+                defaultValue: 0,
+            },
             signature: {
                 type: Sequelize.STRING
             },

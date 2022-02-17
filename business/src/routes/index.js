@@ -19,19 +19,21 @@ businessRouter.get(
     async(req, res) => {
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            }
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            // }
+
+            console.log("req query", req.query)
 
 
             //get all registered businesses
-            const businesses = await db.businesses.findAll({ include: ["businessOwners", "directors", "secretaries", "witnesses"] });
+            const businesses = await db.businesses.findAll({ where: req.query, include: ["businessOwners", "directors", "secretaries", "witnesses"] });
 
             res.status(200).send({ message: "Businesses Fetched", statuscode: 200, data: { businesses } });
 
