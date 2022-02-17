@@ -830,6 +830,7 @@ businessRouter.post(
                         address: businessOwner.address || "",
                         occupation: businessOwner.occupation || "",
                         share: businessOwner.share || 0,
+                        shareAlloted: businessOwner.shareAlloted || 0,
                         idType: businessOwner.idType,
                         idNumber: businessOwner.idNumber || "",
                         idTypeImage: "",
