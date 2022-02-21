@@ -7,7 +7,7 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
-const db_uri = process.env.MY_DB_URI
+const db_uri = process.env.DATABASE_URI
 
 let sequelize;
 if (db_uri) {
