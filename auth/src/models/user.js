@@ -62,6 +62,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             defaultValue: false
         },
+        isDeactivated: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        deactivationReason: {
+            type: DataTypes.STRING,
+
+        },
     }, {
         sequelize,
         modelName: 'User',

@@ -45,6 +45,14 @@ module.exports = {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false
             },
+            isDeactivated: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false
+            },
+            deactivationReason: {
+                type: Sequelize.STRING,
+
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
