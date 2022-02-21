@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beneficiary-pg-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: beneficiary-pg
+  template:
+    metadata:
+      labels:
+        app: beneficiary-pg
+    spec:
+      containers:
+        - name: beneficiary-pg
+          image: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: beneficiary-pg-srv
+spec:
+  selector:
+    app: beneficiary-pg
+  ports:
+    - name: beneficiary-pg
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

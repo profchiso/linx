@@ -1,0 +1,81 @@
+"use strict";
+const { Model } = require("sequelize");
+module.exports = (sequelize, DataTypes) => {
+  class transaction extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+      // this.belongsTo(models.wallet, {
+      //   foreignKey: "transactionId",
+      //   as: "transactions",
+      //   onDelete: "CASCADE",
+      // });
+    }
+  }
+  transaction.init(
+    {
+      creditType: {
+        type: DataTypes.ENUM,
+        values: ["wallet", "bank"],
+        defaultValue: "wallet",
+      },
+      ownersWalletId: {
+        type: DataTypes.NUMERIC,
+        allowNull: false,
+      },
+      businessId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      recipientWalletId: {
+        type: DataTypes.NUMERIC,
+        allowNull: true,
+      },
+      senderWalletId: {
+        type: DataTypes.NUMERIC,
+        allowNull: true,
+      },
+      amount: {
+        type: DataTypes.NUMERIC,
+        allowNull: false,
+      },
+      walletBalance: {
+        type: DataTypes.NUMERIC,
+        allowNull: false,
+      },
+      staffId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      transactionReference: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      transactionType: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      transactionStatus: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      transactionDescription: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      transactionMonth: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+    },
+    {
+      sequelize,
+      modelName: "transaction",
+    }
+  );
+  return transaction;
+};

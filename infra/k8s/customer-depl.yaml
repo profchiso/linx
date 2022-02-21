@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer
+  template:
+    metadata:
+      labels:
+        app: customer
+    spec:
+      containers:
+        - name: customer
+          image: linx/customer
+          env:
+            - name: username
+              value: "postgres"
+            - name: password
+              value: "postgres"
+            - name: database
+              value: "customer"
+            - name: host
+              value: "localhost"
+            - name: dialect
+              value: "postgres"
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-srv
+spec:
+  selector:
+    app: customer
+  ports:
+    - name: customer
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
