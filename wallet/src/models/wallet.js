@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       walletId: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.NUMERIC,
         allowNull: false,
       },
       businessId: {

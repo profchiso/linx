@@ -34,7 +34,7 @@ const formatStaffWalletCreationMail = (payload) => {
     >
       05-Feb-2022
     </div>
-    <div><img src="https://linx-wallet.herokuapp.com/images/Group.svg" /></div>
+    <div><img src="${process.env.BASE_URL}images/Group.svg" /></div>
   </div>
   <div
     style="
@@ -147,7 +147,7 @@ const formatStaffWalletCreationMail = (payload) => {
         "
         >Powered by
       </span>
-      <img src="https://linx-wallet.herokuapp.com/images/Group.svg" alt="" />
+      <img src="${process.env.BASE_URL}images/Group.svg" alt="" />
     </div>
     <div
       style="
@@ -224,7 +224,7 @@ const formatWalletDebitTransactionMail = (
       >
         05-Feb-2022
       </div>
-      <div><img src="https://linx-wallet.herokuapp.com/images/Group.svg" /></div>
+      <div><img src="${process.env.BASE_URL}images/Group.svg" /></div>
     </div>
     <div
       style="
@@ -552,7 +552,7 @@ const formatWalletDebitTransactionMail = (
           "
           >Powered by
         </span>
-        <img src="https://linx-wallet.herokuapp.com/images/Group.svg" alt="" />
+        <img src="${process.env.BASE_URL}images/Group.svg" alt="" />
       </div>
       <div
         style="
@@ -629,7 +629,7 @@ const formatWalletCreditTransactionMail = (
       >
         05-Feb-2022
       </div>
-      <div><img src="https://linx-wallet.herokuapp.com/images/Group.svg" /></div>
+      <div><img src="${process.env.BASE_URL}images/Group.svg" /></div>
     </div>
     <div
       style="
@@ -957,7 +957,7 @@ const formatWalletCreditTransactionMail = (
           "
           >Powered by
         </span>
-        <img src="https://linx-wallet.herokuapp.com/images/Group.svg" alt="" />
+        <img src="${process.env.BASE_URL}images/Group.svg" alt="" />
       </div>
       <div
         style="

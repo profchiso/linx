@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "wallet",
       },
       ownersWalletId: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.NUMERIC,
         allowNull: false,
       },
       businessId: {
@@ -32,11 +32,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       recipientWalletId: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.NUMERIC,
         allowNull: true,
       },
       senderWalletId: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.NUMERIC,
         allowNull: true,
       },
       amount: {

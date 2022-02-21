@@ -38,7 +38,7 @@ module.exports = {
         type: Sequelize.NUMERIC,
       },
       walletId: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.NUMERIC,
       },
       alias: {
         type: Sequelize.STRING,
