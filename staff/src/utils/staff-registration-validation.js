@@ -37,7 +37,5 @@ const staffRegistrationValidation = [
     .notEmpty()
     .withMessage("roleId is required"),
 
-
-
 ]
 module.exports = { staffRegistrationValidation }
