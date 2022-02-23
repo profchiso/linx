@@ -3,7 +3,7 @@ const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
 const { hashWalletPin } = require("../helper/pinHash");
-const { validate } = require("../helper/validatePin");
+const { validatePinOtp } = require("../helper/validatePin");
 const { generateOtp } = require("../helper/generateOtpCode");
 const { sendMailWithSendGrid } = require("../helper/emailTransport");
 
@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
     }
 
     // wallet body validation
-    const { error } = validate(req.body);
+    const { error } = validatePinOtp(req.body);
     if (error) {
       res.status(400);
       throw new Error(error.message);
