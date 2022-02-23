@@ -79,7 +79,7 @@ staffRouter.post(
 
 
 
-            const { firstName, lastName, email, phoneNumber, dataOfBirth, address, country, state, lga, bankName, accountName, accountNumber, role, employmentType, businessId, paymentAccount, password, businessTradingName, businessAlias, companyStaffId } = req.body
+            const { firstName, lastName, email, phoneNumber, dataOfBirth, address, country, state, lga, bankName, accountName, accountNumber, role, roleId, employmentType, businessId, paymentAccount, password, businessTradingName, businessAlias, companyStaffId } = req.body
 
 
             //request body validation
@@ -172,6 +172,7 @@ staffRouter.post(
                 accountName,
                 accountNumber,
                 role: role || "staff",
+                roleId,
                 employmentType,
                 businessId,
                 businessTradingName,

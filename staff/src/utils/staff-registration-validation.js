@@ -32,6 +32,11 @@ const staffRegistrationValidation = [
     .trim()
     .notEmpty()
     .withMessage("Business alias is required"),
+    body("roleId")
+    .trim()
+    .notEmpty()
+    .withMessage("roleId is required"),
+
 
 
 ]
