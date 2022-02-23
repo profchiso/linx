@@ -119,7 +119,7 @@ module.exports = (sequelize, DataTypes) => {
         modelName: 'staff',
     });
     staff.associate = function(models) {
-        staff.belongsTo(models.roles, { foreignKey: 'id', as: 'role' })
+        staff.belongsTo(models.roles, { foreignKey: 'id', as: 'staffRole' })
 
     }
     return staff;
