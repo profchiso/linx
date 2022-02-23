@@ -516,8 +516,35 @@ staffRouter.post(
 );
 
 //create role
-staffRouter.post("/api/v1/staff/roles/:businessId", async(req, res) => {
-    const { businessId } = req.params
+staffRouter.post("/api/v1/staff/business/roles", async(req, res) => {
+    const { name, businessId, permissions } = req.body
+    try {
+        const createdRole = await db.roles.create({
+            name,
+            businessId
+        })
+        if (permissions && permissions.length) {
+            for (let permission of permissions) {
+                let permissionObj = {
+                    permissionName: permission.permissionName,
+                    roleName: permission.roleName,
+                    businessId,
+                    description: permission.description,
+                    roleId: createdRole.id
+                }
+                createdPermissions = db.permissions.create(permissionObj)
+            }
+        }
+        let role = {...createdRole.dataValues }
+        role.permissions = permissions
+        res.status(201).send({ message: `Role created`, statuscode: 201, data: { role } });
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+
+    }
+
 
 
 
@@ -555,7 +582,7 @@ staffRouter.delete(
     }
 );
 
-staffRouter.get("/api/v1/staff/roles-permissions/:businessId", async(req, res) => {
+staffRouter.get("/api/v1/staff/business/roles-permissions/:businessId", async(req, res) => {
     try {
         const { businessId } = req.params
 
@@ -565,6 +592,7 @@ staffRouter.get("/api/v1/staff/roles-permissions/:businessId", async(req, res) =
 
     } catch (error) {
         console.log(error)
+        res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
 
     }
 
