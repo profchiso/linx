@@ -9,8 +9,13 @@ const { errorHandler, NotFoundError } = require("@bc_tickets/common");
 const db = require("../src/models/index");
 const AWS = require("aws-sdk");
 //const { uuid } = require("uuidv4");
-//const { sendMailWithSendGrid } = require("./helper/emailTransport");
-//const { formatStaffWalletCreationMail } = require("./helper/emailFormat");
+const { sendMailWithSendGrid } = require("./helper/emailTransport");
+const {
+  formatStaffWalletCreationMail,
+  formatWalletDebitTransactionMail,
+  formatWalletCreditTransactionMail,
+} = require("./helper/emailFormat");
+const { formatInvoiceMail } = require("./helper/emailFormatInvoice");
 // Configure the region
 AWS.config.update({ region: "us-east-1" });
 //AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
@@ -66,48 +71,103 @@ cronJob.schedule("*/1 * * * *", () => {
 
           switch (userClass) {
             case "wallet creation":
-              await fundWallet(Customer, amount, description, req, res);
+              // transport object
+              const mailOptions = {
+                to: parsedData.to || "j2k4@yahoo.com",
+                from: parsedData.from,
+                subject: parsedData.subject,
+                //html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
+                html: formatStaffWalletCreationMail(
+                  parsedData.createdPrimaryWallet
+                ),
+              };
+
+              await sendMailWithSendGrid(mailOptions);
+
+              let createdNotification = await db.notification.create({
+                from: parsedData.from,
+                to: parsedData.to,
+                subject: parsedData.subject,
+              });
               break;
             case "credit alert":
-              await fundWallet(Driver, amount, description, req, res);
+              // transport object
+              const mailOptionsForDebitAlert = {
+                to: parsedData.recipientEmail,
+                from: parsedData.from,
+                subject: parsedData.subject,
+                //html: `<p>The amount of ${amount} has been transferred from your wallet to the wallet with the id of ${recipientWalletId}</p>`,
+                html: formatWalletCreditTransactionMail(
+                  wallet,
+                  amount,
+                  description,
+                  transactionDay
+                ),
+              };
+
+              await sendMailWithSendGrid(mailOptionsForDebitAlert);
+
+              let createdNotification = await db.notification.create({
+                from: parsedData.from,
+                to: parsedData.to,
+                subject: parsedData.subject,
+              });
               break;
             case "debit alert":
-              await fundWallet(Merchant, amount, description, req, res);
+              // transport object
+              const mailOptionsForDebitAlert = {
+                to: parsedData.walletOwnerEmail,
+                from: parsedData.from,
+                subject: parsedData.subject,
+                //html: `<p>The amount of ${amount} has been transferred from your wallet to the wallet with the id of ${recipientWalletId}</p>`,
+                html: formatWalletDebitTransactionMail(
+                  wallet,
+                  amount,
+                  description,
+                  transactionDay
+                ),
+              };
+
+              await sendMailWithSendGrid(mailOptionsForDebitAlert);
+
+              let createdNotification = await db.notification.create({
+                from: parsedData.from,
+                to: parsedData.to,
+                subject: parsedData.subject,
+              });
               break;
             case "pin otp":
-              await fundWallet(Enterprise, amount, description, req, res);
+              // transport object
+              const mailOptions = {
+                to: parsedData.wallet.dataValues.email,
+                from: parsedData.from,
+                subject: parsedData.subject,
+                html: `<p>Here is your OTP ${generatePhoneOtp}</p>`,
+              };
+
+              await sendMailWithSendGrid(mailOptions);
               break;
+            case "invoice":
+              // transport object
+              const mailOptions = {
+                to: parsedData.customerEmail,
+                from: parsedData.from,
+                subject: parsedData.subject,
+                html: formatInvoiceMail(invoice),
+              };
+
+              await sendMailWithSendGrid(mailOptions);
             case "LinX account creation":
-              await fundWallet(Customer, amount, description, req, res);
+              console.log("Waiting");
               break;
             case "LinX verification code":
-              await fundWallet(Driver, amount, description, req, res);
-              break;
-            case "debit alert":
-              await fundWallet(Merchant, amount, description, req, res);
-              break;
-            case "enterprise":
-              await fundWallet(Enterprise, amount, description, req, res);
+              console.log("Waiting");
               break;
             default:
               break;
           }
 
-          // transport object
-          const mailOptions = {
-            to: createdPrimaryWallet.email || "j2k4@yahoo.com",
-            from: process.env.SENDER_EMAIL,
-            subject: "Wallet Creation",
-            //html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
-            html: formatStaffWalletCreationMail(createdPrimaryWallet),
-          };
-
-          await sendMailWithSendGrid(mailOptions);
-
-          console.log(
-            "Staff wallet successfully pushed to business queue",
-            staffSqsWallet
-          );
+          console.log("Data successfully read from queue and sent as mail");
 
           let deleteParams = {
             QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
