@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS public.customers
     "businessEmail" character varying(255) COLLATE pg_catalog."default",
     "businessPhoneNumber" character varying(255) COLLATE pg_catalog."default",
     website character varying(255) COLLATE pg_catalog."default",
-    "companyLogo" character varying(1000) COLLATE pg_catalog."default",
+    "companyLogo" character varying(5000) COLLATE pg_catalog."default",
     address character varying(255) COLLATE pg_catalog."default",
     country character varying(255) COLLATE pg_catalog."default",
     state character varying(255) COLLATE pg_catalog."default",
