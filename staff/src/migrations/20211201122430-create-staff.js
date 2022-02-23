@@ -62,7 +62,7 @@ module.exports = {
                 type: Sequelize.STRING,
                 defaultValue: "Active"
             },
-            role: {
+            roleName: {
                 type: Sequelize.STRING,
                 defaultValue: "staff"
             },
