@@ -519,11 +519,13 @@ staffRouter.post(
 //create role
 staffRouter.post("/api/v1/staff/business/roles", async(req, res) => {
     const { name, businessId, permissions } = req.body
+    console.log(req.body)
     try {
         const createdRole = await db.roles.create({
             name,
-            businessId
+            businessId: Number(businessId)
         })
+        console.log(createdRole)
         if (permissions && permissions.length) {
             for (let permission of permissions) {
                 let permissionObj = {
@@ -533,7 +535,8 @@ staffRouter.post("/api/v1/staff/business/roles", async(req, res) => {
                     description: permission.description,
                     roleId: createdRole.id
                 }
-                createdPermissions = db.permissions.create(permissionObj)
+                let createdPermissions = await db.permissions.create(permissionObj)
+                console.log(createdPermissions)
             }
         }
         let role = {...createdRole.dataValues }
