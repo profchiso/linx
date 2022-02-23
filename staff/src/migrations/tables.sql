@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.permissions
         ON DELETE NO ACTION
 )
 
+
 CREATE TABLE IF NOT EXISTS public.roles
 (
     id serial NOT NULL ,
@@ -46,7 +47,8 @@ CREATE TABLE IF NOT EXISTS public.staffs
     "walletBalance" numeric DEFAULT 0,
     "bankAccountBalance" numeric DEFAULT 0,
     status character varying(255) COLLATE pg_catalog."default" DEFAULT 'Active'::character varying,
-    role character varying(255) COLLATE pg_catalog."default" DEFAULT 'staff'::character varying,
+    "roleName" character varying(255) COLLATE pg_catalog."default" DEFAULT 'staff'::character varying,
+    "roleId" integer,
     "employmentType" character varying(255) COLLATE pg_catalog."default",
     "businessId" integer,
     bonus numeric DEFAULT 0,
@@ -62,5 +64,9 @@ CREATE TABLE IF NOT EXISTS public.staffs
     "companyStaffId" character varying(255) COLLATE pg_catalog."default",
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
-    CONSTRAINT staffs_pkey PRIMARY KEY (id)
+    CONSTRAINT staffs_pkey PRIMARY KEY (id),
+    CONSTRAINT "staffs_roleId_fkey" FOREIGN KEY ("roleId")
+        REFERENCES public.roles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 )
