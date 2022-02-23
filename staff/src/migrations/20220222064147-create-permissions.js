@@ -25,14 +25,7 @@ module.exports = {
                 }
 
             },
-            // staffId: {
-            //     type: Sequelize.INTEGER,
-            //     references: {
-            //         model: 'staffs', // 'staffs' refers to table name
-            //         key: 'id', // 'id' refers to column name in staff table
-            //     }
 
-            // },
             description: {
                 type: Sequelize.STRING
             },
