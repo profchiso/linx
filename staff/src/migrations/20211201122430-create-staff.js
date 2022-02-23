@@ -66,6 +66,14 @@ module.exports = {
                 type: Sequelize.STRING,
                 defaultValue: "staff"
             },
+            roleId: {
+                type: Sequelize.INTEGER,
+                references: {
+                    model: 'roles', // 'role' refers to table name
+                    key: 'id', // 'id' refers to column name in role table
+                }
+
+            },
             employmentType: {
                 type: Sequelize.STRING
             },
