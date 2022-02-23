@@ -8,6 +8,9 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
+            permissionName: {
+                type: Sequelize.STRING
+            },
             roleName: {
                 type: Sequelize.STRING
             },
