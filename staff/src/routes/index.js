@@ -439,7 +439,7 @@ staffRouter.post(
 
 //STAFF CHANGE PASSWORD
 staffRouter.patch("/api/v1/auth/update-password",
-    authenticate,
+    // authenticate,
     async(req, res) => {
         try {
             const { oldPassword, newPassword, newConfirmPassword } = req.body;
