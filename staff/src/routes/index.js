@@ -515,6 +515,14 @@ staffRouter.post(
     }
 );
 
+//create role
+staffRouter.post("/api/v1/staff/roles/:businessId", async(req, res) => {
+    const { businessId } = req.params
+
+
+
+})
+
 //DELETE STAFF
 staffRouter.delete(
     '/api/v1/staff/:staffId',

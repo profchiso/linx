@@ -11,13 +11,8 @@ module.exports = {
             name: {
                 type: Sequelize.STRING
             },
-            staffId: {
+            businessId: {
                 type: Sequelize.INTEGER,
-                references: {
-                    model: 'staffs', // 'staffs' refers to table name
-                    key: 'id', // 'id' refers to column name in staffs table
-                }
-
             },
             createdAt: {
                 allowNull: false,
