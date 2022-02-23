@@ -555,9 +555,19 @@ staffRouter.delete(
     }
 );
 
-staffRouter.get("/api/v1/staff/permissions", async(req, res) => {
+staffRouter.get("/api/v1/staff/roles-permissions/:businessId", async(req, res) => {
+    try {
+        const { businessId } = req.params
 
-    res.status(200).send({ message: `All permissions`, statuscode: 200, data: { permissions } });
+        let roles = await db.roles.findAll({ where: { businessId } })
+
+        res.status(200).send({ message: `All roles permissions`, statuscode: 200, data: { roles, permissions } });
+
+    } catch (error) {
+
+    }
+
+
 })
 
 
