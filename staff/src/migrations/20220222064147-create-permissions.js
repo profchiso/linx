@@ -15,7 +15,7 @@ module.exports = {
                 type: Sequelize.STRING
             },
             businessId: {
-                type: Sequelize.NUMERIC
+                type: Sequelize.INTEGER
             },
             roleId: {
                 type: Sequelize.INTEGER,
