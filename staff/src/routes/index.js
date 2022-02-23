@@ -5,11 +5,12 @@ const axios = require("axios")
 const { staffRegistrationValidation } = require("../utils/staff-registration-validation")
 const { upload, cloudinary } = require("../utils/imageProcessing")
 const { sendDataToAWSQueue } = require("../utils/sendDataToQueue");
-const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing")
+const { hashUserPassword, decryptPassword, } = require("../utils/passwordHashing")
 const { generateRandomLengthPassword } = require("../utils/generateRandomPassword")
 const { generateEntityId } = require("../utils/generateEntityId")
 const { sendMailWithSendgrid } = require("../utils/emailing")
 const { staffCreationMail } = require("../utils/staffCreationMailTamplate")
+const { permissions } = require("../utils/permissions")
 const db = require("../models/index")
 const staffRouter = express.Router();
 const AUTH_URL = process.env.AUTH_URL
@@ -436,37 +437,50 @@ staffRouter.post(
 );
 
 //STAFF CHANGE PASSWORD
-staffRouter.post(
-    '/api/v1/staff/change-passord',
+staffRouter.patch("/api/v1/auth/update-password",
+    authenticate,
     async(req, res) => {
-
         try {
-            //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            const { oldPassword, newPassword, newConfirmPassword } = req.body;
+            console.log("request body", req.body)
+
+            console.log("req.user.id", req.user.id)
+                //get the user from the user collection
+            const staff = await db.staff.findOne({ where: { id: req.user.id } });
+            console.log("user", user)
+            if (!staff) {
+                return res.status(404).json({ message: "Staff not found", statuscode: 404, errors: [{ message: "Staff not found" }] })
+
             }
 
-            const { staffId } = req.params;
+            // check if passwaord matches the one in the database
 
-            const updatedStaff = await db.staff.update(req.body, { where: { id: staffId }, returning: true, plain: true })
+            let passwordIsMatch = await decryptPassword(oldPassword, staff.password);
+            if (!passwordIsMatch) {
+                return res.status(401).json({ message: "The password you entered is incorrect", statuscode: 401, errors: [{ message: "The password you entered is incorrect" }] })
+            }
+            if (newPassword !== newConfirmPassword) {
 
-            res.status(200).send({ message: `Staff info updated`, statuscode: 200, data: { staff: updatedStaff[1] } });
+                return res.status(401).json({ message: "Password do not match", statuscode: 401, errors: [{ message: "Password do not match" }] })
+            }
+            hashedNewPassword = await hashUserPassword(newPassword);
 
-        } catch (error) {
-            console.log(error)
-            res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+            const updatedStaff = await db.staff.update({ password: hashedNewPassword }, { where: { id: req.user.id }, returning: true, plain: true })
 
+            //log user in by assigning him a token
+            const payLoad = {
+                user: {
+                    id: updatedStaff[1].id,
+                },
+            };
+            let accessToken = await generateAccessToken(payLoad);
+            return res.status(200).json({ message: "Password updated successsfully", statuscode: 200, data: { user: updatedStaff[1], accessToken } });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: err.message || "Something went wrong" }] })
         }
+    })
 
-
-    }
-);
 
 //STAFF RESET PASSWORD
 staffRouter.post(
@@ -532,6 +546,11 @@ staffRouter.delete(
 
     }
 );
+
+staffRouter.get("/api/v1/staff/permissions", async(req, res) => {
+
+    res.status(200).send({ message: `All permissions`, statuscode: 200, data: { permissions } });
+})
 
 
 module.exports = { staffRouter };
