@@ -243,9 +243,6 @@ staffRouter.post(
     }
 );
 
-
-
-
 //GET  STAFF FOR BUSINESS
 staffRouter.get(
     '/api/v1/staff/business/:businessId',
@@ -318,7 +315,6 @@ staffRouter.get(
 
     }
 );
-
 
 //UPDATE STAFF DETAILS
 staffRouter.patch(
@@ -406,7 +402,7 @@ staffRouter.patch(
 
 //STAFF LOGIN
 staffRouter.post(
-    '/api/v1/staff/login',
+    '/api/v1/business-staff/login',
     async(req, res) => {
 
         try {
@@ -483,7 +479,7 @@ staffRouter.post(
 );
 
 //STAFF CHANGE PASSWORD
-staffRouter.patch("/api/v1/auth/update-password",
+staffRouter.patch("/api/v1/business-staff/update-password",
     // authenticate,
     async(req, res) => {
         try {
@@ -530,7 +526,7 @@ staffRouter.patch("/api/v1/auth/update-password",
 
 //STAFF RESET PASSWORD
 staffRouter.post(
-    '/api/v1/staff/reset-password',
+    '/api/v1/business-staff/reset-password',
     async(req, res) => {
 
         try {
@@ -671,19 +667,7 @@ staffRouter.get("/api/v1/staff/business/roles-permissions/:businessId", async(re
 
 })
 
-// staffRouter.get("/api/v1/staff/business/permissions", (req, res) => {
-//     try {
-//         console.log(permissions)
-//         res.status(200).send({ message: `All  permissions`, statuscode: 200, data: { permissions } });
 
-//     } catch (error) {
-//         console.log(error)
-//         res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
-
-//     }
-
-
-// })
 
 
 module.exports = { staffRouter };
