@@ -90,15 +90,32 @@ module.exports = async (req, res) => {
         );
       }
 
-      // transport object
-      const mailOptions = {
+      // // transport object
+      // const mailOptions = {
+      //   to: wallet.dataValues.email,
+      //   from: process.env.SENDER_EMAIL,
+      //   subject: "OTP",
+      //   html: `<p>Here is your OTP ${generatePhoneOtp}</p>`,
+      // };
+
+      // await sendMailWithSendGrid(mailOptions);
+
+      let otpPayload = {
         to: wallet.dataValues.email,
         from: process.env.SENDER_EMAIL,
         subject: "OTP",
-        html: `<p>Here is your OTP ${generatePhoneOtp}</p>`,
+        otp: generatePhoneOtp,
       };
 
-      await sendMailWithSendGrid(mailOptions);
+      let otpSqs = {
+        MessageBody: JSON.stringify(otpPayload),
+        QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
+      };
+      let sendSqsMessage = sqs.sendMessage(otpSqs).promise();
+
+      console.log(
+        "OTP payload successfully pushed to email notification queue"
+      );
 
       res.status(200).send({
         message: `An OTP has been sent to ${wallet.dataValues.email}`,
@@ -153,15 +170,32 @@ module.exports = async (req, res) => {
         );
       }
 
-      // transport object
-      const mailOptions = {
+      // // transport object
+      // const mailOptions = {
+      //   to: wallet.dataValues.email,
+      //   from: process.env.SENDER_EMAIL,
+      //   subject: "OTP",
+      //   html: `<p>Here is your OTP ${generatePhoneOtp}</p>`,
+      // };
+
+      // await sendMailWithSendGrid(mailOptions);
+
+      let otpPayload = {
         to: wallet.dataValues.email,
         from: process.env.SENDER_EMAIL,
         subject: "OTP",
-        html: `<p>Here is your OTP ${generatePhoneOtp}</p>`,
+        otp: generatePhoneOtp,
       };
 
-      await sendMailWithSendGrid(mailOptions);
+      let otpSqs = {
+        MessageBody: JSON.stringify(otpPayload),
+        QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
+      };
+      let sendSqsMessage = sqs.sendMessage(otpSqs).promise();
+
+      console.log(
+        "OTP payload successfully pushed to email notification queue"
+      );
 
       res.status(200).send({
         message: `An OTP has been sent to ${wallet.dataValues.email}`,

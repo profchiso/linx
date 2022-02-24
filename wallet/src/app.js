@@ -191,16 +191,36 @@ cronJob.schedule("*/1 * * * *", () => {
             country: parsedData.country || "Nigeria",
           });
 
-          // transport object
-          const mailOptions = {
-            to: createdPrimaryWallet.email || "j2k4@yahoo.com",
+          // // transport object
+          // const mailOptions = {
+          //   to: createdPrimaryWallet.email || "j2k4@yahoo.com",
+          //   from: process.env.SENDER_EMAIL,
+          //   subject: "Wallet Creation",
+          //   //html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
+          //   html: formatStaffWalletCreationMail(createdPrimaryWallet),
+          // };
+
+          // await sendMailWithSendGrid(mailOptions);
+
+          let staffWalletEmailPayload = {
+            to: createdPrimaryWallet.email,
             from: process.env.SENDER_EMAIL,
             subject: "Wallet Creation",
-            //html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
-            html: formatStaffWalletCreationMail(createdPrimaryWallet),
+            walletId: createdPrimaryWallet.walletId,
           };
 
-          await sendMailWithSendGrid(mailOptions);
+          let staffSqsEmailData = {
+            QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
+            MessageBody: JSON.stringify(staffWalletEmailPayload),
+          };
+          let staffSqsEmail = await sqs
+            .sendMessage(staffSqsEmailData)
+            .promise();
+
+          console.log(
+            "Staff wallet creation email successfully pushed to email notification queue",
+            staffSqsWallet
+          );
 
           let staffWalletPayload = {
             businessId: `${createdPrimaryWallet.dataValues.businessId}`,
@@ -306,6 +326,7 @@ cronJob.schedule("*/1 * * * *", () => {
           const transactionMonth = today.toLocaleString("default", {
             month: "short",
           });
+          const transactionDay = today.toLocaleString().substring(0, 10);
 
           // Loop through each staff wallet array ===========================================================>
 
@@ -358,15 +379,15 @@ cronJob.schedule("*/1 * * * *", () => {
               eachWallet.totalPayable
             );
 
-            // transport object
-            const mailOptionsForCreditAlert = {
-              to: eachWallet.email,
-              from: process.env.SENDER_EMAIL,
-              subject: "Credit Alert",
-              html: `<p>The amount of ${eachWallet.totalPayable} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
-            };
+            // // transport object
+            // const mailOptionsForCreditAlert = {
+            //   to: eachWallet.email,
+            //   from: process.env.SENDER_EMAIL,
+            //   subject: "Credit Alert",
+            //   html: `<p>The amount of ${eachWallet.totalPayable} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
+            // };
 
-            await sendMailWithSendGrid(mailOptionsForCreditAlert);
+            // await sendMailWithSendGrid(mailOptionsForCreditAlert);
 
             let debitTransaction = db.transaction.create({
               creditType: "wallet",
@@ -400,18 +421,24 @@ cronJob.schedule("*/1 * * * *", () => {
             });
 
             let walletCreditPayload = {
-              walletId: walletId,
-              recipientId: eachWallet.staffWallet,
+              recipientWallet: eachWallet.staffWallet,
               amount: eachWallet.totalPayable,
-              ownersBalance: ownersBalance,
-              recipientBalance: recipientBalance,
+              to: eachWallet.email,
+              from: process.env.SENDER_EMAIL,
+              subject: "Credit Alert",
+              transactionDay,
+              description: "Payroll from business",
             };
 
             let wallletCreditSqs = {
               MessageBody: JSON.stringify(walletCreditPayload),
-              QueueUrl: process.env.STAFFWALLETCREDITQUEUE,
+              QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
             };
             let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
+
+            console.log(
+              "Credit email notification payload successfully pushed to email notification queue"
+            );
 
             //===========================================================================>
             let deleteParams = {
@@ -428,15 +455,35 @@ cronJob.schedule("*/1 * * * *", () => {
             });
           }
 
-          // transport object
-          const mailOptionsForDebitAlert = {
-            to: walletOwnerEmail,
+          let walletDebitPayload = {
+            wallet: walletId,
+            totalAmount,
+            to: eachWallet.email,
             from: process.env.SENDER_EMAIL,
             subject: "Debit Alert",
-            html: `<p>The amount of ${totalAmount} has been deducted from your account for payroll transaction</p>`,
+            transactionDay,
+            description: "Multiple Wallet Transfer",
           };
 
-          await sendMailWithSendGrid(mailOptionsForDebitAlert);
+          let wallletDebitSqs = {
+            MessageBody: JSON.stringify(walletDebitPayload),
+            QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
+          };
+          let sendSqsMessage = sqs.sendMessage(wallletDebitSqs).promise();
+
+          console.log(
+            "Debit email notification payload successfully pushed to email notification queue"
+          );
+
+          // // transport object
+          // const mailOptionsForDebitAlert = {
+          //   to: walletOwnerEmail,
+          //   from: process.env.SENDER_EMAIL,
+          //   subject: "Debit Alert",
+          //   html: `<p>The amount of ${totalAmount} has been deducted from your account for payroll transaction</p>`,
+          // };
+
+          // await sendMailWithSendGrid(mailOptionsForDebitAlert);
           console.log("END OF TRANSACTION!");
         }
       }

@@ -133,30 +133,21 @@ module.exports = async (req, res) => {
 
       emailTransactionDetails.push(eachWallet.recipientId, eachWallet.amount);
 
-      // transport object
-      const mailOptionsForCreditAlert = {
-        to: eachWallet.recipientEmail,
-        from: process.env.SENDER_EMAIL,
-        subject: "Credit Alert",
-        //html: `<p>The amount of ${eachWallet.amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
-        html: formatWalletCreditTransactionMail(
-          recipientWallet,
-          eachWallet.amount,
-          eachWallet.description,
-          transactionDay
-        ),
-      };
+      // // transport object
+      // const mailOptionsForCreditAlert = {
+      //   to: eachWallet.recipientEmail,
+      //   from: process.env.SENDER_EMAIL,
+      //   subject: "Credit Alert",
+      //   //html: `<p>The amount of ${eachWallet.amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
+      //   html: formatWalletCreditTransactionMail(
+      //     recipientWallet,
+      //     eachWallet.amount,
+      //     eachWallet.description,
+      //     transactionDay
+      //   ),
+      // };
 
-      await sendMailWithSendGrid(mailOptionsForCreditAlert);
-
-      // let transaction = db.transaction.create({
-      //   creditType: "wallet",
-      //   ownersWalletId: walletId,
-      //   recipientWalletId: eachWallet.recipientWalletId,
-      //   amount: eachWallet.amount,
-      //   ownersWalletBalance: ownersBalance,
-      //   recipientWalletBalance: recipientBalance,
-      // });
+      // await sendMailWithSendGrid(mailOptionsForCreditAlert);
 
       let debitTransaction = db.transaction.create({
         creditType: "wallet",
@@ -188,42 +179,82 @@ module.exports = async (req, res) => {
         transactionMonth: transactionMonth,
       });
 
+      // let walletCreditPayload = {
+      //   walletId: walletId,
+      //   recipientId: eachWallet.recipientWalletId,
+      //   amount: eachWallet.amount,
+      //   ownersBalance: ownersBalance,
+      //   recipientBalance: recipientBalance,
+      // };
+
+      // let wallletCreditSqs = {
+      //   MessageBody: JSON.stringify(walletCreditPayload),
+      //   QueueUrl:
+      //     eachWallet.recipientType == "business"
+      //       ? businessWalletCreditQueue
+      //       : staffWalletCreditQueue,
+      // };
+      // let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
+
       let walletCreditPayload = {
-        walletId: walletId,
-        recipientId: eachWallet.recipientWalletId,
+        recipientWallet,
         amount: eachWallet.amount,
-        ownersBalance: ownersBalance,
-        recipientBalance: recipientBalance,
+        to: eachWallet.email,
+        from: process.env.SENDER_EMAIL,
+        subject: "Credit Alert",
+        transactionDay,
+        description: eachWallet.description,
       };
 
       let wallletCreditSqs = {
         MessageBody: JSON.stringify(walletCreditPayload),
-        QueueUrl:
-          eachWallet.recipientType == "business"
-            ? businessWalletCreditQueue
-            : staffWalletCreditQueue,
+        QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
       };
       let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
+
+      console.log(
+        "Credit email notification payload successfully pushed to email notification queue"
+      );
     }
 
     // await wallet.save();
     // await recipientWallet.save();
 
-    // transport object
-    const mailOptionsForDebitAlert = {
+    // // transport object
+    // const mailOptionsForDebitAlert = {
+    //   to: walletOwnerEmail,
+    //   from: process.env.SENDER_EMAIL,
+    //   subject: "Debit Alert",
+    //   //html: `<p>The amount of ${totalAmount} has been transferred from your wallet to multiple wallets with the details below</p>`,
+    //   html: formatWalletDebitTransactionMail(
+    //     wallet,
+    //     totalAmount,
+    //     (description = "Multiple Wallet Transfer"),
+    //     transactionDay
+    //   ),
+    // };
+
+    // await sendMailWithSendGrid(mailOptionsForDebitAlert);
+
+    let walletDebitPayload = {
+      wallet,
+      totalAmount,
       to: walletOwnerEmail,
       from: process.env.SENDER_EMAIL,
       subject: "Debit Alert",
-      //html: `<p>The amount of ${totalAmount} has been transferred from your wallet to multiple wallets with the details below</p>`,
-      html: formatWalletDebitTransactionMail(
-        wallet,
-        totalAmount,
-        (description = "Multiple Wallet Transfer"),
-        transactionDay
-      ),
+      transactionDay,
+      description: "Multiple Wallet Transfer",
     };
 
-    await sendMailWithSendGrid(mailOptionsForDebitAlert);
+    let wallletDebitSqs = {
+      MessageBody: JSON.stringify(walletDebitPayload),
+      QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
+    };
+    let sendSqsMessage = sqs.sendMessage(wallletDebitSqs).promise();
+
+    console.log(
+      "Debit email notification payload successfully pushed to email notification queue"
+    );
 
     return res.status(200).send({
       statusCode: 200,

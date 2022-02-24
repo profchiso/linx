@@ -124,37 +124,77 @@ module.exports = async (req, res) => {
       { where: { walletId: recipientWalletId }, returning: true, plain: true }
     );
 
-    // transport object
-    const mailOptionsForDebitAlert = {
+    // // transport object
+    // const mailOptionsForDebitAlert = {
+    //   to: walletOwnerEmail,
+    //   from: process.env.SENDER_EMAIL,
+    //   subject: "Debit Alert",
+    //   //html: `<p>The amount of ${amount} has been transferred from your wallet to the wallet with the id of ${recipientWalletId}</p>`,
+    //   html: formatWalletDebitTransactionMail(
+    //     wallet,
+    //     amount,
+    //     description,
+    //     transactionDay
+    //   ),
+    // };
+
+    // await sendMailWithSendGrid(mailOptionsForDebitAlert);
+
+    let walletDebitPayload = {
+      wallet,
+      totalAmount: amount,
       to: walletOwnerEmail,
       from: process.env.SENDER_EMAIL,
       subject: "Debit Alert",
-      //html: `<p>The amount of ${amount} has been transferred from your wallet to the wallet with the id of ${recipientWalletId}</p>`,
-      html: formatWalletDebitTransactionMail(
-        wallet,
-        amount,
-        description,
-        transactionDay
-      ),
+      transactionDay,
+      description,
     };
 
-    await sendMailWithSendGrid(mailOptionsForDebitAlert);
+    let wallletDebitSqs = {
+      MessageBody: JSON.stringify(walletDebitPayload),
+      QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
+    };
+    let sendSqsMessage = sqs.sendMessage(wallletDebitSqs).promise();
 
-    // transport object
-    const mailOptionsForCreditAlert = {
+    console.log(
+      "Debit email notification payload successfully pushed to email notification queue"
+    );
+
+    // // transport object
+    // const mailOptionsForCreditAlert = {
+    //   to: recipientEmail,
+    //   from: process.env.SENDER_EMAIL,
+    //   subject: "Credit Alert",
+    //   //html: `<p>The amount of ${amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
+    //   html: formatWalletCreditTransactionMail(
+    //     recipientWallet,
+    //     amount,
+    //     description,
+    //     transactionDay
+    //   ),
+    // };
+
+    // await sendMailWithSendGrid(mailOptionsForCreditAlert);
+
+    let walletCreditPayload = {
+      recipientWallet,
+      amount,
       to: recipientEmail,
       from: process.env.SENDER_EMAIL,
       subject: "Credit Alert",
-      //html: `<p>The amount of ${amount} has been transferred from the wallet with the id of ${walletId} to your wallet</p>`,
-      html: formatWalletCreditTransactionMail(
-        recipientWallet,
-        amount,
-        description,
-        transactionDay
-      ),
+      transactionDay,
+      description,
     };
 
-    await sendMailWithSendGrid(mailOptionsForCreditAlert);
+    let wallletCreditSqs = {
+      MessageBody: JSON.stringify(walletCreditPayload),
+      QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
+    };
+    let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
+
+    console.log(
+      "Credit email notification payload successfully pushed to email notification queue"
+    );
 
     Promise.all([
       db.transaction.create({
