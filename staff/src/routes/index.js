@@ -626,14 +626,9 @@ staffRouter.get("/api/v1/staff/business/roles-permissions/:businessId", async(re
 
 })
 
-staffRouter.get("/api/v1/staff/business/permissions", async(req, res) => {
+staffRouter.get("/api/v1/staff/business/permissions", (req, res) => {
     try {
-        //const { businessId } = req.params
-
-
-        // let roles = await db.roles.findAll({ where: { businessId: Number(businessId) } })
-        // console.log(roles)
-
+        console.log(permissions)
         res.status(200).send({ message: `All  permissions`, statuscode: 200, data: { permissions } });
 
     } catch (error) {
