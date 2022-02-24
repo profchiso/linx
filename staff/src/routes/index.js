@@ -588,6 +588,25 @@ staffRouter.delete(
     }
 );
 
+staffRouter.get("/api/v1/staff/business/roles/:roleId/:businessId/permissions", async(req, res) => {
+    try {
+        const { roleId, businessId } = req.params
+
+
+        let roles = await db.roles.findAll({ where: { businessId: Number(businessId), } })
+        console.log(roles)
+
+        res.status(200).send({ message: `All roles and permissions`, statuscode: 200, data: { roles, permissions } });
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+
+    }
+
+
+})
+
 staffRouter.get("/api/v1/staff/business/roles-permissions/:businessId", async(req, res) => {
     try {
         const { businessId } = req.params
@@ -597,6 +616,25 @@ staffRouter.get("/api/v1/staff/business/roles-permissions/:businessId", async(re
         console.log(roles)
 
         res.status(200).send({ message: `All roles and permissions`, statuscode: 200, data: { roles, permissions } });
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+
+    }
+
+
+})
+
+staffRouter.get("/api/v1/staff/business/permissions", async(req, res) => {
+    try {
+        //const { businessId } = req.params
+
+
+        // let roles = await db.roles.findAll({ where: { businessId: Number(businessId) } })
+        // console.log(roles)
+
+        res.status(200).send({ message: `All  permissions`, statuscode: 200, data: { permissions } });
 
     } catch (error) {
         console.log(error)
