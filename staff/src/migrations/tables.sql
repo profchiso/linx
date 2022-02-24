@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.permissions
 )
 
 
+
 CREATE TABLE IF NOT EXISTS public.roles
 (
     id serial NOT NULL ,
