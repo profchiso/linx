@@ -154,7 +154,7 @@ module.exports = async (req, res) => {
       MessageBody: JSON.stringify(walletDebitPayload),
       QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
     };
-    let sendSqsMessage = sqs.sendMessage(wallletDebitSqs).promise();
+    let sendDebitSqsMessage = sqs.sendMessage(wallletDebitSqs).promise();
 
     console.log(
       "Debit email notification payload successfully pushed to email notification queue"
@@ -190,7 +190,7 @@ module.exports = async (req, res) => {
       MessageBody: JSON.stringify(walletCreditPayload),
       QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
     };
-    let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
+    let sendCreditSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
 
     console.log(
       "Credit email notification payload successfully pushed to email notification queue"
