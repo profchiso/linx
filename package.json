@@ -4,8 +4,8 @@
   "description": "Auth services",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon wallet/src/index.js",
-    "start": "node wallet/src/index.js",
+    "dev": "nodemon notification/src/index.js",
+    "start": "node notification/src/index.js",
     "auth-dev": "nodemon auth/src/index.js",
     "wallet-dev": "nodemon wallet/src/index.js",
     "notification-dev": "nodemon notification/src/index.js",

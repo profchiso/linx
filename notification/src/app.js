@@ -52,7 +52,7 @@ app.all("*", async () => {
 
 app.use(errorHandler);
 
-cronJob.schedule("*/1 * * * *", () => {
+cronJob.schedule("10 * * * * *", () => {
   try {
     // Read notification from queeu and send email
     sqs.receiveMessage(notificationParams, async function (err, data) {
@@ -62,24 +62,26 @@ cronJob.schedule("*/1 * * * *", () => {
         return;
       }
 
+      console.log("*********MESSAGES********", data.Messages);
+
       if (data.Messages && data.Messages.length) {
         let messageBody = data.Messages;
 
         for (let message of messageBody) {
           let parsedData = JSON.parse(message.Body);
-          let userClass = parsedData.messageType;
+          let userClass = parsedData.subject;
 
           switch (userClass) {
-            case "wallet creation":
+            case "Wallet Creation":
               // transport object
               const mailOptions = {
                 to: parsedData.to || "j2k4@yahoo.com",
                 from: parsedData.from,
                 subject: parsedData.subject,
-                //html: `<p>A wallet with the id ${createdPrimaryWallet.walletId} has been created for you</p>`,
-                html: formatStaffWalletCreationMail(
-                  parsedData.createdPrimaryWallet
-                ),
+                html: `<p>A wallet with the id ${parsedData.walletId} has been created for you</p>`,
+                // html: formatStaffWalletCreationMail(
+                //   parsedData.createdPrimaryWallet
+                // ),
               };
 
               await sendMailWithSendGrid(mailOptions);
@@ -90,18 +92,18 @@ cronJob.schedule("*/1 * * * *", () => {
                 subject: parsedData.subject,
               });
               break;
-            case "credit alert":
+            case "Credit Alert":
               // transport object
               const mailOptionsForDebitAlert = {
-                to: parsedData.recipientEmail,
+                to: parsedData.to,
                 from: parsedData.from,
                 subject: parsedData.subject,
                 //html: `<p>The amount of ${amount} has been transferred from your wallet to the wallet with the id of ${recipientWalletId}</p>`,
                 html: formatWalletCreditTransactionMail(
-                  wallet,
-                  amount,
-                  description,
-                  transactionDay
+                  parsedData.recipientWallet,
+                  parsedData.amount,
+                  parsedData.description,
+                  parsedData.transactionDay
                 ),
               };
 
@@ -113,18 +115,18 @@ cronJob.schedule("*/1 * * * *", () => {
                 subject: parsedData.subject,
               });
               break;
-            case "debit alert":
+            case "Debit Alert":
               // transport object
               const mailOptionsForDebitAlert = {
-                to: parsedData.walletOwnerEmail,
+                to: parsedData.to,
                 from: parsedData.from,
                 subject: parsedData.subject,
                 //html: `<p>The amount of ${amount} has been transferred from your wallet to the wallet with the id of ${recipientWalletId}</p>`,
                 html: formatWalletDebitTransactionMail(
-                  wallet,
-                  amount,
-                  description,
-                  transactionDay
+                  parsedData.wallet,
+                  parsedData.totalAmount,
+                  parsedData.description,
+                  parsedData.transactionDay
                 ),
               };
 
@@ -136,24 +138,24 @@ cronJob.schedule("*/1 * * * *", () => {
                 subject: parsedData.subject,
               });
               break;
-            case "pin otp":
+            case "OTP":
               // transport object
               const mailOptions = {
-                to: parsedData.wallet.dataValues.email,
+                to: parsedData.to,
                 from: parsedData.from,
                 subject: parsedData.subject,
-                html: `<p>Here is your OTP ${generatePhoneOtp}</p>`,
+                html: `<p>Here is your OTP ${parsedData.otp}</p>`,
               };
 
               await sendMailWithSendGrid(mailOptions);
               break;
-            case "invoice":
+            case "Your Invoice":
               // transport object
               const mailOptions = {
-                to: parsedData.customerEmail,
+                to: parsedData.to,
                 from: parsedData.from,
                 subject: parsedData.subject,
-                html: formatInvoiceMail(invoice),
+                html: formatInvoiceMail(parsedData.invoice),
               };
 
               await sendMailWithSendGrid(mailOptions);
