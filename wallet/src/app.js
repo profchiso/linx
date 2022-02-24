@@ -206,7 +206,10 @@ cronJob.schedule("*/1 * * * *", () => {
             to: createdPrimaryWallet.email,
             from: process.env.SENDER_EMAIL,
             subject: "Wallet Creation",
-            walletId: createdPrimaryWallet.walletId,
+            options: {
+              name: createdPrimaryWallet.name,
+              walletId: createdPrimaryWallet.walletId,
+            },
           };
 
           let staffSqsEmailData = {
