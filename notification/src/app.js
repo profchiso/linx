@@ -1,5 +1,7 @@
 const express = require("express");
 
+const cronJob = require("node-cron");
+
 const cors = require("cors");
 
 require("express-async-errors");
@@ -78,15 +80,13 @@ cronJob.schedule("10 * * * * *", () => {
                 to: parsedData.to || "j2k4@yahoo.com",
                 from: parsedData.from,
                 subject: parsedData.subject,
-                html: `<p>A wallet with the id ${parsedData.walletId} has been created for you</p>`,
-                // html: formatStaffWalletCreationMail(
-                //   parsedData.createdPrimaryWallet
-                // ),
+                //html: `<p>A wallet with the id ${parsedData.walletId} has been created for you</p>`,
+                html: formatStaffWalletCreationMail(parsedData.options),
               };
 
               await sendMailWithSendGrid(mailOptions);
 
-              let createdNotification = await db.notification.create({
+              await db.notification.create({
                 from: parsedData.from,
                 to: parsedData.to,
                 subject: parsedData.subject,
@@ -94,7 +94,7 @@ cronJob.schedule("10 * * * * *", () => {
               break;
             case "Credit Alert":
               // transport object
-              const mailOptionsForDebitAlert = {
+              const mailOptionsForCreditAlert = {
                 to: parsedData.to,
                 from: parsedData.from,
                 subject: parsedData.subject,
@@ -107,9 +107,9 @@ cronJob.schedule("10 * * * * *", () => {
                 ),
               };
 
-              await sendMailWithSendGrid(mailOptionsForDebitAlert);
+              await sendMailWithSendGrid(mailOptionsForCreditAlert);
 
-              let createdNotification = await db.notification.create({
+              await db.notification.create({
                 from: parsedData.from,
                 to: parsedData.to,
                 subject: parsedData.subject,
@@ -132,7 +132,7 @@ cronJob.schedule("10 * * * * *", () => {
 
               await sendMailWithSendGrid(mailOptionsForDebitAlert);
 
-              let createdNotification = await db.notification.create({
+              await db.notification.create({
                 from: parsedData.from,
                 to: parsedData.to,
                 subject: parsedData.subject,
@@ -140,25 +140,25 @@ cronJob.schedule("10 * * * * *", () => {
               break;
             case "OTP":
               // transport object
-              const mailOptions = {
+              const mailOptionsForOtp = {
                 to: parsedData.to,
                 from: parsedData.from,
                 subject: parsedData.subject,
                 html: `<p>Here is your OTP ${parsedData.otp}</p>`,
               };
 
-              await sendMailWithSendGrid(mailOptions);
+              await sendMailWithSendGrid(mailOptionsForOtp);
               break;
             case "Your Invoice":
               // transport object
-              const mailOptions = {
+              const mailOptionsForInvoice = {
                 to: parsedData.to,
                 from: parsedData.from,
                 subject: parsedData.subject,
                 html: formatInvoiceMail(parsedData.invoice),
               };
 
-              await sendMailWithSendGrid(mailOptions);
+              await sendMailWithSendGrid(mailOptionsForInvoice);
             case "LinX account creation":
               console.log("Waiting");
               break;
