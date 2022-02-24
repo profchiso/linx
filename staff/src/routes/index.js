@@ -34,7 +34,7 @@ staffRouter.get(
 
 
             //get all registered businesses
-            const staff = await db.staff.findAll({ where: req.query });
+            const staff = await db.staff.findAll({});
 
             let myStaff = [];
             if (staff.length > 0) {
