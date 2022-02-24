@@ -34,7 +34,7 @@ staffRouter.get(
 
 
             //get all registered businesses
-            const staff = await db.staff.findAll({});
+            const staff = await db.staff.findAll({ where: req.query });
 
             let myStaff = [];
             if (staff.length > 0) {
@@ -79,7 +79,7 @@ staffRouter.post(
 
 
 
-            const { firstName, lastName, email, phoneNumber, dataOfBirth, address, country, state, lga, bankName, accountName, accountNumber, role, roleId, employmentType, businessId, paymentAccount, password, businessTradingName, businessAlias, companyStaffId } = req.body
+            const { firstName, lastName, email, phoneNumber, dataOfBirth, address, country, state, lga, bankName, accountName, accountNumber, roleName, roleId, employmentType, businessId, paymentAccount, password, businessTradingName, businessAlias, companyStaffId } = req.body
 
 
             //request body validation
@@ -171,7 +171,7 @@ staffRouter.post(
                 bankName,
                 accountName,
                 accountNumber,
-                role: role || "staff",
+                roleName: roleName || "staff",
                 roleId,
                 employmentType,
                 businessId,
