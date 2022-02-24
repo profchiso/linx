@@ -626,19 +626,19 @@ staffRouter.get("/api/v1/staff/business/roles-permissions/:businessId", async(re
 
 })
 
-staffRouter.get("/api/v1/staff/business/permissions", (req, res) => {
-    try {
-        console.log(permissions)
-        res.status(200).send({ message: `All  permissions`, statuscode: 200, data: { permissions } });
+// staffRouter.get("/api/v1/staff/business/permissions", (req, res) => {
+//     try {
+//         console.log(permissions)
+//         res.status(200).send({ message: `All  permissions`, statuscode: 200, data: { permissions } });
 
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+//     } catch (error) {
+//         console.log(error)
+//         res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
 
-    }
+//     }
 
 
-})
+// })
 
 
 module.exports = { staffRouter };
