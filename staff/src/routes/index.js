@@ -532,7 +532,7 @@ staffRouter.post("/api/v1/staff/business/roles", async(req, res) => {
             for (let permission of permissions) {
                 let permissionObj = {
                     permissionName: permission.permissionName,
-                    roleName: permission.roleName,
+                    roleName: name,
                     businessId,
                     description: permission.description,
                     roleId: createdRole.dataValues.id
