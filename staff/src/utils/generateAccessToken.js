@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const JWT_SECRET = process.env.JWT_KEY
-console.log(JWT_SECRET)
+
 
 //GENERATE ACCESS TOKEN FOR AUTHENTICATION
 exports.generateAccessToken = async(payload) => {
