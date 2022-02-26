@@ -216,7 +216,7 @@ staffRouter.post(
                 firstName,
                 lastName,
                 employmentType,
-                role,
+                roleName,
                 businessTradingName,
                 businessAlias,
                 password: tempPassword
