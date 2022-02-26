@@ -416,7 +416,7 @@ staffRouter.post(
 
 
             //CHECK IF staff EXIST
-            const existingStaff = await db.staffs.findOne({ where: { staffId, businessAlias } });
+            const existingStaff = await db.staff.findOne({ where: { staffId, businessAlias } });
             if (!existingStaff) {
                 return res.status(400).send({ message: `Invalid user credentials`, statuscode: 400, errors: [{ message: `Invalid user credentials` }] });
             }
@@ -435,7 +435,8 @@ staffRouter.post(
                 user: {
                     id: existingStaff.id,
                     role: existingStaff.role,
-                    permissions: staffRoleDetails.permissions
+                    permissions: staffRoleDetails.permissions,
+                    type: "Staff"
                 },
             };
 
@@ -481,24 +482,31 @@ staffRouter.patch("/api/v1/business-staff/update-password",
 
             let passwordIsMatch = await decryptPassword(oldPassword, staff.password);
             if (!passwordIsMatch) {
-                return res.status(401).json({ message: "The password you entered is incorrect", statuscode: 401, errors: [{ message: "The password you entered is incorrect" }] })
+                return res.status(400).json({ message: "The password you entered is incorrect", statuscode: 400, errors: [{ message: "The password you entered is incorrect" }] })
             }
             if (newPassword !== newConfirmPassword) {
 
-                return res.status(401).json({ message: "Password do not match", statuscode: 401, errors: [{ message: "Password do not match" }] })
+                return res.status(400).json({ message: "Password do not match", statuscode: 400, errors: [{ message: "Password do not match" }] })
             }
             hashedNewPassword = await hashUserPassword(newPassword);
 
             const updatedStaff = await db.staff.update({ password: hashedNewPassword }, { where: { id: req.user.id }, returning: true, plain: true })
 
-            //log user in by assigning him a token
+            //log staff in by assigning him a token
+            let staffDetails = await db.staff.findOne({ where: { id: req.user.id }, include: ["role"] })
+            let staffRoleDetails = await db.roles.findOne({ where: { id: staffDetails.roleId }, include: ["permissions"] })
+
+            //JWT PAYLOAD FOR SIGINED IN staff
             const payLoad = {
                 user: {
-                    id: updatedStaff[1].id,
+                    id: staffDetails.id,
+                    role: staffDetails.role,
+                    permissions: staffRoleDetails.permissions,
+                    type: "Staff"
                 },
             };
             let accessToken = await generateAccessToken(payLoad);
-            return res.status(200).json({ message: "Password updated successsfully", statuscode: 200, data: { user: updatedStaff[1], accessToken } });
+            return res.status(200).json({ message: "Password updated successsfully", statuscode: 200, data: { staff: staffDetails, accessToken } });
         } catch (err) {
             console.log(err);
             return res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: err.message || "Something went wrong" }] })
