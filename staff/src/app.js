@@ -37,7 +37,7 @@ app.all('*', async() => {
 
 app.use(errorHandler);
 cronJob.schedule("*/1 * * * *", async() => {
-    await getStaffWalletFromQueueAndUpdate()
+    // await getStaffWalletFromQueueAndUpdate()
 
 })
 

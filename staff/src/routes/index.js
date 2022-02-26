@@ -66,16 +66,16 @@ staffRouter.post(
     async(req, res) => {
 
         try {
-            //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            }
+            // //authenticate user
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            // }
 
 
 
@@ -289,16 +289,16 @@ staffRouter.get(
     async(req, res) => {
 
         try {
-            //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            }
+            // //authenticate user
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            // }
 
             const { staffId } = req.params;
 
@@ -327,15 +327,15 @@ staffRouter.patch(
 
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            }
+            // const { data } = await axios.get(`${AUTH_URL}`, {
+            //         headers: {
+            //             authorization: req.headers.authorization
+            //         }
+            //     })
+            //     //check if user is not authenticated
+            // if (!data.user) {
+            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            // }
 
             const { staffId } = req.params;
             if (req.body.profilePix) {
@@ -557,18 +557,18 @@ staffRouter.post(
     }
 );
 
-//create role
+//create role for a business
 staffRouter.post("/api/v1/staff/business/roles", async(req, res) => {
     const { name, businessId, permissions } = req.body
-    console.log(req.body)
+
     try {
         let roleObj = {
             name,
             businessId: Number(businessId)
         }
-        console.log(roleObj)
+
         const createdRole = await db.roles.create(roleObj)
-        console.log(createdRole)
+
         if (permissions && permissions.length) {
             for (let permission of permissions) {
                 let permissionObj = {
@@ -580,11 +580,14 @@ staffRouter.post("/api/v1/staff/business/roles", async(req, res) => {
                 }
                 let createdPermissions = await db.permissions.create(permissionObj)
                 console.log(createdPermissions)
+
             }
         }
-        let role = {...createdRole.dataValues }
-        role.permissions = permissions
-        res.status(201).send({ message: `Role created`, statuscode: 201, data: { role } });
+
+
+        let justCreatedRole = await db.roles.findOne({ where: { id: createdRole.dataValues.id }, include: ["permissions"] })
+
+        res.status(201).send({ message: `Role created`, statuscode: 201, data: { role: justCreatedRole } });
 
     } catch (error) {
         console.log(error)
@@ -648,23 +651,19 @@ staffRouter.get("/api/v1/staff/business/roles/:roleId/:businessId/permissions", 
 
 })
 
+//GET ALL ROLES AND PERMISSIONS FOR A BUSINESS
 staffRouter.get("/api/v1/staff/business/roles-permissions/:businessId", async(req, res) => {
     try {
         const { businessId } = req.params
 
 
-        let roles = await db.roles.findAll({ where: { businessId: Number(businessId) } })
-        console.log(roles)
-
+        let roles = await db.roles.findAll({ where: { businessId: Number(businessId) }, include: ["permissions"] })
         res.status(200).send({ message: `All roles and permissions`, statuscode: 200, data: { roles, permissions } });
 
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
-
     }
-
-
 })
 
 
