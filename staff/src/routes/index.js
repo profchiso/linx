@@ -442,7 +442,7 @@ staffRouter.post(
 
             let accessToken = await generateAccessToken(payLoad);
 
-            let { data } = await axios.get(`${BUSINESS_SERVICE_URL}/business/${existingStaff.businessId}`)
+            let { data } = await axios.get(`${BUSINESS_SERVICE_URL}/api/v1/business/${existingStaff.businessId}`)
 
 
             existingStaff.password = undefined
