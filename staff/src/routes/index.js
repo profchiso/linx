@@ -34,7 +34,7 @@ staffRouter.get(
 
 
             //get all registered businesses
-            const staff = await db.staff.findAll({ where: req.query });
+            const staff = await db.staff.findAll({ where: req.query, include: ["role"] });
 
             let myStaff = [];
             if (staff.length > 0) {
@@ -182,6 +182,8 @@ staffRouter.post(
                 staffId
             })
 
+            //"profilePix": "base64 string for image",
+
 
             let returnData = {...createdStaff.dataValues }
             delete returnData.password
@@ -195,8 +197,8 @@ staffRouter.post(
                 email: email,
                 walletCategory: "staff"
             }
-            console.log("queue payload", awsQueuePayload)
-            let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
+
+            // let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
 
 
             //send staff login details
@@ -229,7 +231,7 @@ staffRouter.post(
                 html
             };
 
-            await sendMailWithSendgrid(mailOptions)
+            // await sendMailWithSendgrid(mailOptions)
 
 
             res.status(201).send({ message: "Staff Created", statuscode: 201, type: "success", data: { staff: returnData } });
@@ -632,6 +634,8 @@ staffRouter.delete(
     }
 );
 
+
+//not sure what is happening here
 staffRouter.get("/api/v1/staff/business/roles/:roleId/:businessId/permissions", async(req, res) => {
     try {
         const { roleId, businessId } = req.params
