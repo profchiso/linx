@@ -4,8 +4,8 @@
     "description": "Auth services",
     "main": "index.js",
     "scripts": {
-        "dev": "nodemon staff/src/index.js",
-        "start": "node staff/src/index.js",
+        "dev": "nodemon src/index.js",
+        "start": "node src/index.js",
         "auth-dev": "nodemon auth/src/index.js",
         "wallet-dev": "nodemon wallet/src/index.js",
         "dev-all": "npm-run-all -p -r wallet-dev business-dev auth-dev ",
