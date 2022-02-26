@@ -102,7 +102,7 @@ exports.staffCreationMail = async(options) => {
               line-height: 26px;
               color: #000;
             "
-            >${options.role}</span
+            >${options.roleName}</span
           >
           role at ${options.businessTradingName} has been successfully created on LinX.
     
