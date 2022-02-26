@@ -23,6 +23,7 @@ if (db_uri) {
     sequelize = new Sequelize(db_uri, { dialect: "postgres" });
 
 } else {
+    console.log("connected using password")
     sequelize = new Sequelize(process.env.POSTGRES_DATABASE, process.env.POSTGRES_USERNAME, process.env.POSTGRES_PASSWORD, DB_CONFIG);
 }
 
