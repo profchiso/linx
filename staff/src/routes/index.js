@@ -308,7 +308,7 @@ staffRouter.get(
             const { staffId } = req.params;
 
 
-            const foundStaff = await db.staff.findOne({ where: { id: staffId } });
+            const foundStaff = await db.staff.findOne({ where: { id: staffId }, include: ["role"] });
 
             res.status(200).send({ message: `Staff fetched`, statuscode: 200, data: { staff: foundStaff } });
 
@@ -418,7 +418,7 @@ staffRouter.post(
 
 
             //CHECK IF staff EXIST
-            const existingStaff = await db.staff.findOne({ where: { staffId, businessAlias } });
+            const existingStaff = await db.staff.findOne({ where: { staffId, businessAlias }, include: ["role"] });
             if (!existingStaff) {
                 return res.status(400).send({ message: `Invalid user credentials`, statuscode: 400, errors: [{ message: `Invalid user credentials` }] });
             }
@@ -446,7 +446,7 @@ staffRouter.post(
             let accessToken = await generateAccessToken(payLoad);
 
             let { data } = await axios.get(`${BUSINESS_SERVICE_URL}/api/v1/business/${existingStaff.businessId}`)
-            console.log(data)
+            console.log("staff business", data)
 
 
             existingStaff.password = undefined
