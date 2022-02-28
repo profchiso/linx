@@ -7,7 +7,7 @@
         "dev": "nodemon src/index.js",
         "start": "node src/index.js",
         "migration": "cd src && sequelize-cli db:migrate",
-        "undo-migration": " cd src && sequelize-cli db:migrate:undo",
+        "undo-migration": "cd src && sequelize-cli db:migrate:undo",
         "wallet-dev": "nodemon wallet/src/index.js",
         "dev-all": "npm-run-all -p -r wallet-dev business-dev auth-dev ",
         "test": "jest --watchAll --no-cache --detectOpenHandles",
