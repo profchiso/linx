@@ -224,7 +224,7 @@ cronJob.schedule("*/1 * * * *", () => {
 
           console.log(
             "Staff wallet creation email successfully pushed to email notification queue",
-            staffSqsWallet
+            staffSqsEmail
           );
 
           let staffWalletPayload = {
