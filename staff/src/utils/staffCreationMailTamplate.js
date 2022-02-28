@@ -1,4 +1,8 @@
 exports.staffCreationMail = async(options) => {
+    let date = new Date()
+    let day = date.getDate()
+    let month = date.toLocaleString('default', { month: 'short' })
+    let year = date.getFullYear()
     let htmlTmaplate = `<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -43,6 +47,7 @@ exports.staffCreationMail = async(options) => {
               color: #000000;
             "
           >
+          ${day}-${month}-${year}
             05-Feb-2022
           </div>
           <div><img src="${process.env.BASE_URL}images/Group.svg" /></div>
