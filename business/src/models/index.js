@@ -9,14 +9,23 @@ const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 const db_uri = process.env.DATABASE_URL
 
+const DB_CONFIG = {
+    username: process.env.POSTGRES_USERNAME,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DATABASE,
+    host: process.env.POSTGRES_HOST,
+    dialect: process.env.POSTGRES_DIALECT
+}
+
+
 let sequelize;
 if (db_uri) {
     sequelize = new Sequelize(db_uri, { dialect: "postgres" });
-} else {
-    console.log("using local")
-    sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
 
+} else {
+    console.log("connected using password")
+    sequelize = new Sequelize(process.env.POSTGRES_DATABASE, process.env.POSTGRES_USERNAME, process.env.POSTGRES_PASSWORD, DB_CONFIG);
+}
 fs
     .readdirSync(__dirname)
     .filter(file => {
