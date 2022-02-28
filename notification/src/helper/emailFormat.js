@@ -34,7 +34,7 @@ const formatStaffWalletCreationMail = (payload) => {
     >
       05-Feb-2022
     </div>
-    <div><img src="${process.env.BASE_URL}images/Group.svg" /></div>
+    <div><img src="${process.env.BASE_URL}/images/Group.svg" /></div>
   </div>
   <div
     style="
@@ -147,7 +147,7 @@ const formatStaffWalletCreationMail = (payload) => {
         "
         >Powered by
       </span>
-      <img src="${process.env.BASE_URL}images/Group.svg" alt="" />
+      <img src="${process.env.BASE_URL}/images/Group.svg" alt="" />
     </div>
     <div
       style="
@@ -224,7 +224,7 @@ const formatWalletDebitTransactionMail = (
       >
         05-Feb-2022
       </div>
-      <div><img src="${process.env.BASE_URL}images/Group.svg" /></div>
+      <div><img src="${process.env.BASE_URL}/images/Group.svg" /></div>
     </div>
     <div
       style="
@@ -246,7 +246,7 @@ const formatWalletDebitTransactionMail = (
           line-height: 26px;
           color: #000;
         "
-        >${payload.dataValues.name},</span
+        >${payload.name},</span
       >
     </div>
     <div
@@ -431,7 +431,7 @@ const formatWalletDebitTransactionMail = (
             border-bottom: 1px solid #b8b2b2;
           "
         >
-          ${payload.dataValues.name}
+          ${payload.name}
         </div>
         <div
           style="
@@ -495,7 +495,7 @@ const formatWalletDebitTransactionMail = (
             border-bottom: 1px solid #b8b2b2;
           "
         >
-          ********${payload.dataValues.walletId.substring(8)}
+          ********${payload.walletId.substring(8)}
         </div>
         <div
           style="
@@ -527,7 +527,7 @@ const formatWalletDebitTransactionMail = (
             border-bottom: 1px solid #b8b2b2;
           "
         >
-          NGN${payload.dataValues.balance}
+          NGN${payload.balance}
         </div>
       </div>
     </div>
@@ -552,7 +552,7 @@ const formatWalletDebitTransactionMail = (
           "
           >Powered by
         </span>
-        <img src="${process.env.BASE_URL}images/Group.svg" alt="" />
+        <img src="${process.env.BASE_URL}/images/Group.svg" alt="" />
       </div>
       <div
         style="
@@ -629,7 +629,7 @@ const formatWalletCreditTransactionMail = (
       >
         05-Feb-2022
       </div>
-      <div><img src="${process.env.BASE_URL}images/Group.svg" /></div>
+      <div><img src="${process.env.BASE_URL}/images/Group.svg" /></div>
     </div>
     <div
       style="
@@ -651,7 +651,7 @@ const formatWalletCreditTransactionMail = (
           line-height: 26px;
           color: #000;
         "
-        >${payload.dataValues.name},</span
+        >${payload.name},</span
       >
     </div>
     <div
@@ -836,7 +836,7 @@ const formatWalletCreditTransactionMail = (
             border-bottom: 1px solid #b8b2b2;
           "
         >
-          ${payload.dataValues.name}
+          ${payload.name}
         </div>
         <div
           style="
@@ -900,7 +900,7 @@ const formatWalletCreditTransactionMail = (
             border-bottom: 1px solid #b8b2b2;
           "
         >
-          ********${payload.dataValues.walletId.substring(8)}
+          ********${payload.walletId.substring(8)}
         </div>
         <div
           style="
@@ -932,7 +932,7 @@ const formatWalletCreditTransactionMail = (
             border-bottom: 1px solid #b8b2b2;
           "
         >
-          NGN${payload.dataValues.balance}
+          NGN${payload.balance}
         </div>
       </div>
     </div>
@@ -957,7 +957,7 @@ const formatWalletCreditTransactionMail = (
           "
           >Powered by
         </span>
-        <img src="${process.env.BASE_URL}images/Group.svg" alt="" />
+        <img src="${process.env.BASE_URL}/images/Group.svg" alt="" />
       </div>
       <div
         style="

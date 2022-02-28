@@ -54,7 +54,7 @@ app.all("*", async () => {
 
 app.use(errorHandler);
 
-cronJob.schedule("10 * * * * *", () => {
+cronJob.schedule("5 * * * * *", () => {
   try {
     // Read notification from queeu and send email
     sqs.receiveMessage(notificationParams, async function (err, data) {
@@ -71,6 +71,7 @@ cronJob.schedule("10 * * * * *", () => {
 
         for (let message of messageBody) {
           let parsedData = JSON.parse(message.Body);
+
           let userClass = parsedData.subject;
 
           switch (userClass) {
@@ -91,6 +92,9 @@ cronJob.schedule("10 * * * * *", () => {
                 to: parsedData.to,
                 subject: parsedData.subject,
               });
+
+              console.log("HURRAY, WALLET CREATIONEMAIL SENT");
+
               break;
             case "Credit Alert":
               // transport object
@@ -114,6 +118,9 @@ cronJob.schedule("10 * * * * *", () => {
                 to: parsedData.to,
                 subject: parsedData.subject,
               });
+
+              console.log("HURRAY, CREDIT EMAIL SENT");
+
               break;
             case "Debit Alert":
               // transport object
@@ -137,6 +144,9 @@ cronJob.schedule("10 * * * * *", () => {
                 to: parsedData.to,
                 subject: parsedData.subject,
               });
+
+              console.log("HURRAY, DEBIT EMAIL SENT");
+
               break;
             case "OTP":
               // transport object
@@ -148,6 +158,9 @@ cronJob.schedule("10 * * * * *", () => {
               };
 
               await sendMailWithSendGrid(mailOptionsForOtp);
+
+              console.log("HURRAY, OTP EMAIL SENT");
+
               break;
             case "Your Invoice":
               // transport object
@@ -159,6 +172,9 @@ cronJob.schedule("10 * * * * *", () => {
               };
 
               await sendMailWithSendGrid(mailOptionsForInvoice);
+
+              console.log("HURRAY, INVOICE EMAIL SENT");
+              break;
             case "LinX account creation":
               console.log("Waiting");
               break;
