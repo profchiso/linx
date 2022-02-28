@@ -167,6 +167,8 @@ cronJob.schedule("*/1 * * * *", () => {
         return;
       }
 
+      console.log(data.Messages);
+
       if (data.Messages && data.Messages.length) {
         let messageBody = data.Messages;
 
