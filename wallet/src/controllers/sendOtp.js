@@ -1,3 +1,4 @@
+const AWS = require("aws-sdk");
 const db = require("../models/index");
 const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
@@ -6,6 +7,12 @@ const { hashWalletPin } = require("../helper/pinHash");
 const { validatePinOtp } = require("../helper/validatePin");
 const { generateOtp } = require("../helper/generateOtpCode");
 const { sendMailWithSendGrid } = require("../helper/emailTransport");
+
+AWS.config.update({ region: "us-east-1" });
+//AWS.config.update({accessKeyId: process.env.AWS_ACCESS_KEY_ID,secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,});
+
+// Create an SQS service object
+const sqs = new AWS.SQS({ apiVersion: "2012-11-05" });
 
 module.exports = async (req, res) => {
   try {

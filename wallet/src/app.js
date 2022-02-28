@@ -424,7 +424,8 @@ cronJob.schedule("*/1 * * * *", () => {
             });
 
             let walletCreditPayload = {
-              recipientWallet: eachWallet.staffWallet,
+              //recipientWallet: eachWallet.staffWallet,
+              recipientWallet,
               amount: eachWallet.totalPayable,
               to: eachWallet.email,
               from: process.env.SENDER_EMAIL,
@@ -459,7 +460,8 @@ cronJob.schedule("*/1 * * * *", () => {
           }
 
           let walletDebitPayload = {
-            wallet: walletId,
+            //wallet: walletId,
+            wallet,
             totalAmount,
             to: eachWallet.email,
             from: process.env.SENDER_EMAIL,

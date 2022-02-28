@@ -1,6 +1,9 @@
 const AWS = require("aws-sdk");
 const { uuid } = require("uuidv4");
 const db = require("../models/index");
+const axios = require("axios");
+const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
+
 const { validateWalletCreditData } = require("../helper/validateWallet");
 const { sendMailWithSendGrid } = require("../helper/emailTransport");
 const {

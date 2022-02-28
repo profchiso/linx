@@ -1,4 +1,6 @@
 const db = require("../models/index");
+const axios = require("axios");
+const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
 const { validate } = require("../helper/validateWallet");
 
 module.exports = async (req, res) => {

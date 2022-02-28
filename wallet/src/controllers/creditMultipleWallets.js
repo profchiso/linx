@@ -1,6 +1,8 @@
 const AWS = require("aws-sdk");
 const { uuid } = require("uuidv4");
 const db = require("../models/index");
+const axios = require("axios");
+const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
 const {
   validateMultipleWalletsCreditData,
 } = require("../helper/validateWallet");
@@ -196,10 +198,12 @@ module.exports = async (req, res) => {
       // };
       // let sendSqsMessage = sqs.sendMessage(wallletCreditSqs).promise();
 
+      //console.log("=====|=======", eachWallet);
+
       let walletCreditPayload = {
         recipientWallet,
         amount: eachWallet.amount,
-        to: eachWallet.email,
+        to: eachWallet.recipientEmail,
         from: process.env.SENDER_EMAIL,
         subject: "Credit Alert",
         transactionDay,
