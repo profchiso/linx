@@ -6,6 +6,7 @@ const { staffRegistrationValidation } = require("../utils/staff-registration-val
 const { upload, cloudinary } = require("../utils/imageProcessing")
 const { sendDataToAWSQueue } = require("../utils/sendDataToQueue");
 const { hashUserPassword, decryptPassword, } = require("../utils/passwordHashing")
+const { generateAccessToken } = require("../utils/generateAccessToken")
 const { generateRandomLengthPassword } = require("../utils/generateRandomPassword")
 const { generateEntityId } = require("../utils/generateEntityId")
 const { sendMailWithSendgrid } = require("../utils/emailing")
@@ -441,6 +442,7 @@ staffRouter.post(
                 },
             };
 
+            console.log(payLoad)
             let accessToken = await generateAccessToken(payLoad);
 
             let { data } = await axios.get(`${BUSINESS_SERVICE_URL}/api/v1/business/${existingStaff.businessId}`)
