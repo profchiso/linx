@@ -1,9 +1,16 @@
+const AWS = require("aws-sdk");
 const { Invoice } = require("../models/invoice");
 const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
 const { sendMailWithSendGrid } = require("../helper/emailTransport");
 const { formatInvoiceMail } = require("../helper/emailFormat");
+
+AWS.config.update({ region: "us-east-1" });
+//AWS.config.update({accessKeyId: process.env.AWS_ACCESS_KEY_ID,secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,});
+
+// Create an SQS service object
+const sqs = new AWS.SQS({ apiVersion: "2012-11-05" });
 
 module.exports = async (req, res) => {
   try {
@@ -18,20 +25,20 @@ module.exports = async (req, res) => {
     //     throw new NotAuthorisedError()
     // }
 
-    //authenticate user
-    const { data } = await axios.get(`${AUTH_URL}`, {
-      headers: {
-        authorization: req.headers.authorization,
-      },
-    });
-    //check if user is not authenticated
-    if (!data.user) {
-      return res.status(401).send({
-        message: `Access denied, you are not authenticated`,
-        statuscode: 401,
-        errors: [{ message: `Access denied, you are not authenticated` }],
-      });
-    }
+    // //authenticate user
+    // const { data } = await axios.get(`${AUTH_URL}`, {
+    //   headers: {
+    //     authorization: req.headers.authorization,
+    //   },
+    // });
+    // //check if user is not authenticated
+    // if (!data.user) {
+    //   return res.status(401).send({
+    //     message: `Access denied, you are not authenticated`,
+    //     statuscode: 401,
+    //     errors: [{ message: `Access denied, you are not authenticated` }],
+    //   });
+    // }
 
     const { customerEmail } = req.body;
 
@@ -51,15 +58,32 @@ module.exports = async (req, res) => {
 
     await invoice.save();
 
-    // transport object
-    const mailOptions = {
+    // // transport object
+    // const mailOptions = {
+    //   to: customerEmail,
+    //   from: process.env.SENDER_EMAIL,
+    //   subject: "Your Invoice",
+    //   html: formatInvoiceMail(invoice),
+    // };
+
+    // await sendMailWithSendGrid(mailOptions);
+
+    let invoicePayload = {
       to: customerEmail,
       from: process.env.SENDER_EMAIL,
       subject: "Your Invoice",
-      html: formatInvoiceMail(invoice),
+      invoice,
     };
 
-    await sendMailWithSendGrid(mailOptions);
+    let invoiceSqs = {
+      MessageBody: JSON.stringify(invoicePayload),
+      QueueUrl: process.env.GENERALNOTIFICATIONQUEUEURL,
+    };
+    let sendSqsMessage = sqs.sendMessage(invoiceSqs).promise();
+
+    console.log(
+      "Invoice payload successfully pushed to email notification queue"
+    );
 
     return res.status(200).send({
       message: `Invoice sent successfully to ${customerEmail}`,
