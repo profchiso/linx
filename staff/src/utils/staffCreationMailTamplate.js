@@ -135,6 +135,19 @@ exports.staffCreationMail = async(options) => {
               >${options.password}</span
             >
             <br />
+            StaffId:
+            <span
+              style="
+                font-family: Steradian;
+                font-style: normal;
+                font-weight: 300;
+                font-size: 20px;
+                line-height: 26px;
+                color: #000;
+              "
+              >${options.staffId}</span
+            >
+            <br />
             Click the link below to open the LinX app, change your password and
             login to your user dashboard.
           </div>

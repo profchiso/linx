@@ -219,7 +219,8 @@ staffRouter.post(
                 roleName,
                 businessTradingName,
                 businessAlias,
-                password: tempPassword
+                password: tempPassword,
+                staffId
             }
             let html = await staffCreationMail(mailTemplateOptions)
 
