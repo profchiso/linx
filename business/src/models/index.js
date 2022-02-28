@@ -19,7 +19,7 @@ const DB_CONFIG = {
 
 
 let sequelize;
-if (db_uri) {
+if (db_uri == "") {
     sequelize = new Sequelize(db_uri, { dialect: "postgres" });
 
 } else {
