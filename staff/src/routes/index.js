@@ -436,7 +436,7 @@ staffRouter.post(
             const payLoad = {
                 user: {
                     id: existingStaff.id,
-                    role: existingStaff.role,
+                    role: existingStaff.roleName,
                     permissions: staffRoleDetails.permissions,
                     type: "Staff"
                 },
