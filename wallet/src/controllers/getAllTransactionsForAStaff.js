@@ -31,9 +31,9 @@ module.exports = async (req, res) => {
       });
     }
 
-    const { staffId, businessId } = req.params;
+    const { businessId, staffId } = req.params;
     const transactions = await db.transaction.findAll({
-      where: { staffId, businessId },
+      where: { businessId, staffId },
     });
     if (transactions.length == 0) {
       res.status(200).send({
