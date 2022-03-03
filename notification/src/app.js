@@ -2,6 +2,8 @@ const express = require("express");
 
 const cronJob = require("node-cron");
 
+const path = require("path");
+
 const cors = require("cors");
 
 require("express-async-errors");
@@ -36,6 +38,7 @@ app.set("trust proxy", true);
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(
   cookieSession({
     signed: false,
@@ -168,7 +171,12 @@ cronJob.schedule("5 * * * * *", () => {
                 to: parsedData.to,
                 from: parsedData.from,
                 subject: parsedData.subject,
-                html: formatInvoiceMail(parsedData.invoice),
+                html: formatInvoiceMail(
+                  parsedData.invoice,
+                  parsedData.transactionDay,
+                  parsedData.totalAmount,
+                  parsedData.quantity
+                ),
               };
 
               await sendMailWithSendGrid(mailOptionsForInvoice);
