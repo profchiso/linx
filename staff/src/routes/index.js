@@ -312,7 +312,7 @@ staffRouter.get(
             let staffRoleDetails = await db.roles.findOne({ where: { id: foundStaff.roleId }, include: ["permissions"] })
             console.log(staffRoleDetails)
 
-            foundStaff.permissions = staffRoleDetails.permissions
+            foundStaff.permissions = staffRoleDetails.dataValues.permissions
 
             res.status(200).send({ message: `Staff fetched`, statuscode: 200, data: { staff: foundStaff } });
 
