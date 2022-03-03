@@ -3,8 +3,8 @@ const { Invoice } = require("../models/invoice");
 const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
-const { sendMailWithSendGrid } = require("../helper/emailTransport");
-const { formatInvoiceMail } = require("../helper/emailFormat");
+// const { sendMailWithSendGrid } = require("../helper/emailTransport");
+// const { formatInvoiceMail } = require("../helper/emailFormat");
 
 AWS.config.update({ region: "us-east-1" });
 //AWS.config.update({accessKeyId: process.env.AWS_ACCESS_KEY_ID,secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,});
@@ -25,20 +25,20 @@ module.exports = async (req, res) => {
     //     throw new NotAuthorisedError()
     // }
 
-    // //authenticate user
-    // const { data } = await axios.get(`${AUTH_URL}`, {
-    //   headers: {
-    //     authorization: req.headers.authorization,
-    //   },
-    // });
-    // //check if user is not authenticated
-    // if (!data.user) {
-    //   return res.status(401).send({
-    //     message: `Access denied, you are not authenticated`,
-    //     statuscode: 401,
-    //     errors: [{ message: `Access denied, you are not authenticated` }],
-    //   });
-    // }
+    //authenticate user
+    const { data } = await axios.get(`${AUTH_URL}`, {
+      headers: {
+        authorization: req.headers.authorization,
+      },
+    });
+    //check if user is not authenticated
+    if (!data.user) {
+      return res.status(401).send({
+        message: `Access denied, you are not authenticated`,
+        statuscode: 401,
+        errors: [{ message: `Access denied, you are not authenticated` }],
+      });
+    }
 
     const { customerEmail } = req.body;
 
@@ -58,6 +58,16 @@ module.exports = async (req, res) => {
 
     await invoice.save();
 
+    //get day and month
+    const today = new Date();
+    const transactionMonth = today.toLocaleString("default", {
+      month: "short",
+    });
+    const transactionDay = today.toLocaleString().substring(0, 10);
+
+    let totalAmount = invoice.goodsDetail[0].totalAmount;
+    let quantity = invoice.goodsDetail[0].quantity;
+
     // // transport object
     // const mailOptions = {
     //   to: customerEmail,
@@ -73,6 +83,9 @@ module.exports = async (req, res) => {
       from: process.env.SENDER_EMAIL,
       subject: "Your Invoice",
       invoice,
+      transactionDay,
+      totalAmount,
+      quantity,
     };
 
     let invoiceSqs = {
