@@ -4,20 +4,20 @@ const AUTH_URL = "https://linx-rds.herokuapp.com/api/v1/auth/authenticate";
 const { validate } = require("../helper/validateWallet");
 
 module.exports = async (req, res) => {
-  //authenticate user
-  const { data } = await axios.get(`${AUTH_URL}`, {
-    headers: {
-      authorization: req.headers.authorization,
-    },
-  });
-  //check if user is not authenticated
-  if (!data.user) {
-    return res.status(401).send({
-      message: `Access denied, you are not authenticated`,
-      statuscode: 401,
-      errors: [{ message: `Access denied, you are not authenticated` }],
-    });
-  }
+  // //authenticate user
+  // const { data } = await axios.get(`${AUTH_URL}`, {
+  //   headers: {
+  //     authorization: req.headers.authorization,
+  //   },
+  // });
+  // //check if user is not authenticated
+  // if (!data.user) {
+  //   return res.status(401).send({
+  //     message: `Access denied, you are not authenticated`,
+  //     statuscode: 401,
+  //     errors: [{ message: `Access denied, you are not authenticated` }],
+  //   });
+  // }
 
   // wallet validation
   const { error } = validate(req.body);
