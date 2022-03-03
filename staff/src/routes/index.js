@@ -309,6 +309,10 @@ staffRouter.get(
 
 
             const foundStaff = await db.staff.findOne({ where: { id: staffId }, include: ["role"] });
+            let staffRoleDetails = await db.roles.findOne({ where: { id: foundStaff.roleId }, include: ["permissions"] })
+            console.log(staffRoleDetails)
+
+            foundStaff.permissions = staffRoleDetails.permissions
 
             res.status(200).send({ message: `Staff fetched`, statuscode: 200, data: { staff: foundStaff } });
 
