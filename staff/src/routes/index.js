@@ -81,7 +81,7 @@ staffRouter.post(
 
 
 
-            const { firstName, lastName, email, phoneNumber, dataOfBirth, address, country, state, lga, bankName, accountName, accountNumber, roleName, roleId, employmentType, businessId, paymentAccount, password, businessTradingName, businessAlias, companyStaffId } = req.body
+            const { firstName, lastName, email, phoneNumber, dataOfBirth, address, country, state, lga, bankName, accountName, accountNumber, roleName, roleId, employmentType, businessId, paymentAccount, password, businessTradingName, businessAlias, companyStaffId, designation } = req.body
 
 
             //request body validation
@@ -182,6 +182,7 @@ staffRouter.post(
                 companyStaffId: companyStaffId || "",
                 password: hashedPassword,
                 staffId,
+                designation
                 // userId: data.user.id,
             })
 

@@ -122,6 +122,9 @@ module.exports = {
             companyStaffId: {
                 type: Sequelize.STRING
             },
+            designation: {
+                type: Sequelize.STRING
+            },
 
             createdAt: {
                 allowNull: false,
