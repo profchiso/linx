@@ -25,6 +25,7 @@ module.exports.validateWalletCreditData = function validate(req) {
   const schema = Joi.object({
     recipientWalletId: Joi.number().required(),
     businessId: Joi.number().required(),
+    staffId: Joi.number(),
     amount: Joi.number().required(),
     recipientType: Joi.string().required(),
     walletOwnerEmail: Joi.string().required(),
