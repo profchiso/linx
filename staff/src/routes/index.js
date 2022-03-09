@@ -181,7 +181,8 @@ staffRouter.post(
                 businessAlias: formattedBusinessAlias,
                 companyStaffId: companyStaffId || "",
                 password: hashedPassword,
-                staffId
+                staffId,
+                userId: data.user.id,
             })
 
 
@@ -197,7 +198,8 @@ staffRouter.post(
                 phoneNumber,
                 name: `${firstName} ${lastName}`,
                 email: email,
-                walletCategory: "staff"
+                walletCategory: "staff",
+                alias: businessAlias,
             }
 
             let queueResponse = await sendDataToAWSQueue(awsQueuePayload, queueUrl)
