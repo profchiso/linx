@@ -182,7 +182,7 @@ staffRouter.post(
                 companyStaffId: companyStaffId || "",
                 password: hashedPassword,
                 staffId,
-                userId: data.user.id,
+                // userId: data.user.id,
             })
 
 
