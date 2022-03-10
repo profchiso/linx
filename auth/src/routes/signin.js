@@ -10,7 +10,7 @@ const { permissions } = require("../utils/permissions")
 const db = require("../models/index")
 const signinRouter = express.Router();
 
-const BUSINESS_SERVICE_URL = `https://linx-business.herokuapp.com/api/v1/business`
+const BUSINESS_SERVICE_URL = process.env.BUSINESS_SERVICE_URL
 
 //SIGIN IN USER
 signinRouter.post(
