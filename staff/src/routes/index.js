@@ -16,6 +16,7 @@ const { authenticate } = require("../utils/authService")
 const db = require("../models/index")
 const staffRouter = express.Router();
 const AUTH_URL = process.env.AUTH_URL
+const STAFF_AUTH_URL = process.env.STAFF_AUTH_URL
 const BUSINESS_SERVICE_URL = process.env.BUSINESS_SERVICE_URL
 const queueUrl = process.env.STAFF_CREATION_QUEUE;
 
@@ -25,15 +26,44 @@ staffRouter.get(
     async(req, res) => {
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
-                    headers: {
-                        authorization: req.headers.authorization
-                    }
-                })
-                //check if user is not authenticated
-            if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+
+            let authUser
+            const { authSource } = req.query
+            if (!authSource) {
+                return res.status(400).send({ message: `authSource query parameter required`, statuscode: 400, errors: [{ message: `authSource query parameter required` }] });
             }
+
+            if (authSource.toLowerCase() === "user") {
+
+                const { data } = await axios.get(`${AUTH_URL}`, {
+                        headers: {
+                            authorization: req.headers.authorization
+                        }
+                    })
+                    //check if user is not authenticated
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else if (authSource.toLowerCase() === "staff") {
+
+                const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                        headers: {
+                            authorization: req.headers.authorization
+                        }
+                    })
+                    //check if user is not authenticated
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else {
+                return res.status(400).send({ message: `Invalid authSource query parameter value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
+            }
+
+
 
 
             //get all registered businesses
