@@ -12,6 +12,7 @@ const { generateEntityId } = require("../utils/generateEntityId")
 const { sendMailWithSendgrid } = require("../utils/emailing")
 const { staffCreationMail } = require("../utils/staffCreationMailTamplate")
 const { permissions } = require("../utils/permissions")
+const { authenticate } = require("../utils/authService")
 const db = require("../models/index")
 const staffRouter = express.Router();
 const AUTH_URL = process.env.AUTH_URL
@@ -466,6 +467,27 @@ staffRouter.post(
 
 
             res.status(200).send({ message: "Signin successful", statuscode: 200, data: { staff: existingStaff, accessToken, business: data.business } });
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Something went wrong", statuscode: 500, errors: [{ message: error.message || "internal server error" }] })
+
+        }
+
+
+    }
+);
+
+
+//AUTHENTICATE REQUESTS
+staffRouter.get(
+    '/api/v1/authenticate-staff/authenticate',
+    authenticate,
+    async(req, res) => {
+        try {
+            console.log("auth user", req.user)
+
+            res.status(200).send({ user: req.user });
 
         } catch (error) {
             console.log(error)
