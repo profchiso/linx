@@ -38,8 +38,9 @@ exports.authenticate = async(req, res, next) => {
         let staffRoleDetails = await db.roles.findOne({ where: { id: user.roleId }, include: ["permissions"] })
             //Allow access to protected route
         req.user = user;
-        req.user.permissions = staffRoleDetails.permissions,
-            res.locals.user = user;
+        req.user.permissions = staffRoleDetails.permissions
+        console.log(req.user)
+        res.locals.user = user;
 
         next();
     } catch (error) {
