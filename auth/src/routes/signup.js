@@ -8,6 +8,7 @@ const { generateAccessToken } = require("../utils/generateAccessToken");
 const { authenticate } = require("../utils/authService")
 const { signUpValidations } = require("../utils/signUpValidation")
 const { userCreationMail } = require("../utils/userCreationEmail")
+const { permissions } = require("../utils/permissions")
 const db = require("../models/index")
 const signupRouter = express.Router();
 
@@ -67,6 +68,7 @@ signupRouter.post(
             const payLoad = {
                 user: {
                     id: user.id,
+                    permissions
                 },
             };
 
@@ -203,6 +205,8 @@ signupRouter.get(
     authenticate,
     async(req, res) => {
         try {
+            console.log("auth user", req.user)
+
             res.status(200).send({ user: req.user });
 
         } catch (error) {
