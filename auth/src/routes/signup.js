@@ -68,7 +68,8 @@ signupRouter.post(
             const payLoad = {
                 user: {
                     id: user.id,
-                    permissions
+                    permissions,
+                    type: "User"
                 },
             };
 

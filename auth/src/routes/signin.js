@@ -6,6 +6,7 @@ const { hashUserPassword, decryptPassword } = require("../utils/passwordHashing"
 const { generateAccessToken } = require("../utils/generateAccessToken");
 const { sendMailWithSendgrid, sendWithMailTrap, sendEmailWithMailgun } = require("../utils/emailing")
 const { generateVerificationCode } = require("../utils/generateVerificationCode")
+const { permissions } = require("../utils/permissions")
 const db = require("../models/index")
 const signinRouter = express.Router();
 
@@ -50,6 +51,8 @@ signinRouter.post(
             const payLoad = {
                 user: {
                     id: existingUser.id,
+                    permissions,
+                    type: "User"
                 },
             };
 
