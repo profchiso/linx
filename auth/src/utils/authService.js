@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const db = require("../models/index");
 const { NotFoundError, NotAuthorisedError } = require("@bc_tickets/common");
+const { permissions } = require("../utils/permissions")
 const JWT_SECRET = process.env.JWT_KEY;
 
 exports.authenticate = async(req, res, next) => {
@@ -36,6 +37,7 @@ exports.authenticate = async(req, res, next) => {
         }
         //Allow access to protected route
         req.user = user;
+        req.user.permissions = permissions
         res.locals.user = user;
 
         next();

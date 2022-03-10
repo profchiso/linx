@@ -7,6 +7,7 @@ const { upload, cloudinary } = require("../utils/imageProcessing")
 const { generateAccessToken } = require("../utils/generateAccessToken");
 const { authenticate } = require("../utils/authService")
 const { signUpValidations } = require("../utils/signUpValidation")
+const { userCreationMail } = require("../utils/userCreationEmail")
 const db = require("../models/index")
 const signupRouter = express.Router();
 
@@ -39,6 +40,13 @@ signupRouter.post(
             let newUser = { firstName, lastName, phone, password: hashedPassword, verificationCode, email }
             const user = await db.User.create(newUser);
 
+            let mailTemplateOption = {
+                firstName,
+                lastName,
+                verificationCode
+            }
+            let html = await userCreationMail(mailTemplateOption)
+
 
             let msg = `${user.firstName}, 
         Your LinX account has been created successfully. Please use the following code:
@@ -51,6 +59,7 @@ signupRouter.post(
                 to: user.email,
                 subject: `LinX Account`,
                 text: msg,
+                html
             };
 
             //SEND MAIL CONTAINING VERIFICATION CODE UPON SIGNUP
