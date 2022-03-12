@@ -16,7 +16,7 @@ const { authenticate } = require("../utils/authService")
 const db = require("../models/index")
 const staffRouter = express.Router();
 const AUTH_URL = process.env.AUTH_URL
-const STAFF_AUTH_URL = process.env.STAFF_AUTH_URL
+    //const STAFF_AUTH_URL = process.env.STAFF_AUTH_URL
 const BUSINESS_SERVICE_URL = process.env.BUSINESS_SERVICE_URL
 const queueUrl = process.env.STAFF_CREATION_QUEUE;
 

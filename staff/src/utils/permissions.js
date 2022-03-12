@@ -8,5 +8,4 @@ exports.permissions = [
     { id: 7, slug: "HANDLE_PAYROLL", name: "HANDLE PAYROLL", description: "User can hadle payroll, pay other staff on business behalf with business funds" },
     { id: 8, slug: "HANDLE_BUSINESS_SERVICES", name: "HANDLE BUSINESS SERVICES", description: "Handle business services on befalf of business" },
     { id: 9, slug: "HANDLE_MARKET_PLACE", name: "HANDLE MARKET PLACE", description: "Handle markt place on behalf of business" },
-
 ]
