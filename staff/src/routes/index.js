@@ -305,11 +305,11 @@ staffRouter.get(
 
             let authUser
                 //const { authSource } = req.query
-            if (!authSource) {
+            if (!req.headers.authSource) {
                 return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
             }
 
-            if (authSource.toLowerCase() === "user") {
+            if (req.headers.authSource.toLowerCase() === "user") {
 
                 const { data } = await axios.get(`${AUTH_URL}`, {
                         headers: {
@@ -322,7 +322,7 @@ staffRouter.get(
                 }
                 authUser = data.user
 
-            } else if (authSource.toLowerCase() === "staff") {
+            } else if (req.headers.authSource.toLowerCase() === "staff") {
 
                 const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
                         headers: {
