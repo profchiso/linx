@@ -590,7 +590,12 @@ staffRouter.post(
 
             let accessToken = await generateAccessToken(payLoad);
 
-            let { data } = await axios.get(`${BUSINESS_SERVICE_URL}/api/v1/business/${existingStaff.businessId}`)
+            let { data } = await axios.get(`${BUSINESS_SERVICE_URL}/api/v1/business/${existingStaff.businessId}`, {
+                headers: {
+                    authorization: `Bearer ${accessToken}`,
+                    authsource: "staff"
+                }
+            })
             console.log("staff business", data)
 
 
