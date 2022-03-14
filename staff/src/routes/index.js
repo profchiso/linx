@@ -301,7 +301,7 @@ staffRouter.get(
             //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             // }
             const authSource = req.headers.authSource
-            console.log(req.headers)
+            console.log(req.headers.authSource)
 
             let authUser
                 //const { authSource } = req.query
