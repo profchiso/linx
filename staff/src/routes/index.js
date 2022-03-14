@@ -300,17 +300,17 @@ staffRouter.get(
             // if (!data.user) {
             //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             // }
-            const authSource = req.headers.authSource
+            //const authSource = req.headers.authSource
             console.log(req.headers)
-            console.log(req.headers.authSource)
+            console.log(req.headers.authsource)
 
             let authUser
                 //const { authSource } = req.query
-            if (!req.headers.authSource) {
+            if (!req.headers.authsource) {
                 return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
             }
 
-            if (req.headers.authSource.toLowerCase() === "user") {
+            if (req.headers.authsource.toLowerCase() === "user") {
 
                 const { data } = await axios.get(`${AUTH_URL}`, {
                         headers: {
@@ -323,7 +323,7 @@ staffRouter.get(
                 }
                 authUser = data.user
 
-            } else if (req.headers.authSource.toLowerCase() === "staff") {
+            } else if (req.headers.authsource.toLowerCase() === "staff") {
 
                 const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
                         headers: {
