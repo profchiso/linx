@@ -11,6 +11,8 @@ const { userCreationMail } = require("../utils/userCreationEmail")
 const { permissions } = require("../utils/permissions")
 const db = require("../models/index")
 const signupRouter = express.Router();
+const AUTH_URL = process.env.AUTH_URL
+const STAFF_AUTH_URL = process.env.STAFF_AUTH_URL
 
 //SIGIN UP USER
 signupRouter.post(

@@ -11,6 +11,8 @@ const db = require("../models/index")
 const signinRouter = express.Router();
 
 const BUSINESS_SERVICE_URL = process.env.BUSINESS_SERVICE_URL
+const AUTH_URL = process.env.AUTH_URL
+const STAFF_AUTH_URL = process.env.STAFF_AUTH_URL
 
 //SIGIN IN USER
 signinRouter.post(
