@@ -19,17 +19,40 @@ businessRouter.get(
     async(req, res) => {
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
+            let authUser
+
+            if (!req.headers.authsource) {
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
+            }
+
+            if (req.headers.authsource.toLowerCase() === "user") {
+
+                const { data } = await axios.get(`${AUTH_URL}`, {
                     headers: {
                         authorization: req.headers.authorization
                     }
                 })
-                //check if user is not authenticated
-            if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            }
 
-            console.log("req query", req.query)
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else if (req.headers.authsource.toLowerCase() === "staff") {
+
+                const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else {
+                return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
+            }
 
 
             //get all registered businesses
@@ -51,16 +74,40 @@ businessRouter.get(
     async(req, res) => {
 
         try {
-            //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            // }
+            let authUser
+
+            if (!req.headers.authsource) {
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
+            }
+
+            if (req.headers.authsource.toLowerCase() === "user") {
+
+                const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else if (req.headers.authsource.toLowerCase() === "staff") {
+
+                const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else {
+                return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
+            }
 
             const { id } = req.params;
 
@@ -94,16 +141,40 @@ businessRouter.post(
 
         try {
             //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
+            let authUser
+
+            if (!req.headers.authsource) {
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
+            }
+
+            if (req.headers.authsource.toLowerCase() === "user") {
+
+                const { data } = await axios.get(`${AUTH_URL}`, {
                     headers: {
                         authorization: req.headers.authorization
                     }
                 })
-                //check if user is not authenticated
-            if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else if (req.headers.authsource.toLowerCase() === "staff") {
+
+                const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else {
+                return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
             }
-            //console.log("req", req.body)
 
             //request body validation
             const errors = validationResult(req);
@@ -325,7 +396,7 @@ businessRouter.post(
                 address,
                 country,
                 tin,
-                userId: data.user.id || userId,
+                userId: authUser.user.id || userId,
                 rcNumber,
                 state,
                 utilityBillImage: imageData.utilityBillImage,
@@ -343,7 +414,7 @@ businessRouter.post(
 
             //create business alias
 
-            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: data.user.id })
+            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdBusiness.id, userId: authUser.user.id })
 
             //create business owners
             let partners = [];
@@ -402,7 +473,7 @@ businessRouter.post(
 
             let awsQueuePayload = {
                 businessId: createdBusiness.id,
-                userId: data.user.id || userId,
+                userId: authUser.user.id || userId,
                 alias: alias.toUpperCase(),
                 tradingName,
                 name: tradingName || "",
@@ -571,7 +642,7 @@ businessRouter.post(
                 yearOfOperation,
                 address,
                 country,
-                userId: data.user.id,
+                userId: authUser.user.id,
                 state,
                 utilityBillImage: imageData.utilityBillImage,
                 alias: alias.toUpperCase(),
@@ -584,7 +655,7 @@ businessRouter.post(
             })
 
             //create business alias
-            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdFreelanceBusiness.id, userId: data.user.id })
+            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdFreelanceBusiness.id, userId: authUser.user.id })
 
             //create business owners
             let partners = [];
