@@ -65,7 +65,8 @@ signinRouter.post(
                 //get associated businesses
                 let { data } = await axios.get(`${BUSINESS_SERVICE_URL}/my-businesses/${existingUser.id}`, {
                     headers: {
-                        authorization: `Bearer ${accessToken}`
+                        authorization: `Bearer ${accessToken}`,
+                        authsource: "user"
                     }
                 })
                 console.log("data", data)
