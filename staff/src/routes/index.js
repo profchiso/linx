@@ -243,8 +243,7 @@ staffRouter.post(
 
             let returnData = {...createdStaff.dataValues }
             delete returnData.password
-            console.log(createdStaff.id)
-            console.log(returnData.id)
+
 
             let awsQueuePayload = {
                 staffId: createdStaff.id,
