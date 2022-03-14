@@ -345,7 +345,7 @@ staffRouter.get(
             } else {
                 return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
             }
-            console.log(authUser.user.id)
+            console.log(authUser)
 
 
 
