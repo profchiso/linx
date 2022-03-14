@@ -733,7 +733,7 @@ businessRouter.post(
 
             let awsQueuePayload = {
                 businessId: createdFreelanceBusiness.id,
-                userId: data.user.id || userId,
+                userId: authUser.id || userId,
                 alias: alias.toUpperCase(),
                 tradingName,
                 name: tradingName || "",
@@ -937,7 +937,7 @@ businessRouter.post(
 
 
             //create business alias
-            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdUnregisteredBusiness.id, userId: authUser.id, }) // data.user.id || userId
+            const businesAlias = await db.aliases.create({ name: alias.toUpperCase(), businessId: createdUnregisteredBusiness.id, userId: authUser.id, })
             console.log("business", businesAlias)
                 //create business owners
             let partners = [];
