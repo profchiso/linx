@@ -39,6 +39,9 @@ exports.authenticate = async(req, res, next) => {
             //Allow access to protected route
         req.user = user;
         req.user.permissions = staffRoleDetails.permissions
+        req.user.type = "staff"
+        req.user.role = staffRoleDetails.role || "staff"
+        req.user.id = user.id
         console.log(req.user)
         res.locals.user = user;
 
