@@ -234,7 +234,7 @@ staffRouter.post(
                 password: hashedPassword,
                 staffId,
                 designation
-                // userId: data.user.id,
+                // userId: authUser.id,
             })
 
 
@@ -245,7 +245,7 @@ staffRouter.post(
 
             let awsQueuePayload = {
                 staffId: createdStaff.id,
-                userId: authUser.user.id,
+                userId: authUser.id,
                 businessId,
                 phoneNumber,
                 name: `${firstName} ${lastName}`,
@@ -678,9 +678,9 @@ staffRouter.patch("/api/v1/business-staff/update-password",
             const { oldPassword, newPassword, newConfirmPassword } = req.body;
             console.log("request body", req.body)
 
-            console.log("req.user.id", req.user.id)
+            console.log("req.user.id", authUser.id)
                 //get the user from the user collection
-            const staff = await db.staff.findOne({ where: { id: authUser.user.id } });
+            const staff = await db.staff.findOne({ where: { id: authUser.id } });
             console.log("user", user)
             if (!staff) {
                 return res.status(404).json({ message: "Staff not found", statuscode: 404, errors: [{ message: "Staff not found" }] })
@@ -699,10 +699,10 @@ staffRouter.patch("/api/v1/business-staff/update-password",
             }
             hashedNewPassword = await hashUserPassword(newPassword);
 
-            const updatedStaff = await db.staff.update({ password: hashedNewPassword }, { where: { id: authUser.user.id }, returning: true, plain: true })
+            const updatedStaff = await db.staff.update({ password: hashedNewPassword }, { where: { id: authUser.id }, returning: true, plain: true })
 
             //log staff in by assigning him a token
-            let staffDetails = await db.staff.findOne({ where: { id: authUser.user.id }, include: ["role"] })
+            let staffDetails = await db.staff.findOne({ where: { id: authUser.id }, include: ["role"] })
             let staffRoleDetails = await db.roles.findOne({ where: { id: staffDetails.roleId }, include: ["permissions"] })
 
             //JWT PAYLOAD FOR SIGINED IN staff
