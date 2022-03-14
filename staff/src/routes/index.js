@@ -27,35 +27,32 @@ staffRouter.get(
         try {
             //authenticate user
 
-            const authSource = req.headers.authSource
-
             let authUser
-                //const { authSource } = req.query
-            if (!authSource) {
-                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource query parameter required` }] });
+
+            if (!req.headers.authsource) {
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
             }
 
-            if (authSource.toLowerCase() === "user") {
+            if (req.headers.authsource.toLowerCase() === "user") {
 
                 const { data } = await axios.get(`${AUTH_URL}`, {
-                        headers: {
-                            authorization: req.headers.authorization
-                        }
-                    })
-                    //check if user is not authenticated
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+
                 if (!data.user) {
                     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
                 }
                 authUser = data.user
 
-            } else if (authSource.toLowerCase() === "staff") {
+            } else if (req.headers.authsource.toLowerCase() === "staff") {
 
                 const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
-                        headers: {
-                            authorization: req.headers.authorization
-                        }
-                    })
-                    //check if user is not authenticated
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
                 if (!data.user) {
                     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
                 }
@@ -64,9 +61,6 @@ staffRouter.get(
             } else {
                 return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
             }
-
-
-
 
             //get all registered businesses
             const staff = await db.staff.findAll({ where: req.query, include: ["role"] });
@@ -101,15 +95,39 @@ staffRouter.post(
     async(req, res) => {
 
         try {
-            //authenticate user
-            const { data } = await axios.get(`${AUTH_URL}`, {
+            let authUser
+
+            if (!req.headers.authsource) {
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
+            }
+
+            if (req.headers.authsource.toLowerCase() === "user") {
+
+                const { data } = await axios.get(`${AUTH_URL}`, {
                     headers: {
                         authorization: req.headers.authorization
                     }
                 })
-                //check if user is not authenticated
-            if (!data.user) {
-                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else if (req.headers.authsource.toLowerCase() === "staff") {
+
+                const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else {
+                return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
             }
 
 
@@ -227,7 +245,7 @@ staffRouter.post(
 
             let awsQueuePayload = {
                 staffId: createdStaff.id,
-                userId: data.user.id,
+                userId: authUser.user.id,
                 businessId,
                 phoneNumber,
                 name: `${firstName} ${lastName}`,
@@ -291,21 +309,10 @@ staffRouter.get(
     async(req, res) => {
         //authenticate user
         try {
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            // }
-            //const authSource = req.headers.authSource
-            console.log(req.headers)
-            console.log(req.headers.authsource)
+
 
             let authUser
-                //const { authSource } = req.query
+
             if (!req.headers.authsource) {
                 return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
             }
@@ -313,11 +320,11 @@ staffRouter.get(
             if (req.headers.authsource.toLowerCase() === "user") {
 
                 const { data } = await axios.get(`${AUTH_URL}`, {
-                        headers: {
-                            authorization: req.headers.authorization
-                        }
-                    })
-                    //check if user is not authenticated
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+
                 if (!data.user) {
                     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
                 }
@@ -326,11 +333,10 @@ staffRouter.get(
             } else if (req.headers.authsource.toLowerCase() === "staff") {
 
                 const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
-                        headers: {
-                            authorization: req.headers.authorization
-                        }
-                    })
-                    //check if user is not authenticated
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
                 if (!data.user) {
                     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
                 }
@@ -339,7 +345,7 @@ staffRouter.get(
             } else {
                 return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
             }
-            console.log("auth user", authUser)
+
 
 
             const { businessId } = req.params;
@@ -371,16 +377,41 @@ staffRouter.get(
     async(req, res) => {
 
         try {
-            // //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            // }
+            let authUser
+
+            if (!req.headers.authsource) {
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
+            }
+
+            if (req.headers.authsource.toLowerCase() === "user") {
+
+                const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else if (req.headers.authsource.toLowerCase() === "staff") {
+
+                const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else {
+                return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
+            }
+
 
             const { staffId } = req.params;
 
@@ -417,16 +448,41 @@ staffRouter.patch(
     async(req, res) => {
 
         try {
-            //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            // }
+            let authUser
+
+            if (!req.headers.authsource) {
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
+            }
+
+            if (req.headers.authsource.toLowerCase() === "user") {
+
+                const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else if (req.headers.authsource.toLowerCase() === "staff") {
+
+                const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else {
+                return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
+            }
+
 
             const { staffId } = req.params;
             if (req.body.profilePix) {
@@ -577,12 +633,53 @@ staffRouter.patch("/api/v1/business-staff/update-password",
     // authenticate,
     async(req, res) => {
         try {
+
+            let authUser
+
+            if (!req.headers.authsource) {
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
+            }
+
+            if (req.headers.authsource.toLowerCase() === "user") {
+
+                const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else if (req.headers.authsource.toLowerCase() === "staff") {
+
+                const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else {
+                return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
+            }
+
+
+
+
+
+
             const { oldPassword, newPassword, newConfirmPassword } = req.body;
             console.log("request body", req.body)
 
             console.log("req.user.id", req.user.id)
                 //get the user from the user collection
-            const staff = await db.staff.findOne({ where: { id: req.user.id } });
+            const staff = await db.staff.findOne({ where: { id: authUser.user.id } });
             console.log("user", user)
             if (!staff) {
                 return res.status(404).json({ message: "Staff not found", statuscode: 404, errors: [{ message: "Staff not found" }] })
@@ -601,10 +698,10 @@ staffRouter.patch("/api/v1/business-staff/update-password",
             }
             hashedNewPassword = await hashUserPassword(newPassword);
 
-            const updatedStaff = await db.staff.update({ password: hashedNewPassword }, { where: { id: req.user.id }, returning: true, plain: true })
+            const updatedStaff = await db.staff.update({ password: hashedNewPassword }, { where: { id: authUser.user.id }, returning: true, plain: true })
 
             //log staff in by assigning him a token
-            let staffDetails = await db.staff.findOne({ where: { id: req.user.id }, include: ["role"] })
+            let staffDetails = await db.staff.findOne({ where: { id: authUser.user.id }, include: ["role"] })
             let staffRoleDetails = await db.roles.findOne({ where: { id: staffDetails.roleId }, include: ["permissions"] })
 
             //JWT PAYLOAD FOR SIGINED IN staff
@@ -631,16 +728,42 @@ staffRouter.post(
     async(req, res) => {
 
         try {
-            //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            // }
+            let authUser
+
+            if (!req.headers.authsource) {
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
+            }
+
+            if (req.headers.authsource.toLowerCase() === "user") {
+
+                const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else if (req.headers.authsource.toLowerCase() === "staff") {
+
+                const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else {
+                return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
+            }
+
+
 
             const { staffId } = req.params;
 
@@ -661,6 +784,42 @@ staffRouter.post(
 //create role for a business
 staffRouter.post("/api/v1/staff/business/roles", async(req, res) => {
     const { name, businessId, permissions } = req.body
+    let authUser
+
+    if (!req.headers.authsource) {
+        return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
+    }
+
+    if (req.headers.authsource.toLowerCase() === "user") {
+
+        const { data } = await axios.get(`${AUTH_URL}`, {
+            headers: {
+                authorization: req.headers.authorization
+            }
+        })
+
+        if (!data.user) {
+            return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+        }
+        authUser = data.user
+
+    } else if (req.headers.authsource.toLowerCase() === "staff") {
+
+        const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+            headers: {
+                authorization: req.headers.authorization
+            }
+        })
+        if (!data.user) {
+            return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+        }
+        authUser = data.user
+
+    } else {
+        return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
+    }
+
+
 
     try {
         let roleObj = {
@@ -707,16 +866,42 @@ staffRouter.delete(
     async(req, res) => {
 
         try {
-            //authenticate user
-            // const { data } = await axios.get(`${AUTH_URL}`, {
-            //         headers: {
-            //             authorization: req.headers.authorization
-            //         }
-            //     })
-            //     //check if user is not authenticated
-            // if (!data.user) {
-            //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
-            // }
+            let authUser
+
+            if (!req.headers.authsource) {
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
+            }
+
+            if (req.headers.authsource.toLowerCase() === "user") {
+
+                const { data } = await axios.get(`${AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else if (req.headers.authsource.toLowerCase() === "staff") {
+
+                const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                    headers: {
+                        authorization: req.headers.authorization
+                    }
+                })
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else {
+                return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
+            }
+
+
 
             const { staffId } = req.params
 
@@ -756,7 +941,45 @@ staffRouter.get("/api/v1/staff/business/roles/:roleId/:businessId/permissions", 
 
 //GET ALL ROLES AND PERMISSIONS FOR A BUSINESS
 staffRouter.get("/api/v1/staff/business/roles-permissions/:businessId", async(req, res) => {
+
+
     try {
+        let authUser
+
+        if (!req.headers.authsource) {
+            return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
+        }
+
+        if (req.headers.authsource.toLowerCase() === "user") {
+
+            const { data } = await axios.get(`${AUTH_URL}`, {
+                headers: {
+                    authorization: req.headers.authorization
+                }
+            })
+
+            if (!data.user) {
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            }
+            authUser = data.user
+
+        } else if (req.headers.authsource.toLowerCase() === "staff") {
+
+            const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                headers: {
+                    authorization: req.headers.authorization
+                }
+            })
+            if (!data.user) {
+                return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+            }
+            authUser = data.user
+
+        } else {
+            return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
+        }
+
+
         const { businessId } = req.params
 
 
