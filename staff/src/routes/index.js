@@ -300,6 +300,44 @@ staffRouter.get(
             // if (!data.user) {
             //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             // }
+            const authSource = req.headers.authSource
+
+            let authUser
+                //const { authSource } = req.query
+            if (!authSource) {
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource query parameter required` }] });
+            }
+
+            if (authSource.toLowerCase() === "user") {
+
+                const { data } = await axios.get(`${AUTH_URL}`, {
+                        headers: {
+                            authorization: req.headers.authorization
+                        }
+                    })
+                    //check if user is not authenticated
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else if (authSource.toLowerCase() === "staff") {
+
+                const { data } = await axios.get(`${STAFF_AUTH_URL}`, {
+                        headers: {
+                            authorization: req.headers.authorization
+                        }
+                    })
+                    //check if user is not authenticated
+                if (!data.user) {
+                    return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
+                }
+                authUser = data.user
+
+            } else {
+                return res.status(400).send({ message: `Invalid authSource in headers value, can only be staff or user`, statuscode: 400, errors: [{ message: `Invalid authSource query parameter value, can only be staff or user` }] });
+            }
+
 
             const { businessId } = req.params;
             const staff = await db.staff.findAll({ where: { businessId }, include: ["role"] });
