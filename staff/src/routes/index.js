@@ -301,11 +301,12 @@ staffRouter.get(
             //     return res.status(401).send({ message: `Access denied, you are not authenticated`, statuscode: 401, errors: [{ message: `Access denied, you are not authenticated` }] });
             // }
             const authSource = req.headers.authSource
+            console.log(req.headers)
 
             let authUser
                 //const { authSource } = req.query
             if (!authSource) {
-                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource query parameter required` }] });
+                return res.status(400).send({ message: `authSource header required`, statuscode: 400, errors: [{ message: `authSource header required` }] });
             }
 
             if (authSource.toLowerCase() === "user") {
