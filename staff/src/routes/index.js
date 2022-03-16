@@ -596,16 +596,18 @@ staffRouter.post(
                     authsource: "staff"
                 }
             })
-            console.log("staff business", data)
+
 
 
             existingStaff.password = undefined
             existingStaff.permissions = staffRoleDetails.permissions
-            console.log(existingStaff)
+            let returnData = {...existingStaff.dataValues }
+            returnData.permissions = staffRoleDetails.permissions
+            console.log(returnData)
 
 
 
-            res.status(200).send({ message: "Signin successful", statuscode: 200, data: { staff: existingStaff, accessToken, business: data.business } });
+            res.status(200).send({ message: "Signin successful", statuscode: 200, data: { staff: returnData, accessToken, business: data.business } });
 
         } catch (error) {
             console.log(error)
