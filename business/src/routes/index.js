@@ -595,7 +595,7 @@ businessRouter.post(
 
                 await cloudinary.uploader.upload(
                     req.body.businessLogo, {
-                        public_id: `businessLogo/${name.split(" ").join("-")}-businessLogo`,
+                        public_id: `businessLogo/${tradingName.split(" ").join("-")}-businessLogo`,
                     },
                     (error, result) => {
 
