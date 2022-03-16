@@ -726,9 +726,10 @@ businessRouter.post(
             }
 
             let returnData = {...createdFreelanceBusiness.dataValues }
+            console.log("authUser", authUser)
 
             returnData.alias = businesAlias.dataValues
-            returnData.owner = data.user
+            returnData.owner = authUser
             returnData.businessOwners = partners
 
             let awsQueuePayload = {
