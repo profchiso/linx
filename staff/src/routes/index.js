@@ -600,6 +600,8 @@ staffRouter.post(
 
 
             existingStaff.password = undefined
+            existingStaff.permissions = staffRoleDetails.permissions
+            console.log(existingStaff)
 
 
 
