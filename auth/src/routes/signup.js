@@ -104,6 +104,7 @@ signupRouter.post(
     //authenticate,
     async(req, res) => {
         try {
+            console.log(req.headers.authsource)
 
             let authUser
 
