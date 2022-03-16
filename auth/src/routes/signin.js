@@ -73,7 +73,7 @@ signinRouter.post(
                 })
                 console.log("data", data)
                 myBusinesses = data.myBusinesses
-                console.log("my businesses", myBusinesses)
+                console.log("my businesses", data.data.myBusinesses)
             } else {
                 //REGENERATE VERIFICATION TOKEN ON SIGIN IF USER IS NOT VERIFIED
                 verificationCode = generateVerificationCode()
