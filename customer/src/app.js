@@ -8,7 +8,7 @@ const cookieSession = require("cookie-session");
 const { errorHandler, NotFoundError } = require("@bc_tickets/common");
 const db = require("../src/models/index");
 
-const customerRouter = require("./routes/customer");
+const clientRouter = require("./routes/client");
 
 const app = express();
 app.set("trust proxy", true);
@@ -23,9 +23,9 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.send("welcome to customer");
+  res.send("welcome to client");
 });
-app.use(customerRouter);
+app.use(clientRouter);
 
 app.all("*", async () => {
   throw new NotFoundError();

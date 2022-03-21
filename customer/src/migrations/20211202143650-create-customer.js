@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("customers", {
+    await queryInterface.createTable("clients", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -60,6 +60,7 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
       },
+      clientType: Sequelize.STRING,
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -71,6 +72,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("customers");
+    await queryInterface.dropTable("clients");
   },
 };

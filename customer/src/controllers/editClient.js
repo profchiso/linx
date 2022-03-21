@@ -3,7 +3,7 @@ const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = process.env.AUTH_URL;
 const STAFF_AUTH_URL = process.env.STAFF_AUTH_URL;
-const { validate } = require("../helper/validateCustomer");
+const { validateUpdate } = require("../helper/validateCustomer");
 
 module.exports = async (req, res) => {
   try {
@@ -59,41 +59,55 @@ module.exports = async (req, res) => {
       });
     }
 
-    // customer validation
-    const { error } = validate(req.body);
+    // customer data validation
+    const { error } = validateUpdate(req.body);
     if (error) {
       res.status(400);
       throw new Error(error.message);
     }
 
-    let createdCustomer = await db.customer.create({
-      ...req.body,
-      status: "active",
-    });
-    //   businessName: req.body.businessName,
-    //   businessEmail: req.body.businessEmail,
-    //   businessPhoneNumber: req.body.businessPhoneNumber,
-    //   website: req.body.website,
-    //   companyLogo: req.body.companyLogo,
-    //   address: req.body.address,
-    //   country: req.body.country,
-    //   state: req.body.state,
-    //   lga: req.body.lga,
-    //   firstName: req.body.firstName,
-    //   lastName: req.body.lastName,
-    //   email: req.body.email,
-    //   phoneNumber: req.body.phoneNumber,
-    //   alias: req.body.alias,
-    //   businessId: req.body.businessId,
-    //   status: "active",
-    // });
+    const { clientId } = req.params;
 
-    res.status(201).send({
-      message: "Customer Created",
-      statuscode: 201,
-      type: "success",
+    let message, existingClient, updatedClient;
+
+    if (req.body.clientType.toLowerCase() == "customer") {
+      existingClient = await db.client.findOne({
+        where: { id: clientId, clientType: "customer" },
+      });
+
+      if (!existingClient) {
+        throw new Error("customer cannot be found");
+      }
+      updatedClient = await db.client.update(req.body, {
+        where: { id: clientId, clientType: "customer" },
+        returning: true,
+        plain: true,
+      });
+      message = "Customer updated successfully";
+    } else if (req.body.clientType.toLowerCase() == "vendor") {
+      existingClient = await db.client.findOne({
+        where: { id: clientId, clientType: "vendor" },
+      });
+
+      if (!existingClient) {
+        throw new Error("vendor cannot be found");
+      }
+      updatedClient = await db.client.update(req.body, {
+        where: { id: clientId, clientType: "vendor" },
+        returning: true,
+        plain: true,
+      });
+      message = "Vendor updated successfully";
+    } else {
+      res.status(400);
+      throw new Error("client type must be either customer or vendor");
+    }
+
+    res.status(200).send({
+      message,
+      statuscode: 200,
       data: {
-        customer: createdCustomer,
+        client: updatedClient[1],
       },
     });
   } catch (error) {

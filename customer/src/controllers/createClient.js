@@ -3,10 +3,11 @@ const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = process.env.AUTH_URL;
 const STAFF_AUTH_URL = process.env.STAFF_AUTH_URL;
+const { validate } = require("../helper/validateCustomer");
 
 module.exports = async (req, res) => {
-  //authenticate user
   try {
+    //authenticate user
     let authUser;
     if (!req.headers.authsource) {
       return res.status(400).send({
@@ -58,16 +59,60 @@ module.exports = async (req, res) => {
       });
     }
 
-    const { businessId } = req.params;
-    const customers = await db.customer.findAll({ where: { businessId } });
-    if (!customers) {
-      throw new Error("There are no customers found");
+    // customer validation
+    const { error } = validate(req.body);
+    if (error) {
+      res.status(400);
+      throw new Error(error.message);
     }
 
-    res.status(200).send({
-      message: "Customers found successfully",
-      statuscode: 200,
-      data: { customers },
+    let message, createdClient;
+
+    if (req.body.clientType.toLowerCase() == "customer") {
+      createdClient = await db.client.create({
+        ...req.body,
+        status: "active",
+        clientType: req.body.clientType.toLowerCase(),
+      });
+      message = "Customer created successfully";
+    } else if (req.body.clientType.toLowerCase() == "vendor") {
+      createdClient = await db.client.create({
+        ...req.body,
+        status: "active",
+        clientType: req.body.clientType.toLowerCase(),
+      });
+
+      message = "Vendor created successfully";
+    } else {
+      res.status(400);
+      throw new Error("client type must be either customer or vendor");
+    }
+
+    //   businessName: req.body.businessName,
+    //   businessEmail: req.body.businessEmail,
+    //   businessPhoneNumber: req.body.businessPhoneNumber,
+    //   website: req.body.website,
+    //   companyLogo: req.body.companyLogo,
+    //   address: req.body.address,
+    //   country: req.body.country,
+    //   state: req.body.state,
+    //   lga: req.body.lga,
+    //   firstName: req.body.firstName,
+    //   lastName: req.body.lastName,
+    //   email: req.body.email,
+    //   phoneNumber: req.body.phoneNumber,
+    //   alias: req.body.alias,
+    //   businessId: req.body.businessId,
+    //   status: "active",
+    // });
+
+    res.status(201).send({
+      message,
+      statuscode: 201,
+      type: "success",
+      data: {
+        client: createdClient,
+      },
     });
   } catch (error) {
     console.log(error);

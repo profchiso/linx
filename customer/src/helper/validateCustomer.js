@@ -18,6 +18,7 @@ module.exports.validate = function validate(req) {
     phoneNumber: Joi.string().required(),
     alias: Joi.string().required(),
     businessId: Joi.number().required(),
+    clientType: Joi.string().required(),
   });
 
   return schema.validate(req);
@@ -41,6 +42,16 @@ module.exports.validateUpdate = function validate(req) {
     phoneNumber: Joi.string(),
     alias: Joi.string().required(),
     businessId: Joi.number().required(),
+    clientType: Joi.string().required(),
+  });
+
+  return schema.validate(req);
+};
+
+//validate blacklist customer data
+module.exports.validateClientType = function validate(req) {
+  const schema = Joi.object({
+    clientType: Joi.string().required(),
   });
 
   return schema.validate(req);

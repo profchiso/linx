@@ -3,11 +3,11 @@ const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = process.env.AUTH_URL;
 const STAFF_AUTH_URL = process.env.STAFF_AUTH_URL;
-const { validateUpdate } = require("../helper/validateCustomer");
+const { validateClientType } = require("../helper/validateCustomer");
 
 module.exports = async (req, res) => {
+  //authenticate user
   try {
-    //authenticate user
     let authUser;
     if (!req.headers.authsource) {
       return res.status(400).send({
@@ -59,33 +59,43 @@ module.exports = async (req, res) => {
       });
     }
 
-    // customer data validation
-    const { error } = validateUpdate(req.body);
+    // client validation
+    const { error } = validateClientType(req.body);
     if (error) {
       res.status(400);
       throw new Error(error.message);
     }
 
-    const { customerId } = req.params;
-    const existingCustomer = await db.customer.findOne({
-      where: { id: customerId },
-    });
+    const { businessId } = req.params;
 
-    if (!existingCustomer) {
-      throw new Error("customer cannot be found");
+    let message, clients;
+
+    if (req.body.clientType.toLowerCase() == "customer") {
+      clients = await db.client.findAll({
+        where: { businessId, clientType: "customer" },
+      });
+      if (!clients) {
+        throw new Error("There are no customers found");
+      }
+      message = "Customers found successfully";
+    } else if (req.body.clientType.toLowerCase() == "vendor") {
+      clients = await db.client.findAll({
+        where: { businessId, clientType: "vendor" },
+      });
+      if (!clients) {
+        throw new Error("There are no vendors found");
+      }
+
+      message = "Vendors found successfully";
+    } else {
+      res.status(400);
+      throw new Error("client type must be either customer or vendor");
     }
-    const updatedCustomer = await db.customer.update(req.body, {
-      where: { id: customerId },
-      returning: true,
-      plain: true,
-    });
 
     res.status(200).send({
-      message: "Customer updated successfully",
+      message,
       statuscode: 200,
-      data: {
-        customer: updatedCustomer[1],
-      },
+      data: { clients },
     });
   } catch (error) {
     console.log(error);

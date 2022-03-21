@@ -1,11 +1,11 @@
-CREATE TABLE IF NOT EXISTS public.customers
+CREATE TABLE IF NOT EXISTS public.clients
 (
     id serial ,
     "businessName" character varying(255) COLLATE pg_catalog."default",
     "businessEmail" character varying(255) COLLATE pg_catalog."default",
     "businessPhoneNumber" character varying(255) COLLATE pg_catalog."default",
     website character varying(255) COLLATE pg_catalog."default",
-    "companyLogo" character varying(5000) COLLATE pg_catalog."default",
+    "companyLogo" character varying(50000) COLLATE pg_catalog."default",
     address character varying(255) COLLATE pg_catalog."default",
     country character varying(255) COLLATE pg_catalog."default",
     state character varying(255) COLLATE pg_catalog."default",
@@ -17,8 +17,9 @@ CREATE TABLE IF NOT EXISTS public.customers
     alias character varying(255) COLLATE pg_catalog."default",
     "businessId" integer,
     status character varying(255) COLLATE pg_catalog."default",
-    "isBlacklisted" character varying(255) COLLATE pg_catalog."default"
+    "isBlacklisted" character varying(255) COLLATE pg_catalog."default",
+    "clientType" character varying(255) COLLATE pg_catalog."default",
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
-    CONSTRAINT customers_pkey PRIMARY KEY (id)
+    CONSTRAINT clients_pkey PRIMARY KEY (id)
 )

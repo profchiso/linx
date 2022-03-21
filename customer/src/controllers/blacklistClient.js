@@ -3,6 +3,7 @@ const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = process.env.AUTH_URL;
 const STAFF_AUTH_URL = process.env.STAFF_AUTH_URL;
+const { validateClientType } = require("../helper/validateCustomer");
 
 module.exports = async (req, res) => {
   //authenticate user
@@ -58,28 +59,64 @@ module.exports = async (req, res) => {
       });
     }
 
-    const { customerId } = req.params;
-    const customer = await db.customer.findOne({ where: { id: customerId } });
-
-    if (!customer) {
-      throw new Error("customer cannot be found");
+    // client validation
+    const { error } = validateClientType(req.body);
+    if (error) {
+      res.status(400);
+      throw new Error(error.message);
     }
 
-    // Toggle blacklist status
-    customer.isBlacklisted = !customer.isBlacklisted;
+    const { clientId } = req.params;
 
-    customer.status = customer.isBlacklisted ? "blacklisted" : "active";
+    let message, client;
 
-    await customer.save();
+    if (req.body.clientType.toLowerCase() == "customer") {
+      client = await db.client.findOne({
+        where: { id: clientId, clientType: "customer" },
+      });
 
-    const message = customer.isBlacklisted
-      ? "Customer has been blacklisted"
-      : "Customer has been removed from blacklist";
+      if (!client) {
+        throw new Error("customer cannot be found");
+      }
+
+      // Toggle blacklist status
+      client.isBlacklisted = !client.isBlacklisted;
+
+      client.status = client.isBlacklisted ? "blacklisted" : "active";
+
+      await client.save();
+
+      message = client.isBlacklisted
+        ? "Customer has been blacklisted"
+        : "Customer has been removed from blacklist";
+    } else if (req.body.clientType.toLowerCase() == "vendor") {
+      client = await db.client.findOne({
+        where: { id: clientId, clientType: "vendor" },
+      });
+
+      if (!client) {
+        throw new Error("vendor cannot be found");
+      }
+
+      // Toggle blacklist status
+      client.isBlacklisted = !client.isBlacklisted;
+
+      client.status = client.isBlacklisted ? "blacklisted" : "active";
+
+      await client.save();
+
+      message = client.isBlacklisted
+        ? "Vendor has been blacklisted"
+        : "Vendor has been removed from blacklist";
+    } else {
+      res.status(400);
+      throw new Error("client type must be either customer or vendor");
+    }
 
     res.status(200).send({
       message,
       statuscode: 200,
-      data: { customer },
+      data: { client },
     });
   } catch (error) {
     console.log(error);
