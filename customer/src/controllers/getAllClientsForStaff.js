@@ -66,48 +66,27 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
 
-    const { clientId } = req.params;
+    const { staffId } = req.params;
 
-    let message, client;
+    let message, clients;
 
     if (req.body.clientType.toLowerCase() == "customer") {
-      client = await db.client.findOne({
-        where: { id: clientId, clientType: "customer" },
+      clients = await db.client.findAll({
+        where: { staffId, clientType: "customer" },
       });
-
-      if (!client) {
-        throw new Error("customer cannot be found");
+      if (!clients) {
+        throw new Error("There are no customers found");
       }
-
-      // Toggle blacklist status
-      client.isBlacklisted = !client.isBlacklisted;
-
-      client.status = client.isBlacklisted ? "blacklisted" : "active";
-
-      await client.save();
-
-      message = client.isBlacklisted
-        ? "Customer has been blacklisted"
-        : "Customer has been removed from blacklist";
+      message = "Customers found successfully";
     } else if (req.body.clientType.toLowerCase() == "vendor") {
-      client = await db.client.findOne({
-        where: { id: clientId, clientType: "vendor" },
+      clients = await db.client.findAll({
+        where: { staffId, clientType: "vendor" },
       });
-
-      if (!client) {
-        throw new Error("vendor cannot be found");
+      if (!clients) {
+        throw new Error("There are no vendors found");
       }
 
-      // Toggle blacklist status
-      client.isBlacklisted = !client.isBlacklisted;
-
-      client.status = client.isBlacklisted ? "blacklisted" : "active";
-
-      await client.save();
-
-      message = client.isBlacklisted
-        ? "Vendor has been blacklisted"
-        : "Vendor has been removed from blacklist";
+      message = "Vendors found successfully";
     } else {
       res.status(400);
       throw new Error("client type must be either customer or vendor");
@@ -116,7 +95,7 @@ module.exports = async (req, res) => {
     res.status(200).send({
       message,
       statuscode: 200,
-      data: { client },
+      data: { clients },
     });
   } catch (error) {
     console.log(error);

@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.clients
     "phoneNumber" character varying(255) COLLATE pg_catalog."default",
     alias character varying(255) COLLATE pg_catalog."default",
     "businessId" integer,
+    "staffId" integer,
     status character varying(255) COLLATE pg_catalog."default",
     "isBlacklisted" character varying(255) COLLATE pg_catalog."default",
     "clientType" character varying(255) COLLATE pg_catalog."default",

@@ -18,6 +18,7 @@ module.exports.validate = function validate(req) {
     phoneNumber: Joi.string().required(),
     alias: Joi.string().required(),
     businessId: Joi.number().required(),
+    staffId: Joi.number(),
     clientType: Joi.string().required(),
   });
 

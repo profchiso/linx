@@ -3,7 +3,7 @@ const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = process.env.AUTH_URL;
 const STAFF_AUTH_URL = process.env.STAFF_AUTH_URL;
-const { validateUpdate } = require("../helper/validateCustomer");
+const { validateUpdate } = require("../helper/validateClient");
 
 module.exports = async (req, res) => {
   try {

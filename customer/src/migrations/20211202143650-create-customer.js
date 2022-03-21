@@ -53,6 +53,9 @@ module.exports = {
       businessId: {
         type: Sequelize.INTEGER,
       },
+      staffId: {
+        type: Sequelize.INTEGER,
+      },
       status: {
         type: Sequelize.STRING,
       },

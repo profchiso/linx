@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       phoneNumber: DataTypes.STRING,
       alias: DataTypes.STRING,
       businessId: DataTypes.INTEGER,
+      staffId: DataTypes.INTEGER,
       status: DataTypes.STRING,
       isBlacklisted: {
         type: DataTypes.BOOLEAN,
