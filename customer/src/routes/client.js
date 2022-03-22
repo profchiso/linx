@@ -18,7 +18,10 @@ clientRouter.get(
   "/api/v1/client/business/:businessId",
   getAllClientsForBusiness
 );
-clientRouter.get("/api/v1/client/staff/:staffId", getAllClientsForStaff);
+clientRouter.get(
+  "/api/v1/client/business/:businessId/staff/:staffId",
+  getAllClientsForStaff
+);
 clientRouter.get("/api/v1/client/:clientId", getClient);
 clientRouter.post("/api/v1/client", processBase64CompanyLogo, createClient);
 clientRouter.patch("/api/v1/client/blacklist/:clientId", blacklistClient);

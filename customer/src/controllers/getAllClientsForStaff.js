@@ -66,13 +66,13 @@ module.exports = async (req, res) => {
       throw new Error(error.message);
     }
 
-    const { staffId } = req.params;
+    const { businessId, staffId } = req.params;
 
     let message, clients;
 
     if (req.body.clientType.toLowerCase() == "customer") {
       clients = await db.client.findAll({
-        where: { staffId, clientType: "customer" },
+        where: { businessId, staffId, clientType: "customer" },
       });
       if (!clients) {
         throw new Error("There are no customers found");
@@ -80,7 +80,7 @@ module.exports = async (req, res) => {
       message = "Customers found successfully";
     } else if (req.body.clientType.toLowerCase() == "vendor") {
       clients = await db.client.findAll({
-        where: { staffId, clientType: "vendor" },
+        where: { businessId, staffId, clientType: "vendor" },
       });
       if (!clients) {
         throw new Error("There are no vendors found");
