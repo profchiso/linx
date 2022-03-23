@@ -3,7 +3,7 @@ const axios = require("axios");
 const { NotAuthorisedError } = require("@bc_tickets/common");
 const AUTH_URL = process.env.AUTH_URL;
 const STAFF_AUTH_URL = process.env.STAFF_AUTH_URL;
-const { validateClientType } = require("../helper/validateClient");
+//const { validateClientType } = require("../helper/validateClient");
 
 module.exports = async (req, res) => {
   //authenticate user
@@ -60,17 +60,23 @@ module.exports = async (req, res) => {
     }
 
     // client validation
-    const { error } = validateClientType(req.body);
-    if (error) {
-      res.status(400);
-      throw new Error(error.message);
-    }
+    // const { error } = validateClientType(req.body);
+    // if (error) {
+    //   res.status(400);
+    //   throw new Error(error.message);
+    // }
 
     const { businessId } = req.params;
 
     let message, clients;
 
-    if (req.body.clientType.toLowerCase() == "customer") {
+    if (Object.keys(req.query).length === 0 || !req.query.clientType) {
+      throw new Error(
+        "you must pass a query parameter of 'clientType' for this route"
+      );
+    }
+
+    if (req.query.clientType.toLowerCase() == "customer") {
       clients = await db.client.findAll({
         where: { businessId, clientType: "customer" },
       });
@@ -78,7 +84,7 @@ module.exports = async (req, res) => {
         throw new Error("There are no customers found");
       }
       message = "Customers found successfully";
-    } else if (req.body.clientType.toLowerCase() == "vendor") {
+    } else if (req.query.clientType.toLowerCase() == "vendor") {
       clients = await db.client.findAll({
         where: { businessId, clientType: "vendor" },
       });
