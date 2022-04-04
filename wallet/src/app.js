@@ -101,8 +101,9 @@ cronJob.schedule("*/1 * * * *", () => {
             data: bodyData,
           };
 
-          axios(config)
+          let apiCall = axios(config)
             .then(function (response) {
+              console.log("@@@@@@@@@@@@", response);
               console.log(
                 JSON.stringify("RESPONSE DATA *********", response.data)
               );
@@ -111,6 +112,8 @@ cronJob.schedule("*/1 * * * *", () => {
             .catch(function (error) {
               console.log(error);
             });
+
+          console.log("+++++++@@@@@@", apiCall);
 
           //==========================================================================================================
 
