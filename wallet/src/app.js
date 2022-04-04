@@ -75,6 +75,8 @@ cronJob.schedule("*/1 * * * *", () => {
       if (data.Messages && data.Messages.length) {
         let messageBody = data.Messages;
 
+        console.log("**||||||***", messageBody);
+
         for (let message of messageBody) {
           let parsedData = JSON.parse(message.Body);
 
@@ -84,7 +86,7 @@ cronJob.schedule("*/1 * * * *", () => {
           //=====================================================================================================
           let generatedAccountNumber;
 
-          let data = JSON.stringify({
+          let bodyData = JSON.stringify({
             account_name: `${parsedData.name}-${parsedData.alias}`,
           });
 
@@ -96,12 +98,14 @@ cronJob.schedule("*/1 * * * *", () => {
               "X-Auth-Signature": process.env.X_AUTH_SIGNATURE,
               "Client-Id": process.env.CLIENT_ID,
             },
-            data: data,
+            data: bodyData,
           };
 
           axios(config)
             .then(function (response) {
-              console.log(JSON.stringify(response.data));
+              console.log(
+                JSON.stringify("RESPONSE DATA *********", response.data)
+              );
               generatedAccountNumber = response.data.account_number;
             })
             .catch(function (error) {
@@ -215,7 +219,7 @@ cronJob.schedule("*/1 * * * *", () => {
           //=====================================================================================================
           let generatedAccountNumber;
 
-          let data = JSON.stringify({
+          let bodyData = JSON.stringify({
             account_name: `${parsedData.name}-${parsedData.alias}`,
           });
 
@@ -227,12 +231,14 @@ cronJob.schedule("*/1 * * * *", () => {
               "X-Auth-Signature": process.env.X_AUTH_SIGNATURE,
               "Client-Id": process.env.CLIENT_ID,
             },
-            data: data,
+            data: bodyData,
           };
 
           axios(config)
             .then(function (response) {
-              console.log(JSON.stringify(response.data));
+              console.log(
+                JSON.stringify("RESPONSE DATA *********", response.data)
+              );
               generatedAccountNumber = response.data.account_number;
             })
             .catch(function (error) {
