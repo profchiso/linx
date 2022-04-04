@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS public.wallets
     category character varying(255) COLLATE pg_catalog."default",
     "hasPin" boolean,
     country character varying(255) COLLATE pg_catalog."default",
+    accountNumber character varying(255) COLLATE pg_catalog."default",
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT wallets_pkey PRIMARY KEY (id)

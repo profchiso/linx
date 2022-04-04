@@ -6,6 +6,8 @@ const path = require("path");
 
 const cors = require("cors");
 
+const axios = require("axios");
+
 require("express-async-errors");
 
 const cookieSession = require("cookie-session");
@@ -78,6 +80,36 @@ cronJob.schedule("*/1 * * * *", () => {
 
           let checkOwnerId = Number(parsedData.businessId);
 
+          //Generate Virtual Account Number using an external service
+          //=====================================================================================================
+          let generatedAccountNumber;
+
+          let data = JSON.stringify({
+            account_name: `${parsedData.name}-${parsedData.alias}`,
+          });
+
+          let config = {
+            method: "post",
+            url: "http://154.113.16.142:8088/appdevapi/api/PiPCreateDynamicAccountNumber",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Auth-Signature": process.env.X_AUTH_SIGNATURE,
+              "Client-Id": process.env.CLIENT_ID,
+            },
+            data: data,
+          };
+
+          axios(config)
+            .then(function (response) {
+              console.log(JSON.stringify(response.data));
+              generatedAccountNumber = response.data.account_number;
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+
+          //==========================================================================================================
+
           let createdPrimaryWallet = await db.wallet.create({
             walletId: Number(Date.now().toString().substring(0, 10)),
             name: parsedData.name || "Testing",
@@ -92,6 +124,7 @@ cronJob.schedule("*/1 * * * *", () => {
             email: parsedData.email || "j2k4@yahoo.com",
             category: parsedData.walletCategory || "business",
             country: parsedData.country || "Nigeria",
+            accountNumber: generatedAccountNumber,
           });
 
           let createdPromoWallet = await db.wallet.create({
@@ -108,6 +141,7 @@ cronJob.schedule("*/1 * * * *", () => {
             email: parsedData.email || "j2k4@yahoo.com",
             category: parsedData.walletCategory || "business",
             country: parsedData.country || "Nigeria",
+            accountNumber: generatedAccountNumber,
           });
 
           let businessWalletPayload = {
@@ -177,6 +211,36 @@ cronJob.schedule("*/1 * * * *", () => {
 
           let checkBusinessOwnerId = Number(parsedData.businessId);
 
+          //Generate Virtual Account Number using an external service
+          //=====================================================================================================
+          let generatedAccountNumber;
+
+          let data = JSON.stringify({
+            account_name: `${parsedData.name}-${parsedData.alias}`,
+          });
+
+          let config = {
+            method: "post",
+            url: "http://154.113.16.142:8088/appdevapi/api/PiPCreateDynamicAccountNumber",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Auth-Signature": process.env.X_AUTH_SIGNATURE,
+              "Client-Id": process.env.CLIENT_ID,
+            },
+            data: data,
+          };
+
+          axios(config)
+            .then(function (response) {
+              console.log(JSON.stringify(response.data));
+              generatedAccountNumber = response.data.account_number;
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+
+          //==========================================================================================================
+
           let createdPrimaryWallet = await db.wallet.create({
             walletId: Number(Date.now().toString().substring(0, 10)),
             name: parsedData.name || "Testing",
@@ -191,6 +255,7 @@ cronJob.schedule("*/1 * * * *", () => {
             email: parsedData.email || "j2k4@yahoo.com",
             category: parsedData.walletCategory || "staff",
             country: parsedData.country || "Nigeria",
+            accountNumber: generatedAccountNumber,
           });
 
           // // transport object
