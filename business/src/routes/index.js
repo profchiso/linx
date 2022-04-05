@@ -406,8 +406,8 @@ businessRouter.post(
                 tinCertificate: imageData.tinCertificate,
                 alias: alias.toUpperCase(),
                 utilityBillType,
-                email: req.body.businessEmail || data.user.email,
-                businessEmail: req.body.businessEmail || data.user.email,
+                email: req.body.businessEmail || authUser.email,
+                businessEmail: req.body.businessEmail || authUser.email,
                 businessPhoneNumber: req.body.businessPhoneNumber || "",
                 businessCategory: "Registered",
                 businessLogo: imageData.businessLogo
@@ -468,7 +468,7 @@ businessRouter.post(
             let returnData = {...createdBusiness.dataValues }
 
             returnData.alias = businesAlias.dataValues
-            returnData.owner = data.user
+            returnData.owner = authUser
             returnData.businessOwners = partners
 
 
@@ -478,7 +478,7 @@ businessRouter.post(
                 alias: alias.toUpperCase(),
                 tradingName,
                 name: tradingName || "",
-                email: req.body.businessEmail || data.user.email,
+                email: req.body.businessEmail || authUser.email,
                 walletCategory: "business"
             }
             console.log("queue payload", awsQueuePayload)
@@ -673,8 +673,8 @@ businessRouter.post(
                 utilityBillImage: imageData.utilityBillImage,
                 alias: alias.toUpperCase(),
                 utilityBillType,
-                email: businessEmail || data.user.email,
-                businessEmail: businessEmail || data.user.email,
+                email: businessEmail || authUser.email,
+                businessEmail: businessEmail || authUser.email,
                 businessCategory: "Freelance",
                 businessLogo: imageData.businessLogo,
                 businessPhoneNumber: req.body.businessPhoneNumber || ""
