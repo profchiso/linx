@@ -92,7 +92,7 @@ cronJob.schedule("*/1 * * * *", () => {
 
           let config = {
             method: "post",
-            url: "http://154.113.16.142:8088/appdevapi/api/PiPCreateDynamicAccountNumber",
+            url: process.env.ACCOUNT_CREATION_URL,
             headers: {
               "Content-Type": "application/json",
               "X-Auth-Signature": process.env.X_AUTH_SIGNATURE,
@@ -101,19 +101,15 @@ cronJob.schedule("*/1 * * * *", () => {
             data: bodyData,
           };
 
-          let apiCall = axios(config)
+          await axios(config)
             .then(function (response) {
-              console.log("@@@@@@@@@@@@", response);
-              console.log(
-                JSON.stringify("RESPONSE DATA *********", response.data)
-              );
+              console.log("RESPONSE DATA *********", response.data);
+
               generatedAccountNumber = response.data.account_number;
             })
             .catch(function (error) {
               console.log(error);
             });
-
-          console.log("+++++++@@@@@@", apiCall);
 
           //==========================================================================================================
 
@@ -228,7 +224,7 @@ cronJob.schedule("*/1 * * * *", () => {
 
           let config = {
             method: "post",
-            url: "http://154.113.16.142:8088/appdevapi/api/PiPCreateDynamicAccountNumber",
+            url: process.env.ACCOUNT_CREATION_URL,
             headers: {
               "Content-Type": "application/json",
               "X-Auth-Signature": process.env.X_AUTH_SIGNATURE,
@@ -237,11 +233,10 @@ cronJob.schedule("*/1 * * * *", () => {
             data: bodyData,
           };
 
-          axios(config)
+          await axios(config)
             .then(function (response) {
-              console.log(
-                JSON.stringify("RESPONSE DATA *********", response.data)
-              );
+              console.log("RESPONSE DATA *********", response.data);
+
               generatedAccountNumber = response.data.account_number;
             })
             .catch(function (error) {
