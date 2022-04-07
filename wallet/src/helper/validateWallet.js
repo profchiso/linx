@@ -31,6 +31,7 @@ module.exports.validateWalletCreditData = function validate(req) {
     walletOwnerEmail: Joi.string().required(),
     recipientEmail: Joi.string().required(),
     description: Joi.string(),
+    recipientWalletAccountNumber: Joi.number().required(),
   });
 
   return schema.validate(req);
@@ -46,6 +47,7 @@ module.exports.validateMultipleWalletsCreditData = function validate(req) {
         walletOwnerEmail: Joi.string(),
         recipientEmail: Joi.string().required(),
         description: Joi.string(),
+        recipientWalletAccountNumber: Joi.number().required(),
       })
     ),
     totalAmount: Joi.number().required(),

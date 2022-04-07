@@ -364,6 +364,7 @@ cronJob.schedule("*/1 * * * *", () => {
           let parsedData = JSON.parse(message.Body);
 
           let walletId = parsedData.businessPaymentWallet;
+          let accountNumber = parsedData.accountNumber;
 
           let staffWalletsArray = parsedData.staff;
           let totalAmount = parsedData.totalAmount;
@@ -371,7 +372,7 @@ cronJob.schedule("*/1 * * * *", () => {
           let businessId = parsedData.businessId;
 
           const wallet = await db.wallet.findOne({
-            where: { walletId: walletId },
+            where: { walletId: walletId, accountNumber: accountNumber },
           });
 
           if (!wallet) {
@@ -406,7 +407,10 @@ cronJob.schedule("*/1 * * * *", () => {
 
           for (let eachWallet of staffWalletsArray) {
             const recipientWallet = await db.wallet.findOne({
-              where: { walletId: eachWallet.staffWallet },
+              where: {
+                walletId: eachWallet.staffWallet,
+                accountNumber: eachWallet.recipientWalletAccountNumber,
+              },
             });
 
             if (!recipientWallet) {

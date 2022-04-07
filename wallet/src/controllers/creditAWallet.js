@@ -82,7 +82,7 @@ module.exports = async (req, res) => {
       res.status(400);
       throw new Error(error.message);
     }
-    const { walletId } = req.params;
+    const { walletId, accountNumber } = req.params;
     const {
       recipientWalletId,
       amount,
@@ -91,9 +91,12 @@ module.exports = async (req, res) => {
       recipientEmail,
       businessId,
       description,
+      recipientWalletAccountNumber,
     } = req.body;
     let staffId = req.body.staffId;
-    const wallet = await db.wallet.findOne({ where: { walletId: walletId } });
+    const wallet = await db.wallet.findOne({
+      where: { walletId: walletId, accountNumber: accountNumber },
+    });
 
     if (!wallet) {
       throw new Error("wallet cannot be found");
@@ -104,7 +107,10 @@ module.exports = async (req, res) => {
     }
 
     const recipientWallet = await db.wallet.findOne({
-      where: { walletId: recipientWalletId },
+      where: {
+        walletId: recipientWalletId,
+        accountNumber: recipientWalletAccountNumber,
+      },
     });
 
     if (!recipientWallet) {

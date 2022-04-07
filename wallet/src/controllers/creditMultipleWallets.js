@@ -83,12 +83,14 @@ module.exports = async (req, res) => {
       res.status(400);
       throw new Error(error.message);
     }
-    const { walletId } = req.params;
+    const { walletId, accountNumber } = req.params;
     const { walletsArray, totalAmount, walletOwnerEmail, businessId } =
       req.body;
     let staffId = req.body.staffId;
 
-    const wallet = await db.wallet.findOne({ where: { walletId: walletId } });
+    const wallet = await db.wallet.findOne({
+      where: { walletId: walletId, accountNumber: accountNumber },
+    });
 
     if (!wallet) {
       throw new Error("wallet cannot be found");
@@ -120,7 +122,10 @@ module.exports = async (req, res) => {
 
     for (let eachWallet of walletsArray) {
       const recipientWallet = await db.wallet.findOne({
-        where: { walletId: eachWallet.recipientWalletId },
+        where: {
+          walletId: eachWallet.recipientWalletId,
+          accountNumber: eachWallet.recipientWalletAccountNumber,
+        },
       });
 
       if (!recipientWallet) {
