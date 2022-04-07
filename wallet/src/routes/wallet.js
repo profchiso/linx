@@ -68,12 +68,9 @@ walletRouter.get(
   getAllBeneficiariesForAWallet
 );
 walletRouter.post("/api/v1/create-secondary-wallet", createSecondaryWallet);
+walletRouter.post("/api/v1/wallet/:walletId/:accountNumber", creditAWallet);
 walletRouter.post(
-  "/api/v1/wallet/credit/:walletId/:accountNumber/wallet",
-  creditAWallet
-);
-walletRouter.post(
-  "/api/v1/wallet/credit/:walletId/:accountNumber/wallet/multiple",
+  "/api/v1/wallet/:walletId/:accountNumber/credit/multiple",
   creditMultipleWallets
 );
 walletRouter.post(
