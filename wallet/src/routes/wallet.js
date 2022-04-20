@@ -1,7 +1,7 @@
 const express = require("express");
 
 const createSecondaryWallet = require("../controllers/createSecondaryWallet");
-const creditAWallet = require("../controllers/creditAWallet");
+//const creditAWallet = require("../controllers/creditAWallet");
 const creditMultipleWallets = require("../controllers/creditMultipleWallets");
 const getWallet = require("../controllers/getWallet");
 const getAllWalletForABusiness = require("../controllers/getAllWalletForABusiness");
@@ -68,7 +68,7 @@ walletRouter.get(
   getAllBeneficiariesForAWallet
 );
 walletRouter.post("/api/v1/create-secondary-wallet", createSecondaryWallet);
-walletRouter.post("/api/v1/wallet/:walletId/:accountNumber", creditAWallet);
+//walletRouter.post("/api/v1/wallet/:walletId/:accountNumber", creditAWallet);
 walletRouter.post(
   "/api/v1/wallet/:walletId/:accountNumber/credit/multiple",
   creditMultipleWallets
